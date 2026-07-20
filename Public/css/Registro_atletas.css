@@ -1,0 +1,111 @@
+:root {
+    --gradient-base: linear-gradient(180deg, #0D4866 0%, #0D4866 43.27%, #436C3F 100%);
+    --azul: #0D4866;
+    --verde: #436C3F;               
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #000000;         
+    --gris-card: rgba(239, 239, 239, 0.95);
+    --texto-mutado: #8b949e;
+    --verde-boton: #0c3319;
+}
+
+body {
+   background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
+        url('../img/13.png');
+    background-color: transparent;
+    background-blend-mode: multiply;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: var(--blanco-puro);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+/* --- HEADER --- */
+.register-header {
+    padding: 30px 0 10px 0;
+}
+.register-title {
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+.register-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* --- CONTENEDORES BLANCOS DE FORMULARIO --- */
+.form-section-card {
+    background-color: var(--blanco-puro);
+    color: var(--texto-oscuro);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.section-card-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    color: var(--texto-oscuro);
+}
+
+/* --- ENTRADAS DE DATOS (INPUTS) --- */
+.custom-form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    color: var(--texto-oscuro);
+}
+.custom-input {
+    background-color: var(--gris-card) !important;
+    border: 1px solid transparent !important;
+    border-radius: 10px !important;
+    height: 42px;
+    color: var(--texto-oscuro) !important;
+    font-size: 0.95rem;
+}
+.custom-input:focus {
+    border-color: var(--azul) !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 72, 102, 0.25) !important;
+}
+
+/* --- BOTONES --- */
+.btn-top-action {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--blanco-puro);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 6px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+.btn-top-action:hover {
+    background-color: var(--blanco-puro);
+    color: var(--azul);
+}
+.btn-submit-save {
+    background-color: var(--verde) !important;
+    color: var(--blanco-puro) !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 25px;
+    padding: 12px 50px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+}
+.btn-submit-save:hover {
+    transform: scale(1.02);
+    opacity: 0.95;
+}
+
+/* Estilo para campos deshabilitados del seguro */
+.seguro-field input:disabled,
+.seguro-field select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}

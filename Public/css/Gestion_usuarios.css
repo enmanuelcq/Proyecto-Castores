@@ -1,0 +1,136 @@
+body {
+   background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
+        url('../img/15.png');
+    background-color: transparent;
+    background-size: cover;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+/* Barra superior del Dashboard (Estilo de la segunda imagen) */
+.dashboard-header {
+    background-color: #0d475600; /* Azul/Teal oscuro de la franja superior */
+    padding: 20px 0;
+    border-bottom: 3px solid #19875400;
+}
+
+/* Pestañas de Navegación del Dashboard */
+.nav-dash .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    border-radius: 30px;
+    padding: 10px 25px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.nav-dash .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-dash .nav-link.active {
+    background-color: #198754 !important;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* --- ESTILOS MÓDULO 1: REGISTRAR --- */
+.custom-input {
+    background-color: #d9d9d9 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    height: 45px;
+    color: #333 !important;
+}
+
+.role-capsule {
+    background-color: #052e16;
+    border-radius: 50px;
+    padding: 12px 30px;
+    display: inline-flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+/* --- ESTILOS MÓDULO 2: CONSULTAR --- */
+.user-card {
+    background-color: rgba(234, 242, 234, 0.92); /* Tarjeta clara translúcida */
+    border-radius: 18px;
+    padding: 18px 25px;
+    color: #000000;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.user-card:hover {
+    transform: scale(1.01);
+}
+
+.user-info {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+/* Botones generales del sistema */
+.btn-custom-green {
+    background-color: #3a6843 !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 6px 18px;
+}
+
+.btn-custom-green:hover {
+    background-color: #2b4f32 !important;
+}
+
+.btn-custom-red {
+    background-color: #8a1c1c !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 6px 18px;
+}
+
+    .btn-custom-red:hover {
+    background-color: #a52e2e !important;
+    
+}
+
+.btn-dark-green {
+    background-color: #052e16 !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: bold;
+}
+
+.btn-dark-green:hover {
+    background-color: #0f4c24 !important;
+}
+
+/* Inputs de tipo radio */
+.form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+        /* --- ESTILOS DE LOS MODALES --- */
+.custom-modal-content {
+    background: linear-gradient(to bottom, #0d4866a9, #436c3fa9),url('../img/21.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 25px 30px;
+}
+.inner-white-card {
+    background-color: #e9ecef;
+    color: black;
+    border-radius: 20px;
+    padding: 20px;
+}

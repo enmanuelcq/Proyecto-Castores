@@ -1,0 +1,221 @@
+:root {
+    --azul: #0D4866;
+    --verde: #436C3F;               
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #000000;         
+    --verde-vivido: #0bd872;        
+    --gris-card: rgba(239, 239, 239, 0.95);
+}
+
+body {
+    background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
+        url('../img/7.jpeg');
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.contenido {
+    padding: 20px 0;
+}
+.perfil-atleta {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+.perfil-avatar {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #212529;
+}
+.perfil-info {
+    flex: 1;
+}
+.perfil-info h3 {
+    color: #fff;
+    font-weight: 700;
+    margin: 0;
+}
+.perfil-info .detalles {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+}
+.perfil-info .detalles span {
+    font-size: 0.85rem;
+    color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.perfil-info .detalles span i {
+    font-size: 1rem;
+}
+.perfil-acciones {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.perfil-acciones .btn {
+    border-radius: 10px;
+    font-size: 0.85rem;
+    padding: 8px 18px;
+}
+.stat-card {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(5px);
+    border-radius: 14px;
+    padding: 18px 20px;
+    transition: all 0.3s ease;
+    height: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+.stat-card:hover {
+    background: #a9ffff3b;
+    transform: translateY(-3px);
+    
+}
+.stat-card .icono {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+.stat-card .valor {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+.stat-card .etiqueta {
+    font-size: 0.75rem;
+    color: rgb(255, 255, 255);
+    margin: 0;
+}
+.grafico-container {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 20px;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+    color: #fff;
+}
+.grafico-container h6 {
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.grafico-container h6 i {
+    color: #ffc107;
+    margin-right: 8px;
+}
+.grafico-container canvas {
+    max-height: 250px;
+    
+}
+.prueba-mini-card {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    margin-bottom: 6px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+.prueba-mini-card:hover {
+    background: #a9ffff3b;
+}
+.prueba-mini-card .info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.prueba-mini-card .info i {
+    font-size: 1.1rem;
+}
+.prueba-mini-card .info .nombre {
+    font-weight: 500;
+    color: #fff;
+    font-size: 0.9rem;
+}
+.prueba-mini-card .info .fecha {
+    font-size: 0.75rem;
+    color: rgb(255, 255, 255);
+}
+.prueba-mini-card .valor {
+    font-weight: 600;
+    color: #ffc107;
+    font-size: 0.9rem;
+}
+.comparativo {
+    font-size: 0.75rem;
+    padding: 2px 10px;
+    border-radius: 20px;
+}
+.comparativo.superior { background: rgba(25, 135, 84, 0.377); color: #198754; }
+.comparativo.inferior { background: rgba(220, 53, 70, 0.233); color: #64161e; }
+.comparativo.igual { background: rgba(255, 193, 7, 0.233); color: #ffc107; }
+.badge-mini {
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+.badge-mini.ganado { background: #198754; color: #fff; }
+.badge-mini.perdido { background: #dc3545; color: #fff; }
+.badge-mini.empatado { background: #ffc107; color: #212529; }
+.seccion-titulo {
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.seccion-titulo i {
+    color: #ffc107;
+    margin-right: 10px;
+}
+@media (max-width: 768px) {
+    .perfil-atleta {
+        flex-direction: column;
+        text-align: center;
+    }
+    .perfil-info .detalles {
+        justify-content: center;
+    }
+    .perfil-acciones {
+        justify-content: center;
+        width: 100%;
+    }
+    .grafico-container canvas {
+        max-height: 200px;
+    }
+}

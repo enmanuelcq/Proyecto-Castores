@@ -1,0 +1,140 @@
+:root {
+    /* colores necesarios*/
+    --gradient-base: linear-gradient(180deg, #0D4866 0%, #0D4866 43.27%, #436C3F 100%);
+    --azul: #0D4866;
+    --verde-oscuro: #06350A;
+    --verde: #436C3F;               
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #000000;         
+
+    /* Variantes institucionales */
+    --verde-vivido: #0bd872;        /* Verde fosforescente de marca */
+    --verde-hover: #09b85f;         /* Tonalidad para estados hover */
+    --azul-info: #58a6ff;           /* Azul para nombres de usuario y edición */
+    --rojo-danger: #A60E0E;         /* Rojo para eliminación y advertencias */
+    
+    /* Fondos*/
+    --gris-card: rgba(239, 239, 239, 0.95);
+    --bg-superficie: #161b22;       /* Fondo de tarjetas y cajas internas oscuras */
+    --texto-mutado: #8b949e;
+}
+
+/* ==========================================
+    Inicio de Sesión 
+   ========================================== */
+.login-background {
+    background: linear-gradient(rgba(13, 72, 102, 0.45), rgba(4, 38, 24, 0.65)), 
+                url() no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-card {
+    background-color: var(--blanco-puro);
+    border-radius: 28px;
+    width: 100%;
+    max-width: 440px;
+    padding: 40px 35px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+    color: var(--verde-oscuro);
+}
+
+.brand-logo {
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
+}
+
+.login-card h2 {
+    font-weight: 800;
+    font-size: 1.6rem;
+    margin-bottom: 2px;
+}
+
+.login-card .subtitle-welcome {
+    color: var(--verde-oscuro);
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+}
+
+.form-label {
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+.form-control-custom {
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 15px;
+    font-size: 0.95rem;
+    color: var(--verde-oscuro);
+}
+
+.form-control-custom::placeholder {
+    color: var(--verde);
+}
+
+.form-control-custom:focus {
+    background-color: #d5d5d5;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+    border: none;
+}
+
+.btn-submit-login {
+    background-color: var(--verde-oscuro);
+    color: var(--blanco-puro);
+    font-weight: bold;
+    border-radius: 50px;
+    padding: 10px 30px;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.btn-submit-login:hover {
+    background-color: var(--verde);
+    transform: translateY(-1px);
+}
+
+.link-forgot {
+    font-size: 0.85rem;
+    color: var(--verde-oscuro);
+    text-decoration: none;
+}
+
+.link-forgot:hover {
+    text-decoration: underline;
+}
+
+.register-footer {
+    font-size: 0.85rem;
+    color: var(--verde-oscuro);
+    margin-top: 25px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.register-footer a {
+    color: var(--verde-oscuro);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--verde-oscuro);
+}

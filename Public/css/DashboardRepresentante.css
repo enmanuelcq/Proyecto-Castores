@@ -1,0 +1,545 @@
+:root {
+    --azul: #0D4866;
+    --verde: #436C3F;               
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #000000;         
+    --verde-vivido: #0bd872;        
+    --gris-card: rgba(239, 239, 239, 0.95);
+}
+
+body {
+    background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
+        url('../img/18.jpeg');
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+.contenido {
+    padding: 20px 0;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.page-header h4 {
+    color: #fff;
+    font-weight: 700;
+    margin: 0;
+}
+
+.page-header h4 i {
+    color: #ffc107;
+}
+
+.perfil-atleta {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.perfil-avatar {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #212529;
+}
+
+.perfil-info {
+    flex: 1;
+}
+
+.perfil-info h3 {
+    color: #fff;
+    font-weight: 700;
+    margin: 0;
+}
+
+.perfil-info .detalles {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+}
+
+.perfil-info .detalles span {
+    font-size: 0.85rem;
+    color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.perfil-info .detalles span i {
+    font-size: 1rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 18px 20px;
+    transition: all 0.3s ease;
+    height: 100%;
+    cursor: default;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.stat-card:hover {
+    background: #a9ffff3b;
+    transform: translateY(-3px);
+}
+
+.stat-card .icono {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.stat-card .valor {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.stat-card .etiqueta {
+    font-size: 0.75rem;
+    color: rgb(255, 255, 255);
+    margin: 0;
+}
+
+.stat-card .sub-info {
+    font-size: 0.7rem;
+    color: rgb(255, 255, 255);
+    margin-top: 4px;
+}
+
+.stat-card.clickable {
+    cursor: pointer;
+}
+
+.stat-card.clickable:hover .etiqueta {
+    color: #ffc107;
+}
+
+.badge-estado {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.badge-pagado { background: #198754; color: #fff; }
+.badge-pendiente { background: #dc3545; color: #fff; }
+.badge-revision { background: #ffc107; color: #212529; }
+
+.seccion-titulo {
+    color: #fff;
+    font-weight: 600;
+    margin: 25px 0 15px 0;
+}
+
+.seccion-titulo i {
+    color: #ffc107;
+    margin-right: 10px;
+}
+
+.selector-atletas {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.selector-atletas .btn-atleta {
+    padding: 8px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.selector-atletas .btn-atleta:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.selector-atletas .btn-atleta.active {
+    background: rgba(255, 193, 7, 0.12);
+    border-color: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+
+.prueba-mini-card {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    margin-bottom: 6px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.prueba-mini-card:hover {
+    background: #a9ffff3b;
+}
+
+.prueba-mini-card .info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.prueba-mini-card .info i {
+    font-size: 1.1rem;
+}
+
+.prueba-mini-card .info .nombre {
+    font-weight: 500;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.prueba-mini-card .info .fecha {
+    font-size: 0.75rem;
+    color: rgb(255, 255, 255);
+}
+
+.prueba-mini-card .valor {
+    font-weight: 600;
+    color: #ffc107;
+    font-size: 0.9rem;
+}
+
+.badge-mini {
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+}
+
+.btn-group-acciones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.btn-group-acciones .btn {
+    border-radius: 20px;
+    font-size: 0.8rem;
+    padding: 6px 18px;
+}
+
+.btn-outline-success {
+    border-color: rgb(255, 255, 255);
+    color: #fff;
+}
+
+.btn-outline-success:hover {
+    background: #198754;
+    color: #fff;
+    border-color: #198754;
+}
+
+@media (max-width: 768px) {
+    .perfil-atleta {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .perfil-info .detalles {
+        justify-content: center;
+    }
+    
+    .selector-atletas {
+        justify-content: center;
+    }
+    
+    .btn-group-acciones {
+        justify-content: center;
+    }
+}
+
+/* Estilos para el modal */
+.atleta-header-modal {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(7, 150, 160, 0.582);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 15px 25px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.atleta-avatar-modal {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #212529;
+}
+
+.atleta-info-modal {
+    flex: 1;
+}
+
+.atleta-info-modal h4 {
+    color: #fff;
+    font-weight: 700;
+    margin: 0;
+}
+
+.atleta-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+}
+
+.atleta-badges .badge {
+    padding: 5px 14px;
+    font-weight: 500;
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+.atleta-actions-modal {
+    margin-left: auto;
+}
+
+.info-item {
+    margin-bottom: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.info-item .label-title {
+    font-size: 0.7rem;
+    color: rgb(255, 255, 255);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    min-width: 80px;
+}
+
+.info-item .value {
+    font-size: 0.85rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+.form-section-card {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+    backdrop-filter: blur(5px);
+    height: 100%;
+}
+
+.section-card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-card-title i {
+    font-size: 1.1rem;
+}
+
+.custom-input {
+    background: rgba(255, 255, 255, 0.26) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #2c2b2b !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    font-size: 0.9rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.custom-input:focus {
+    background: rgba(255, 255, 255, 0.26) !important;
+    border-color: #ffc107 !important;
+    color: #2c2b2b !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.15) !important;
+}
+
+.custom-form-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 4px;
+    display: block;
+}
+
+.table-dashboard {
+    color: #fff;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+}
+
+.table-dashboard thead th {
+    background: rgba(255, 255, 255, 0.26);
+    padding: 10px 14px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.4);
+    border: none;
+    font-weight: 600;
+}
+
+.table-dashboard tbody td {
+    background: rgba(255, 255, 255, 0.26);
+    padding: 10px 14px;
+    border: none;
+    vertical-align: middle;
+}
+
+.table-dashboard tbody tr:hover td {
+    background: #a9ffff3b;
+}
+
+.custom-modal-content {
+    border-radius: 20px;
+    overflow: hidden;
+    border: none;
+    background: transparent;
+}
+
+.modal-content {
+    background: rgb(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+.modal-header {
+    background: #1b4d22;
+    padding: 18px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header .modal-title {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.7;
+}
+
+.modal-body {
+    background: linear-gradient(to bottom, rgba(13, 72, 102, 0.514), rgba(67, 108, 63, 0.514)), 
+                url('../img/19.jpeg');
+    background-size: cover;
+    background-position: center;
+    padding: 25px 30px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0);
+}
+
+.modal-footer {
+    background: #1b4d22;
+    padding: 15px 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-footer .btn {
+    border-radius: 50px;
+    padding: 8px 25px;
+    font-weight: 600;
+}
+
+.modal-footer .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    border: none;
+    color: #212529;
+}
+
+.modal-footer .btn-primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 193, 7, 0.3);
+}

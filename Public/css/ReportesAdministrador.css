@@ -1,0 +1,223 @@
+:root {
+    --azul: #0D4866;
+    --verde: #436C3F;               
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #000000;         
+    --verde-vivido: #0bd872;        
+    --gris-card: rgba(239, 239, 239, 0.95);
+}
+
+body {
+    background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
+        url('../img/21.jpeg');
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.contenido {
+    padding: 20px 0;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.page-header h4 {
+    color: #fff;
+    font-weight: 700;
+    margin: 0;
+}
+
+.page-header h4 i {
+    color: #ffc107;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 18px 20px;
+    transition: all 0.3s ease;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.stat-card:hover {
+    background: #a9ffff3b;
+    transform: translateY(-3px);
+}
+
+.stat-card .icono {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.stat-card .valor {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.stat-card .etiqueta {
+    font-size: 0.75rem;
+    color: rgb(255, 255, 255);
+    margin: 0;
+}
+
+.stat-card .sub-info {
+    font-size: 0.7rem;
+    color: rgb(255, 255, 255);
+    margin-top: 4px;
+}
+
+.grafico-container {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 20px;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.grafico-container h6 {
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.grafico-container h6 i {
+    color: #ffc107;
+    margin-right: 8px;
+}
+
+.grafico-container canvas {
+    max-height: 220px;
+}
+
+.table-dashboard {
+    color: #fff;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+}
+
+.table-dashboard thead th {
+    background: #0796a094;
+    padding: 8px 12px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgb(255, 255, 255);
+    border: none;
+    font-weight: 600;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.table-dashboard tbody td {
+    background: rgba(255, 255, 255, 0.397);
+    padding: 8px 12px;
+    border-radius: none;
+    vertical-align: top;
+}
+
+.table-dashboard tbody tr:hover td {
+    background: #a9ffff3b;
+}
+
+.badge-estado {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.badge-pagado { background: #198754; color: #fff; }
+.badge-pendiente { background: #dc3545; color: #fff; }
+.badge-revision { background: #ffc107; color: #212529; }
+.badge-finalizado { background: #198754; color: #fff; }
+.badge-en-curso { background: #ffc107; color: #212529; }
+.badge-programado { background: #0d6efd; color: #fff; }
+
+.seccion-titulo {
+    color: #fff;
+    font-weight: 600;
+    margin: 25px 0 15px 0;
+}
+
+.seccion-titulo i {
+    color: #ffc107;
+    margin-right: 10px;
+}
+
+.seccion-titulo .badge-count {
+    font-size: 0.7rem;
+    font-weight: 400;
+    background: rgba(255, 255, 255, 0.26);
+    color: rgb(255, 255, 255);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-left: 10px;
+    backdrop-filter: blur(5px);
+}
+
+.progress-ring {
+    width: 60px;
+    height: 60px;
+    position: relative;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.progress-ring .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.bi-info-circle {
+    color: #ff0707;
+    
+}
+
+@media (max-width: 768px) {
+    .stat-card .valor {
+        font-size: 1.4rem;
+    }
+    
+    .grafico-container canvas {
+        max-height: 180px;
+    }
+    
+    .table-dashboard {
+        font-size: 0.8rem;
+    }
+    
+    .table-dashboard th,
+    .table-dashboard td {
+        padding: 6px 10px;
+    }
+}

@@ -1,0 +1,712 @@
+:root {
+    --gradient-base: linear-gradient(180deg, #0D4866 0%, #0D4866 43.27%, #436C3F 100%);
+    --azul: #0D4866;
+    --verde-principal: #1b4d22;
+    --verde-boton: #315e37;
+    --rojo-eliminar: #8a1c1c;
+    --blanco-capsula: rgba(239, 239, 239, 0.95);
+    --texto-oscuro: #000000;
+}
+
+body {
+    background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
+        url('../img/14.png');
+    background-color: transparent;
+    background-blend-mode: multiply;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: #ffffff;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+}
+
+.header-title {
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+/* --- FILAS DE ATLETAS (CÁPSULAS) --- */
+.athlete-capsule {
+    background-color: var(--blanco-capsula);
+    color: var(--texto-oscuro);
+    border-radius: 50px;
+    padding: 15px 40px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+.athlete-capsule:hover {
+    transform: scale(1.01);
+}
+.avatar-box {
+    width: 50px;
+    height: 50px;
+    background-color: #8bb1e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+.athlete-name {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 0;
+}
+.athlete-meta {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+}
+
+/* --- BOTONES DE ACCIÓN --- */
+.btn-action-green {
+    background-color: var(--verde-boton) !important;
+    color: white !important;
+    border-radius: 20px;
+    font-weight: 600;
+    padding: 5px 20px;
+    border: none;
+}
+.btn-action-red {
+    background-color: var(--rojo-eliminar) !important;
+    color: white !important;
+    border-radius: 20px;
+    font-weight: 600;
+    padding: 5px 20px;
+    border: none;
+}
+.btn-action-green:hover, .btn-action-red:hover, .btn-secondary:hover {
+    opacity: 0.9;
+}
+
+.btn-secondary{
+    background-color: #6c757d !important;
+    color: white !important;
+    border-radius: 20px;
+    font-weight: 600;
+    padding: 5px 20px;
+    border: none;
+}
+
+.btn-pendiente{
+    background-color: #dfc117 !important;
+    color: white !important;
+    border-radius: 20px;
+    font-weight: 600;
+    padding: 5px 20px;
+    border: none;
+}
+
+/* --- ESTILOS DE LOS MODALES --- */
+
+.inner-white-card {
+    background: rgba(255, 255, 255,0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+
+/* Matriz de Solvencia */
+.month-card {
+    background-color: #b2c7b5;
+    border-radius: 15px;
+    padding: 10px;
+    text-align: center;
+    color: black;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+.month-card.pendiente {
+    background-color: #d1b2b2;
+}
+.status-badge {
+    background-color: #2e5933;
+    color: white;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    display: inline-block;
+    margin-top: 5px;
+}
+.status-badge.pendiente {
+    background-color: #701c1c;
+}
+
+/* ============================================
+   MODAL ATLETA - ESTILOS COMPLETOS
+   ============================================ */
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.custom-modal-content {
+    border-radius: 20px;
+    overflow: hidden;
+    border: none;
+}
+
+/* --- HEADER --- */
+.modal-header {
+    background: var(--verde-oscuro);
+    padding: 20px 30px;
+}
+
+.modal-header .modal-title {
+    color:#ffffff;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+}
+
+.modal-header .btn-close {
+    color: #ffffff;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+/* --- BODY --- */
+.modal-body {
+    background: linear-gradient(to bottom, #0d4866a9, #436c3fa9),url('../img/21.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 25px 30px;
+}
+
+/* --- HEADER DEL ATLETA --- */
+
+.avatar-circle {
+    width: 70px;
+    height: 70px;
+    background: rgba(7, 114, 82, 0.226);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    flex-shrink: 0;
+}
+
+
+/* --- TARJETAS --- */
+.hover-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+.hover-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.hover-card .card-header {
+    padding: 15px 20px;
+    background: #ffffff !important;
+    border-bottom: 2px solid #f0f2f5;
+}
+
+.hover-card .card-header h5 {
+    font-size: 1rem;
+}
+
+.hover-card .card-body {
+    padding: 15px 20px;
+}
+
+/* --- TARJETA DE SEGURO --- */
+.seguro-card {
+    border-left: 4px solid #0d6efd !important;
+}
+
+.sin-seguro-card {
+    border-left: 4px solid #ffc107 !important;
+    background: #fff8e1;
+}
+
+/* --- ÍTEMS DE INFORMACIÓN --- */
+.info-item {
+    padding: 6px 0;
+}
+
+.info-item .text-muted {
+    font-size: 0.85rem;
+}
+
+.info-item .fw-bold {
+    font-size: 0.95rem;
+}
+
+.info-item.border-bottom {
+    border-color: #f0f2f5 !important;
+}
+
+/* --- COLORES POR SECCIÓN --- */
+.text-purple {
+    color: #6f42c1 !important;
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-info {
+    color: #0dcaf0 !important;
+}
+
+.text-secondary {
+    color: #6c757d !important;
+}
+
+/* --- BADGES --- */
+.badge.bg-light {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #333 !important;
+    font-weight: 500;
+    border-radius: 20px;
+}
+
+/* --- DORSAL --- */
+.info-item .fs-4 {
+    font-size: 1.5rem !important;
+    color: #0d6efd;
+}
+
+/* --- FOOTER --- */
+.modal-footer {
+    background: var(--verde-oscuro);
+    padding: 15px 30px;
+    border-top: 1px solid #e9ecef;
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 40px;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+.modal-footer .btn-primary:hover {
+    transform: scale(1.02);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .athlete-header-card .card-body {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+    
+    .athlete-header-card .d-flex.gap-2 {
+        width: 100%;
+    }
+    
+    .avatar-circle {
+        width: 55px;
+        height: 55px;
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-header .modal-title {
+        font-size: 1rem;
+    }
+    
+    .modal-header {
+        padding: 15px 20px;
+    }
+    
+    .modal-body {
+        padding: 15px;
+    }
+    
+    .info-item {
+        padding: 4px 0;
+    }
+    
+    .info-item .fw-bold {
+        font-size: 0.85rem;
+    }
+    
+    .hover-card .card-header {
+        padding: 12px 15px;
+    }
+    
+    .hover-card .card-body {
+        padding: 12px 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .custom-modal-content {
+        border-radius: 10px;
+    }
+    
+    .avatar-circle {
+        width: 45px;
+        height: 45px;
+        font-size: 22px;
+    }
+    
+    .athlete-header-card h4 {
+        font-size: 1.1rem;
+    }
+    
+    .athlete-header-card .badge {
+        font-size: 0.75rem;
+        padding: 5px 12px !important;
+    }
+    
+    .modal-footer .btn-primary {
+        padding: 8px 25px;
+        font-size: 0.9rem;
+        width: 100%;
+    }
+}
+
+
+/* ===== HEADER DEL ATLETA ===== */
+.atleta-header-modal {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(43, 71, 73, 0.582);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 15px 20px;
+    flex-wrap: wrap;
+}
+
+.atleta-avatar-modal {
+    width: 55px;
+    height: 55px;
+    min-width: 55px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #212529;
+}
+
+.atleta-info-modal {
+    flex: 1;
+}
+
+.atleta-info-modal h4 {
+    color: #000000;
+    font-weight: 700;
+    margin: 0;
+}
+
+.atleta-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.atleta-actions-modal {
+    margin-left: auto;
+}
+
+/* ===== TABLA ===== */
+.table-dashboard {
+    color: #000000;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+}
+
+.table-dashboard thead th {
+    background: rgba(46, 60, 61, 0.582);
+    padding: 8px 12px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgb(255, 255, 255);
+    border: none;
+    font-weight: 600;
+
+    
+}
+
+.table-responsive{
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.table-dashboard tbody td {
+    
+    
+    background: rgba(255, 255, 255, 0);
+    padding: 8px 12px;
+    border-radius: none;
+    vertical-align: top;
+}
+
+/* ===== INFO ITEMS ===== */
+.info-item {
+    margin-bottom: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.info-item .label {
+    font-size: 1rem;
+    color: rgb(0, 0, 0);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    min-width: 70px;
+}
+
+.info-item .value {
+    font-size: 0.85rem;
+    color: #000000;
+    font-weight: 500;
+}
+
+/* ===== SECTION CARD ===== */
+.form-section-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+    
+}
+
+.section-card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 10px;
+}
+
+.section-card-title i {
+    font-size: 1rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .atleta-header-modal {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .atleta-actions-modal {
+        margin-left: 0;
+    }
+    
+    .table-dashboard thead {
+        display: none;
+    }
+    
+    .table-dashboard tbody td {
+        display: block;
+        padding: 10px 0;
+    }
+    
+    .table-dashboard tbody td:not(:last-child) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .info-item .label-title {
+        min-width: 80px;
+    }
+}
+
+/* ===== SCROLLBAR ===== */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 193, 7, 0.3);
+}
+
+.label-title{
+    font-family: 'Times New Roman';
+    font-style: bold;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #000000;
+}
+
+/* --- FORM SECTION CARD (mismo estilo que expediente) --- */
+.form-section-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(5px);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.section-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-card-title i {
+    font-size: 1.1rem;
+}
+
+/* --- LABELS --- */
+.custom-form-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgb(0, 0, 0);
+    margin-bottom: 4px;
+    display: block;
+}
+
+/* --- INPUTS --- */
+.custom-input {
+    background: rgba(255, 255, 255, 0.26)!important;
+    border: 1px solid rgba(255, 255, 255, 0.06)!important;
+    color: #000000 !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    font-size: 0.9rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.custom-input::placeholder {
+    color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.custom-input:focus {
+    background: rgba(255, 255, 255, 0.644) !important;
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.15) !important;
+    color: #000000 !important;
+}
+
+.custom-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- SELECTS --- */
+.form-select.custom-input {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #000000 !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    font-size: 0.9rem !important;
+    cursor: pointer;
+}
+
+.form-select.custom-input option {
+    background: #fefeff8c !important;
+    color: #000000 !important;
+}
+
+.form-select.custom-input:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.15) !important;
+}
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .form-section-card {
+        padding: 15px;
+    }
+    
+    .section-card-title {
+        font-size: 0.85rem;
+    }
+    
+    .custom-input,
+    .form-select.custom-input {
+        font-size: 0.85rem !important;
+        padding: 6px 12px !important;
+    }
+    
+    .custom-form-label {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-action-green,
+    .btn-secondary {
+        padding: 8px 20px !important;
+        font-size: 0.85rem !important;
+        width: 100%;
+    }
+    
+    .text-center.my-4 {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+

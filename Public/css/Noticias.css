@@ -1,0 +1,395 @@
+:root {
+    --azul: #0D4866;
+    --verde: #436C3F;               
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #000000;         
+    --verde-vivido: #0bd872;        
+    --gris-card: rgba(239, 239, 239, 0.95);
+}
+
+body {
+    background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
+        url('../img/7.jpeg');
+    background-color: transparent;
+    color: var(--blanco-puro);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+}
+
+/* --- NOTICIAS TARJETAS --- */
+
+.img-noticia-vignette {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* --- TORNEOS TARJETAS --- */
+.torneo-list-card {
+    background-color: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+    transition: background-color 0.2s;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+.torneo-list-card:hover {
+    background-color: #a9ffff3b;
+}
+
+.badge-fecha-box {
+    background-color: var(--blanco-puro);
+    color: var(--texto-oscuro);
+    border-radius: 14px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.badge-fecha-box .dia { 
+    font-size: 1.3rem; 
+}
+.badge-fecha-box .mes { 
+    font-size: 0.8rem; 
+    text-autospace: uppercase; 
+    opacity: 0.7; 
+}
+
+.pill-estado {
+    border-radius: 20px;
+    padding: 4px 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.pill-estado.programado { 
+    background-color: #2e7d32; 
+    color: var(--blanco-puro); 
+}
+.status-badge-finalizado { 
+    background-color: #d32f2f; 
+    color: var(--blanco-puro); 
+    border-radius: 20px; 
+    padding: 4px 15px; 
+    font-size: 0.85rem; 
+    font-weight: 600; 
+}
+
+/* --- ESTILOS DE LOS MODALES --- */
+/* body */
+.modal-body {
+    background: linear-gradient(to bottom, #0d4866a9, #436c3fa9),url('../img/21.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 25px 30px;
+}
+.modal-footer {
+    background: var(--verde-oscuro);
+    border-top: none;
+    padding: 15px 30px;
+}
+/* --- HEADER --- */
+.modal-header {
+    background: var(--verde-oscuro);
+
+}
+
+.form-text{
+    color: var(--blanco-puro);
+}
+.modal-header .modal-title {
+    color:#ffffff;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+}
+
+.modal-header .btn-close {
+    color: #ffffff;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.score-block { 
+    background-color: #d32f2f; 
+    font-size: 2rem; 
+    font-weight: 800; 
+    padding: 5px 20px; 
+    border-radius: 8px; 
+    margin: 0 10px; 
+}
+.inner-data-box { 
+    background-color: var(--gris-card); 
+    border-radius: 16px; 
+    padding: 15px; 
+    color: var(--texto-oscuro); 
+}
+
+/* --- FORMULARIOS DENTRO DE MODALES (ENTRENADOR) --- */
+.coach-form-label { 
+    font-weight: 600; 
+    font-size: 0.9rem; 
+    color: var(--blanco-puro); 
+    margin-bottom: 3px; 
+}
+.coach-input { 
+    background-color: var(--gris-card) !important; 
+    border: none !important; 
+    border-radius: 10px !important; 
+    color: var(--texto-oscuro) !important; 
+    resize: none !important;
+    field-sizing: content !important;
+}
+.coach-input:focus { 
+    box-shadow: 0 0 0 0.25rem rgba(11, 216, 114, 0.4) !important; 
+}
+.section-form-divider { 
+    border-top: 1px solid rgba(255,255,255,0.2); 
+    margin: 20px 0 15px 0; 
+}
+
+        /* Paginador personalizado */
+.pagination-custom .page-link {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 10px 18px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.pagination-custom .page-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.pagination-custom .page-item.active .page-link {
+    background: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+    font-weight: bold;
+}
+
+.pagination-custom .page-item.disabled .page-link {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+}
+
+.pagination-custom .page-item:first-child .page-link,
+.pagination-custom .page-item:last-child .page-link {
+    border-radius: 50px;
+    padding: 10px 16px;
+}
+
+/* Animación de entrada para los partidos */
+.partido-item {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+.partido-item:nth-child(1) { animation-delay: 0.05s; }
+.partido-item:nth-child(2) { animation-delay: 0.1s; }
+.partido-item:nth-child(3) { animation-delay: 0.15s; }
+.partido-item:nth-child(4) { animation-delay: 0.2s; }
+.partido-item:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estados de partidos */
+.pill-estado.por-cargar {
+    background: #ffc107;
+    color: #212529;
+    animation: pulse-warning 2s infinite;
+}
+
+.pill-estado.cancelado {
+    background: #dc3545;
+    color: #fff;
+}
+
+.pill-estado.ganado {
+    background: #198754;
+    color: #fff;
+}
+
+.pill-estado.perdido {
+    background: #dc3545;
+    color: #fff;
+}
+
+.pill-estado.empatado {
+    background: #ffc107;
+    color: #212529;
+}
+
+.pill-estado.programado {
+    background: #0d6efd;
+    color: #fff;
+}
+
+@keyframes pulse-warning {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Estilos responsive para el paginador */
+@media (max-width: 768px) {
+    .pagination-custom .page-link {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .pagination-custom .page-item:first-child .page-link,
+    .pagination-custom .page-item:last-child .page-link {
+        padding: 8px 12px;
+    }
+}
+
+/* ========== ESTILOS GENERALES DE NOTICIAS ========== */
+
+/* Tarjeta horizontal */
+.noticia-horizontal-card {
+    background: rgba(255, 255, 255, 0.26);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.noticia-horizontal-card:hover {
+    background: #a9ffff3b;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Tarjeta vertical */
+.noticia-vertical-card {
+    background: rgba(255, 255, 255, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+}
+
+.noticia-vertical-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Icono de noticia */
+.noticia-icono {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.noticia-icono-sm {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;  
+}
+
+/* Badge flotante */
+.noticia-badge-top {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+/* Imagen de noticia */
+.img-noticia-vignette {
+    max-height: 120px;
+    width: auto;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.img-noticia-vignette:hover {
+    transform: scale(1.05);
+}
+
+.noticia-imagen-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.noticia-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.noticia-imagen-wrapper:hover .noticia-overlay {
+    opacity: 1;
+}
+
+/* Tarjeta principal (destacada) */
+.noticia-card-principal {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.05));
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    border-radius: 16px;
+    min-height: 250px;
+    backdrop-filter: blur(5px);
+}
+
+.noticia-card-principal .noticia-contenido {
+    position: relative;
+    z-index: 1;
+}
+
+/* Tarjeta secundaria */
+.noticia-card-secundaria {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.noticia-card-secundaria:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
