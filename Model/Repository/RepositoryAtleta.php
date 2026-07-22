@@ -157,6 +157,28 @@ class RepositoryAtleta implements IAtletaRepository
         return $this->mapRowsToAtletas($rows);
     }
 
+    public function findAllWithFilters(?bool $status = true, string $busqueda = ''): array
+    {
+        $sql = "SELECT * FROM atleta WHERE 1=1";
+        $params = [];
+
+        if ($status !== null) {
+            $sql .= " AND Atleta_status = ?";
+            $params[] = (int)$status;
+        }
+
+        if (!empty($busqueda)) {
+            $sql .= " AND (1er_nombre LIKE ? OR 2do_nombre LIKE ? OR 1er_apellido LIKE ? OR 2do_apellido LIKE ?)";
+            $like = '%' . $busqueda . '%';
+            $params = array_merge($params, [$like, $like, $like, $like]);
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->mapRowsToAtletas($rows);
+    }
+
     // ──────────── FIND BY NOMBRE (coincidencia parcial en primer o segundo nombre) ────────────
     public function findByNombre(string $nombre): array
     {

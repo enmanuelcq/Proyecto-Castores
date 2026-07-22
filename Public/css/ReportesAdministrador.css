@@ -1,7 +1,7 @@
 :root {
     --azul: #0D4866;
     --verde: #436C3F;               
-    --blanco-puro: #ffffff;
+    --blanco-puro: #000000fff;
     --texto-oscuro: #000000;         
     --verde-vivido: #0bd872;        
     --gris-card: rgba(239, 239, 239, 0.95);
@@ -10,7 +10,7 @@
 body {
     background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
         url('../img/21.jpeg');
-    color: #fff;
+    color: #000000;
     font-family: 'Segoe UI', sans-serif;
     background-size: cover;
     background-position: center;
@@ -31,7 +31,7 @@ body {
 }
 
 .page-header h4 {
-    color: #fff;
+    color: #000000;
     font-weight: 700;
     margin: 0;
 }
@@ -41,7 +41,7 @@ body {
 }
 
 .stat-card {
-    background: rgba(255, 255, 255, 0.26);
+    background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 14px;
     padding: 18px 20px;
@@ -70,7 +70,7 @@ body {
 .stat-card .valor {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #fff;
+    color: #000000;
     line-height: 1.2;
 }
 
@@ -87,7 +87,7 @@ body {
 }
 
 .grafico-container {
-    background: rgba(255, 255, 255, 0.26);
+    background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 14px;
     padding: 20px;
@@ -97,7 +97,7 @@ body {
 }
 
 .grafico-container h6 {
-    color: #fff;
+    color: #000000;
     font-weight: 600;
     margin-bottom: 15px;
 }
@@ -112,7 +112,7 @@ body {
 }
 
 .table-dashboard {
-    color: #fff;
+    color: #000000;
     border-collapse: separate;
     border-spacing: 0 4px;
 }
@@ -122,7 +122,7 @@ body {
     padding: 8px 12px;
     font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.7px;
     color: rgb(255, 255, 255);
     border: none;
     font-weight: 600;
@@ -148,15 +148,15 @@ body {
     font-weight: 600;
 }
 
-.badge-pagado { background: #198754; color: #fff; }
-.badge-pendiente { background: #dc3545; color: #fff; }
+.badge-pagado { background: #198754; color: #000000; }
+.badge-pendiente { background: #dc3545; color: #000000; }
 .badge-revision { background: #ffc107; color: #212529; }
-.badge-finalizado { background: #198754; color: #fff; }
+.badge-finalizado { background: #198754; color: #000000; }
 .badge-en-curso { background: #ffc107; color: #212529; }
-.badge-programado { background: #0d6efd; color: #fff; }
+.badge-programado { background: #0d6efd; color: #000000; }
 
 .seccion-titulo {
-    color: #fff;
+    color: #000000;
     font-weight: 600;
     margin: 25px 0 15px 0;
 }
@@ -169,7 +169,7 @@ body {
 .seccion-titulo .badge-count {
     font-size: 0.7rem;
     font-weight: 400;
-    background: rgba(255, 255, 255, 0.26);
+    background: rgba(255, 255, 255, 0.7);
     color: rgb(255, 255, 255);
     padding: 4px 12px;
     border-radius: 20px;

@@ -1,23 +1,4 @@
-<?php 
-// ===== CALCULAR PENDIENTES REALES ANTES DEL MODAL =====
-$pendientes_reales = 0;
-$meses_activos = obtenerMesesActivos();
-
-// Buscar la solvencia del atleta actual
-foreach($todas_las_solvencias as $solvencia_buscar){
-    if($solvencia_buscar['atleta_cedula'] === $atleta_id){
-        foreach($solvencia_buscar as $clave => $info_mes){
-            if($clave !== 'atleta_cedula' && in_array($clave, $meses_activos)){
-                if($info_mes['estado'] === 'Pendiente'){
-                    $pendientes_reales++;
-                }
-            }
-        }
-        break;
-    }
-}
-?>
-
+<!-- Modal de Solvencia -->
 <div class="modal fade" id="modalSolvencia<?php echo $atleta_id; ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content custom-modal-content">
@@ -36,13 +17,13 @@ foreach($todas_las_solvencias as $solvencia_buscar){
                 <div class="atleta-header-modal mb-4">
                     <div class="atleta-avatar-modal">
                         <?php 
-                        echo strtoupper(substr($atleta['atleta_primer_nombre'] ?? 'A', 0, 1) . substr($atleta['atleta_primer_apellido'] ?? 'A', 0, 1));
+                        echo strtoupper(substr($atleta->getPrimerNombre() ?? 'A', 0, 1) . substr($atleta->getPrimerApellido() ?? 'A', 0, 1));
                         ?>
                     </div>
                     <div class="atleta-info-modal">
-                        <h4><?php echo $nombre_completo; ?></h4>
+                        <h4><?php echo htmlspecialchars($nombre_completo); ?></h4>
                         <div class="atleta-badges">
-                            <span class="badge bg-primary"><?php echo $atleta['atleta_categoria']; ?></span>
+                            <span class="badge bg-primary"><?php echo htmlspecialchars($categoria); ?></span>
                             <span class="badge bg-warning text-dark">
                                 <i class="bi bi-calendar3 me-1"></i>
                                 <?php echo date('F Y'); ?>
@@ -52,110 +33,135 @@ foreach($todas_las_solvencias as $solvencia_buscar){
                     <div class="atleta-actions-modal">
                         <span class="text-white small">
                             <i class="bi bi-clock-history me-1"></i>
-                            <?php echo $pendientes_reales . ' pendientes'; ?>
+                            <?php 
+                            if (!empty($solvencia)) {
+                                $pendientes = array_filter($solvencia, function($m) { 
+                                    return in_array($m['estado'], ['Pendiente', 'Parcial']); 
+                                });
+                                echo count($pendientes) . ' pendientes';
+                            } else {
+                                echo 'Sin datos';
+                            }
+                            ?>
                         </span>
                     </div>
                 </div>
 
-                <!-- ===== CONTENIDO ===== -->
-                <?php 
-                foreach($todas_las_solvencias as $solvencia){
-                    if($solvencia['atleta_cedula'] === $atleta_id){ 
-                ?>
-                        <div class="inner-white-card mb-3">
-                            <div class="row g-2">
-                                <?php 
-                                $meses_activos = obtenerMesesActivos();
-                                foreach($solvencia as $clave => $info_mes){
-                                    if($clave === 'atleta_cedula') continue;
-
-                                    $mes = $info_mes['mes'];
-                                    $estado = $info_mes['estado'];
-                                    $monto = $info_mes['monto'];
-                                    $referencia = $info_mes['referencia'];
-                                    $tipo_pago = $info_mes['tipo_pago'];
-
-                                    // Verificar si el mes es futuro
-                                    $es_futuro = !in_array($clave, $meses_activos);
-
-                                    // Si es futuro, mostrar como "Por Vencer" (deshabilitado)
-                                    if($es_futuro) {
-                                ?>
-                                        <div class="col-6 col-md-3">
-                                            <div class="month-card" style="background-color: #6c757d; opacity: 0.5; color: #fff;">
-                                                <?php echo $mes; ?>
-                                            </div>
-                                            <button class="btn btn-secondary w-100" disabled style="border-radius: 0 0 8px 8px; opacity: 0.5; cursor: not-allowed;">
-                                                <span class="status-badge">Por Vencer</span>
-                                                <small class="d-block">—</small>
-                                            </button>
-                                        </div>
-                                <?php
-                                    } elseif($estado == 'Pagado'){
-                                ?>
-                                        <div class="col-6 col-md-3">
-                                            <div class="month-card"><?php echo $mes; ?></div>
-                                            <button class="btn btn-action-green w-100"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modalSolvenciaPagado<?php echo $atleta_id; ?>"
-                                                    onclick="mostrarDetallePago(
-                                                        '<?php echo $info_mes['mes']; ?>',
-                                                        '<?php echo $info_mes['monto']; ?>',
-                                                        '<?php echo $info_mes['tipo_pago']; ?>',
-                                                        '<?php echo $info_mes['referencia']; ?>',
-                                                        '<?php echo $atleta_id; ?>'
-                                                    )">
-                                                <span class="status-badge">Pagado</span>
-                                                <small class="d-block">$<?php echo number_format($info_mes['monto'], 2); ?></small>
-                                            </button>
-                                        </div>
-                                <?php
-                                    } elseif($estado == 'revision' || $estado == 'Revision'){
-                                ?>
-                                        <div class="col-6 col-md-3">
-                                            <div class="month-card" style="background-color: #ffeeba;"><?php echo $mes; ?></div>
-                                            <button class="btn btn-pendiente w-100"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modalSolvenciaRevision<?php echo $atleta_id; ?>"
-                                                    onclick="mostrarDetalleRevision(
-                                                        '<?php echo $info_mes['mes']; ?>',
-                                                        '<?php echo $info_mes['monto']; ?>',
-                                                        '<?php echo $info_mes['tipo_pago']; ?>',
-                                                        '<?php echo $info_mes['referencia']; ?>',
-                                                        '<?php echo $atleta_id; ?>'
-                                                    )">
-                                                <span class="status-badge">En Revisión</span>
-                                                <small class="d-block">$<?php echo number_format($info_mes['monto'] ?: 0, 2); ?></small>
-                                            </button>
-                                        </div>
-                                <?php
-                                    } else { // Pendiente
-                                ?>
-                                        <div class="col-6 col-md-3">
-                                            <div class="month-card" style="background-color: #f5c6cb; color: #721c24;"><?php echo $mes; ?></div>
-                                            <button class="btn btn-action-red w-100"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modalSolvenciaPendiente<?php echo $atleta_id; ?>"
-                                                    onclick="mostrarDetallePendiente(
-                                                        '<?php echo $info_mes['mes']; ?>',
-                                                        '<?php echo $info_mes['monto']; ?>',
-                                                        '<?php echo $atleta_id; ?>'
-                                                    )">
-                                                <span class="status-badge">Pendiente</span>
-                                                <small class="d-block">Pagar $<?php echo number_format($info_mes['monto'] ?: 0, 2); ?></small>
-                                            </button>
-                                        </div>
-                                <?php
-                                    }
-                                }
-                                ?>
-                            </div>
+                <!-- ===== MESES ===== -->
+                <div class="inner-white-card mb-3">
+                    <?php if (empty($solvencia)): ?>
+                        <div class="alert alert-info text-center">
+                            <i class="bi bi-info-circle me-2"></i>
+                            No hay registros de cuotas para este atleta.
                         </div>
-                <?php 
-                        break;
-                    }
-                }
-                ?>
+                    <?php else: ?>
+                    <div class="row g-2">
+                        <?php foreach ($solvencia as $mesData): 
+                            $mes = $mesData['nombre_mes'];
+                            $estado = $mesData['estado'];
+                            $monto = $mesData['monto'];
+                            $referencia = $mesData['referencia'] ?? '';
+                            $tipoPago = $mesData['tipo_pago'] ?? '';
+                            $esFuturo = $mesData['es_futuro'] ?? false;
+                            $cuotaId = $mesData['cuota_id'] ?? null;
+                            $abonado = $mesData['abonado'] ?? 0;
+                            $saldo = $mesData['saldo'] ?? $monto;
+                            
+                            // Determinar monto a mostrar y estado real
+                            $montoMostrar = ($estado === 'Parcial') ? $saldo : $monto;
+                            $estadoMostrar = ($estado === 'Parcial') ? 'Parcial' : $estado;
+                        ?>
+                            <!-- Cada mes ocupa una columna -->
+                            <div class="col-6 col-md-3">
+                                <?php if ($esFuturo): ?>
+                                    <!-- Por Vencer -->
+                                    <div class="month-card" style="background-color: #6c757d; opacity: 0.5; color: #fff;">
+                                        <?php echo $mes; ?>
+                                    </div>
+                                    <button class="btn btn-secondary w-100" disabled style="border-radius: 0 0 8px 8px; opacity: 0.5; cursor: not-allowed;">
+                                        <span class="status-badge">Por Vencer</span>
+                                        <small class="d-block">—</small>
+                                    </button>
+                                <?php elseif ($estado === 'Pagado'): ?>
+                                    <!-- Pagado -->
+                                    <div class="month-card"><?php echo $mes; ?></div>
+                                    <button class="btn btn-action-green w-100"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalSolvenciaPagado<?php echo $atleta_id; ?>"
+                                        onclick="mostrarDetallePago(
+                                            '<?php echo addslashes($mes); ?>',
+                                            '<?php echo number_format($monto, 2, '.', ''); ?>',
+                                            '<?php echo addslashes($tipoPago); ?>',
+                                            '<?php echo addslashes($referencia); ?>',
+                                            '<?php echo $atleta_id; ?>',
+                                            '<?php 
+                                                $fecha = $mesData['fecha_pago'] ?? '';
+                                                // Si la fecha no está vacía, formatearla, sino mostrar 'No registrada'
+                                                echo !empty($fecha) ? date('d/m/Y', strtotime($fecha)) : 'No registrada';
+                                            ?>',
+                                            '<?php echo addslashes($mesData['banco'] ?? ''); ?>'
+                                        )">
+                                    <span class="status-badge">Pagado</span>
+                                    <small class="d-block">$<?php echo number_format($monto, 2); ?></small>
+                                </button>
+
+                                <?php elseif ($estado === 'Parcial' || $estado === 'Pendiente'): ?>
+                                    <!-- Parcial / Pendiente - Usan el mismo modal con data-* -->
+                                    <div class="month-card" style="background-color: <?php echo $estado === 'Parcial' ? '#fff3cd' : '#f5c6cb'; ?>; <?php echo $estado === 'Parcial' ? 'color: #856404;' : 'color: #721c24;'; ?>">
+                                        <?php echo $mes; ?>
+                                    </div>
+                                    <button class="btn <?php echo $estado === 'Parcial' ? 'btn-pendiente' : 'btn-action-red'; ?> w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalSolvenciaPendiente<?php echo $atleta_id; ?>"
+                                            data-mes="<?php echo htmlspecialchars($mes); ?>"
+                                            data-monto="<?php echo number_format($montoMostrar, 2, '.', ''); ?>"
+                                            data-cuota="<?php echo $cuotaId; ?>"
+                                            data-atleta="<?php echo $atleta_id; ?>"
+                                            data-estado="<?php echo $estadoMostrar; ?>">
+                                        <span class="status-badge"><?php echo $estadoMostrar; ?></span>
+                                        <small class="d-block">Pagar Bs <?php echo number_format($montoMostrar, 2); ?></small>
+                                    </button>
+                                <?php elseif ($estado === 'En Revisión'): ?>
+                                    <!-- En Revisión -->
+                                    <div class="month-card" style="background-color: #ffeeba;"><?php echo $mes; ?></div>
+                                    <button class="btn btn-action-red w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalSolvenciaPendiente<?php echo $atleta_id; ?>"
+                                            data-mes="<?php echo htmlspecialchars($mes); ?>"
+                                            data-monto="<?php echo number_format($monto, 2, '.', ''); ?>"
+                                            data-cuota="<?php echo $cuotaId; ?>"
+                                            data-atleta="<?php echo $atleta_id; ?>"
+                                            data-estado="En Revisión">
+                                        <span class="status-badge">En Revisión</span>
+                                        <small class="d-block">Bs <?php echo number_format($monto, 2); ?></small>
+                                    </button>
+                                <?php else: ?>
+                                    <!-- Por defecto (Pendiente sin cuota) -->
+                                    <div class="month-card" style="background-color: #f5c6cb; color: #721c24;"><?php echo $mes; ?></div>
+                                    <?php if ($cuotaId): ?>
+                                        <button class="btn btn-action-red w-100"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalSolvenciaPendiente<?php echo $atleta_id; ?>"
+                                                data-mes="<?php echo htmlspecialchars($mes); ?>"
+                                                data-monto="<?php echo number_format($monto, 2, '.', ''); ?>"
+                                                data-cuota="<?php echo $cuotaId; ?>"
+                                                data-atleta="<?php echo $atleta_id; ?>"
+                                                data-estado="Pendiente">
+                                            <span class="status-badge">Pendiente</span>
+                                            <small class="d-block">Pagar Bs <?php echo number_format($monto, 2); ?></small>
+                                        </button>
+                                    <?php else: ?>
+                                        <button class="btn btn-secondary w-100" disabled>
+                                            <span class="status-badge">Sin Cuota</span>
+                                            <small class="d-block">—</small>
+                                        </button>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
 
                 <!-- ===== LEYENDA ===== -->
                 <div class="row g-2 mt-3">
@@ -165,6 +171,7 @@ foreach($todas_las_solvencias as $solvencia_buscar){
                             <span class="badge bg-danger ms-2 me-1">●</span> Pendiente
                             <span class="badge bg-warning ms-2 me-1">●</span> En Revisión
                             <span class="badge bg-secondary ms-2 me-1">●</span> Por Vencer
+                            <span class="badge bg-info ms-2 me-1">●</span> Parcial
                         </small>
                         <small class="text-white-50 ms-3">
                             <i class="bi bi-info-circle me-1"></i>
@@ -177,6 +184,9 @@ foreach($todas_las_solvencias as $solvencia_buscar){
             
             <!-- ===== FOOTER ===== -->
             <div class="modal-footer border-0">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalRegistrarPago<?php echo $atleta_id; ?>">
+                    <i class="bi bi-plus-circle me-2"></i>Registrar Pago
+                </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-2"></i>Cerrar
                 </button>
@@ -185,8 +195,7 @@ foreach($todas_las_solvencias as $solvencia_buscar){
     </div>
 </div>
 
-<?php
-include './Public/Modals/modalSolvenciaPagado.php';
-include './Public/Modals/modalSolvenciaPendiente.php';
-include './Public/Modals/modalSolvenciaRevision.php';
-?>
+<!-- Incluir los modales secundarios -->
+<?php include './Public/Modals/modalSolvenciaPagado.php'; ?>
+<?php include './Public/Modals/modalSolvenciaPendiente.php'; ?>
+<?php include './Public/Modals/modalSolvenciaRevision.php'; ?>

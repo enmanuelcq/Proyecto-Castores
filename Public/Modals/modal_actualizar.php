@@ -111,7 +111,7 @@
                                             id="atleta_fecha<?php echo $atleta_id; ?>" 
                                             required
                                             value="<?php echo htmlspecialchars($atleta->getFechaNacimiento()); ?>"
-                                            max="2018-12-31"
+                                            max="2023-12-31"
                                             min="2000-01-01"
                                             title="Seleccione una fecha válida (entre 2000 y 2018)"
                                         >

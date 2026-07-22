@@ -48,6 +48,36 @@ function validar_fecha_real($fecha, $formato = null) {
         return false;
     }
 }
+
+    function calcularEdad($fecha_nac) {
+        $hoy = new DateTime();
+        $fn = new DateTime($fecha_nac);
+        return $hoy->diff($fn)->y;
+    }
+
+    function generarIdAtleta() {
+        return 'atl_' . uniqid();
+    }
+
+    /**
+     * Convierte un número de mes (1-12) a nombre en español
+     * 
+     * @param int $mes
+     * @return string
+     */
+    function nombreMes($mes) {
+        $meses = [
+            1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 
+            4 => 'Abril', 5 => 'Mayo', 6 => 'Junio',
+            7 => 'Julio', 8 => 'Agosto', 9 => 'Septiembre',
+            10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+        ];
+        return $meses[(int)$mes] ?? '';
+    }
+
+    function formatearMonto($monto) {
+        return '$ ' . number_format((float)$monto, 2, ',', '.');
+    }
 #Limpiar Cadenas de Texto#
 
     function limpiar_cadena($cadena){

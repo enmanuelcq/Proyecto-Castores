@@ -2,7 +2,7 @@
 <div class="modal fade" id="modalSolvenciaRevision<?php echo $atleta_id; ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header text-white">
+            <div class="modal-header bg-info text-white">
                 <h5 class="modal-title">
                     <i class="bi bi-hourglass-split me-2"></i>Pago en Revisión
                 </h5>
@@ -22,24 +22,24 @@
                         <div class="row">
                             <div class="col-6">
                                 <small class="text-muted">Mes</small>
-                                <p class="fw-bold mb-0" id="revisionMes">Enero</p>
+                                <p class="fw-bold mb-0" id="revisionMes_<?php echo $atleta_id; ?>">Enero</p>
                             </div>
                             <div class="col-6">
                                 <small class="text-muted">Monto</small>
-                                <p class="fw-bold mb-0" id="revisionMonto">$1,000.00</p>
+                                <p class="fw-bold mb-0" id="revisionMonto_<?php echo $atleta_id; ?>">$1,000.00</p>
                             </div>
                         </div>
                         <hr>
                         <div class="row">
                             <div class="col-6">
                                 <small class="text-muted">Tipo de Pago</small>
-                                <p class="fw-bold mb-0" id="revisionTipoPago">
+                                <p class="fw-bold mb-0" id="revisionTipoPago_<?php echo $atleta_id; ?>">
                                     <span class="badge bg-warning text-dark">Zelle</span>
                                 </p>
                             </div>
                             <div class="col-6">
                                 <small class="text-muted">Referencia</small>
-                                <p class="fw-bold mb-0 text-primary" id="revisionReferencia">ZLN-9921</p>
+                                <p class="fw-bold mb-0 text-primary" id="revisionReferencia_<?php echo $atleta_id; ?>">ZLN-9921</p>
                             </div>
                         </div>
                         <hr>
@@ -52,16 +52,15 @@
                     </div>
                 </div>
 
-                <!-- Formulario para confirmar/rechazar pago -->
+                <!-- Formulario para acciones de revisión -->
                 <div class="card border-info">
                     <div class="card-header bg-info bg-opacity-10">
                         <h6 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Acciones de Revisión</h6>
                     </div>
                     <div class="card-body">
                         <form id="formRevision_<?php echo $atleta_id; ?>">
-                            <input type="hidden" name="cedula" value="<?php echo $atleta_id; ?>">
-                            <input type="hidden" name="mes_revision" id="mesRevisionHidden">
-                            <input type="hidden" name="referencia_revision" id="referenciaRevisionHidden">
+                            <input type="hidden" name="atleta_id" value="<?php echo $atleta_id; ?>">
+                            <input type="hidden" name="cuota_id" id="revisionCuotaId_<?php echo $atleta_id; ?>">
                             
                             <div class="mb-3">
                                 <label class="form-label">Decisión</label>
@@ -75,9 +74,9 @@
                                 </div>
                             </div>
                             
-                            <div class="mb-3" id="comentarioRevisionDiv">
+                            <div class="mb-3">
                                 <label class="form-label">Comentarios (Opcional)</label>
-                                <textarea class="form-control" rows="2" placeholder="Agregar observaciones..."></textarea>
+                                <textarea class="form-control" id="comentarioRevision_<?php echo $atleta_id; ?>" rows="2" placeholder="Agregar observaciones..."></textarea>
                             </div>
                             
                             <div class="mb-3">
@@ -103,3 +102,38 @@
         </div>
     </div>
 </div>
+
+<script>
+function mostrarDetalleRevision(mes, monto, tipoPago, referencia, atletaId) {
+    document.getElementById('revisionMes_' + atletaId).textContent = mes;
+    document.getElementById('revisionMonto_' + atletaId).textContent = '$' + monto;
+    document.getElementById('revisionTipoPago_' + atletaId).innerHTML = '<span class="badge bg-warning text-dark">' + tipoPago + '</span>';
+    document.getElementById('revisionReferencia_' + atletaId).textContent = referencia || 'Sin referencia';
+}
+
+function confirmarPagoRevision(atletaId) {
+    var check = document.getElementById('confirmarRevision_' + atletaId);
+    if (!check.checked) {
+        alert('Debes confirmar que has verificado los datos del pago.');
+        return;
+    }
+    if (confirm('¿Estás seguro de confirmar este pago?')) {
+        // Aquí iría la lógica AJAX para confirmar el pago
+        alert('Pago confirmado. La cuota se marcará como pagada.');
+        // Cerrar modal
+        var modal = bootstrap.Modal.getInstance(document.getElementById('modalSolvenciaRevision' + atletaId));
+        if (modal) modal.hide();
+    }
+}
+
+function rechazarPagoRevision(atletaId) {
+    var comentario = document.getElementById('comentarioRevision_' + atletaId).value;
+    if (confirm('¿Estás seguro de rechazar este pago?')) {
+        // Aquí iría la lógica AJAX para rechazar el pago
+        alert('Pago rechazado. Motivo: ' + (comentario || 'Sin motivo especificado.'));
+        // Cerrar modal
+        var modal = bootstrap.Modal.getInstance(document.getElementById('modalSolvenciaRevision' + atletaId));
+        if (modal) modal.hide();
+    }
+}
+</script>

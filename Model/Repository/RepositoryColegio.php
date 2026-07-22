@@ -19,6 +19,20 @@ class RepositoryColegio implements IColegioRepository
         $sql = "INSERT INTO colegio (nombre_colegio, direccion_colegio) VALUES (?, ?)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$colegio->getNombre(), $colegio->getDireccion()]);
+
+            // ===== DEPURACIÓN =====
+        $lastId = $this->db->lastInsertId();
+        error_log("=== REPOSITORIO COLEGIO ===");
+        error_log("Resultado de execute: " . ($result ? 'true' : 'false'));
+        error_log("Último ID insertado: " . $lastId);
+        error_log("ID actual en entidad: " . $colegio->getId());
+        // ===== FIN DEPURACIÓN =====
+
+        if ($result) {
+            $colegio->setId((int)$lastId);
+        }
+
+        return $result;
     }
 
     public function update(Colegio $colegio): bool

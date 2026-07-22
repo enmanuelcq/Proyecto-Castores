@@ -1,64 +1,37 @@
-<div class="modal fade" id="modalEliminar<?php echo $atleta_id; ?>" tabindex="-1" aria-hidden="true">
+<!-- Modal de Desactivación -->
+<div class="modal fade" id="modalDesactivar<?php echo $atleta_id; ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content custom-modal-content">
-            
-            <!-- ===== HEADER ===== -->
-            <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold text-uppercase">
-                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
-                    Confirmar Eliminación
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Desactivación
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            
-            <!-- ===== BODY ===== -->
             <div class="modal-body">
-                
-                <!-- ===== CABECERA DEL ATLETA ===== -->
-                <div class="atleta-header-modal mb-4">
-                    <div class="atleta-avatar-modal">
-                        <?php 
-                        echo strtoupper(substr($atleta['atleta_primer_nombre'] ?? 'A', 0, 1) . substr($atleta['atleta_primer_apellido'] ?? 'A', 0, 1));
-                        ?>
+                <p>¿Estás seguro de que deseas <strong>desactivar</strong> a este atleta?</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    El atleta <strong><?php echo htmlspecialchars($nombre_completo); ?></strong> quedará <strong>inactivo</strong> y no aparecerá en las listas principales. Puedes reactivarlo más tarde desde la vista de "Inactivos".
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Cédula:</strong> <?php echo htmlspecialchars($atleta->getCedula() ?: 'No registrada'); ?></p>
                     </div>
-                    <div class="atleta-info-modal">
-                        <h4><?php echo $nombre_completo; ?></h4>
-                        <div class="atleta-badges">
-                            <span class="badge bg-primary"><?php echo $atleta['atleta_categoria']; ?></span>
-                            <span class="badge bg-secondary"><?php echo $atleta['atleta_cedula']; ?></span>
-                        </div>
-                    </div>
-                    <div class="atleta-actions-modal">
-                        <span class="text-danger">
-                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                            ¡Esta acción no se puede deshacer!
-                        </span>
+                    <div class="col-md-6">
+                        <p><strong>Categoría:</strong> <?php echo htmlspecialchars($categoria); ?></p>
                     </div>
                 </div>
-
-                <!-- ===== MENSAJE DE CONFIRMACIÓN ===== -->
-                <div class="text-center mb-4">
-                    <div class="alert alert-danger" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.2); border-radius: 12px; padding: 20px;">
-                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2rem;"></i>
-                        <h5 class="mt-2 text-white">¿Está seguro de eliminar a este atleta?</h5>
-                        <p class="text-white small mb-0">
-                            Esta acción eliminará todos los datos asociados al atleta de forma permanente.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- ===== BOTONES ===== -->
-                <div class="d-flex justify-content-center gap-4 mb-3">
-                    <button class="btn btn-secondary px-5 py-2 rounded-pill fw-bold" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg me-2"></i>Cancelar
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form action="./Controller/CambiarStatusAtleta_controller.php" method="POST" class="FormularioAjax">
+                    <input type="hidden" name="atleta_id" value="<?php echo $atleta_id; ?>">
+                    <input type="hidden" name="accion" value="desactivar">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>Desactivar
                     </button>
-                    <button class="btn btn-danger px-5 py-2 rounded-pill fw-bold" 
-                            style="background-color: var(--rojo-eliminar) !important; border-color: var(--rojo-eliminar) !important;" 
-                            id="confirmDeleteBtn">
-                        <i class="bi bi-check-lg me-2"></i>Eliminar
-                    </button>
-                </div>
-
+                </form>
             </div>
         </div>
     </div>

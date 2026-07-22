@@ -1,0 +1,227 @@
+/* ============================================================
+   CONFIGURACIÓN DE CUOTAS - Estilos personalizados
+   ============================================================ */
+
+/* --- Contenedor principal --- */
+
+ .header-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a2a3a;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.5px;
+}
+
+ .header-subtitle {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Tarjetas --- */
+ .card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+ .card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+ .card-body {
+    padding: 2rem 2rem 1.8rem;
+}
+
+/* --- Etiquetas de formulario --- */
+ .form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+}
+
+/* --- Campos de entrada --- */
+ .form-control,
+ .input-group-text {
+    border-radius: 10px;
+    border: 1px solid #dce1e8;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: #ffffff;
+}
+
+ .form-control:focus {
+    border-color: #2c7be5;
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.15);
+    outline: none;
+}
+
+ .form-control:disabled,
+ .form-control[disabled] {
+    background-color: #f8f9fa;
+    color: #495057;
+    cursor: not-allowed;
+}
+
+/* --- Input group --- */
+ .input-group-text {
+    background: #f8f9fa;
+    border-left: none;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+ .input-group .form-control {
+    border-right: none;
+}
+
+ .input-group .form-control:focus + .input-group-text {
+    border-color: #2c7be5;
+}
+
+ .input-group .form-control:focus {
+    border-right: 1px solid #2c7be5;
+}
+
+/* --- Textos de ayuda --- */
+ .text-muted {
+    font-size: 0.8rem;
+    color: #8a9aa8 !important;
+    margin-top: 0.3rem;
+    display: block;
+}
+
+/* --- Botones --- */
+ .btn {
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
+}
+
+ .btn-primary {
+    background: linear-gradient(135deg, #2c7be5, #1a5dc9);
+    border: none;
+    color: #fff;
+}
+
+ .btn-primary:hover {
+    background: linear-gradient(135deg, #1a5dc9, #0f4ba8);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 123, 229, 0.35);
+}
+
+ .btn-warning {
+    background: linear-gradient(135deg, #f6c445, #f5a623);
+    border: none;
+    color: #1a2a3a;
+}
+
+ .btn-warning:hover {
+    background: linear-gradient(135deg, #f5a623, #e0941a);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 166, 35, 0.35);
+}
+
+ .btn i {
+    margin-right: 0.5rem;
+}
+
+/* --- Espaciado entre botones --- */
+ .btn-group-actions {
+    gap: 0.5rem;
+}
+
+/* --- Alertas --- */
+ .alert {
+    border-radius: 12px;
+    border: none;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    border-left: 4px solid transparent;
+    margin-bottom: 1.5rem;
+}
+
+ .alert-success {
+    background: #ecfdf5;
+    border-left-color: #10b981;
+    color: #065f46;
+}
+
+ .alert-danger {
+    background: #fef2f2;
+    border-left-color: #ef4444;
+    color: #991b1b;
+}
+
+ .alert .btn-close {
+    padding: 0.75rem 1rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+     .card-body {
+        padding: 1.5rem;
+    }
+
+     .col-md-6.d-flex.align-items-end {
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+     .col-md-6.d-flex.align-items-end .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+     .header-title {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 576px) {
+     .card-body {
+        padding: 1.25rem 1rem;
+    }
+
+     .form-control,
+     .input-group-text {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.8rem;
+    }
+
+     .btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* --- Animación para el botón de actualizar tasa --- */
+ .btn-warning i {
+    display: inline-block;
+    transition: transform 0.6s ease;
+}
+
+ .btn-warning:hover i {
+    transform: rotate(180deg);
+}
+
+/* --- Sombra sutil en campos deshabilitados --- */
+ .form-control[disabled] {
+    background: #f8f9fa;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* --- Separador sutil entre filas --- */
+ .row.g-3 {
+    row-gap: 0.5rem;
+}

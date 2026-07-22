@@ -16,6 +16,8 @@ require_once $root . '/Model/Entities/Colegio.php';
 require_once $root . '/Model/Entities/Grado.php';
 require_once $root . '/Model/Entities/Hobbie.php';
 require_once $root . '/Model/Entities/HobbieAtleta.php';
+require_once $root . '/Model/Entities/Configuracion.php';
+
 
 // Repositorios
 require_once $root . '/Model/Repository/RepositoryUniforme.php';
@@ -29,6 +31,9 @@ require_once $root . '/Model/Repository/RepositoryColegio.php';
 require_once $root . '/Model/Repository/RepositoryGrado.php';
 require_once $root . '/Model/Repository/RepositoryHobbie.php';
 require_once $root . '/Model/Repository/RepositoryHobbieAtleta.php';
+require_once $root . '/Model/Repository/RepositoryCuotaMensual.php';
+require_once $root . '/Model/Repository/RepositoryConfiguracion.php';
+
 
 
 // Función para generar ID de atleta
@@ -36,12 +41,6 @@ function generarIdAtleta() {
     return 'atl_' . uniqid();
 }
 
-// Función para calcular edad a partir de fecha Y-m-d
-function calcularEdad($fecha_nac) {
-    $hoy = new DateTime();
-    $fn = new DateTime($fecha_nac);
-    return $hoy->diff($fn)->y;
-}
 
 // ============================================
 // 1. VERIFICAR MÉTODO POST
@@ -192,9 +191,9 @@ if (!empty($datos['segundo_apellido']) && !verificar_datos("/^[A-Za-záéíóú�
 if (!empty($datos['atleta_fecha'])) {
     $fecha_obj = DateTime::createFromFormat('Y-m-d', $datos['atleta_fecha']);
     $fecha_min = new DateTime('2000-01-01');
-    $fecha_max = new DateTime('2018-12-31');
+    $fecha_max = new DateTime('2023-12-31');
     if (!$fecha_obj || $fecha_obj < $fecha_min || $fecha_obj > $fecha_max) {
-        $errores[] = "La fecha de nacimiento debe estar entre el 01/01/2000 y el 31/12/2018.";
+        $errores[] = "La fecha de nacimiento debe estar entre el 01/01/2000 y el 31/12/2023.";
     }
 }
 
@@ -533,6 +532,30 @@ try {
         if (!$repoHobbieAtleta->create($hobbieAtleta)) {
             throw new Exception("Error al asociar el hobbie con el atleta.");
         }
+    }
+
+    // === CREAR CUOTAS MENSUALES PARA EL NUEVO ATLETA ===
+    $repoConfig = new RepositoryConfiguracion();
+    $repoCuota = new RepositoryCuotaMensual();
+
+    $montoMensual = $repoConfig->getMontoMensualBs();
+    if ($montoMensual <= 0) {
+        $montoMensual = 50.00; // fallback
+    }
+
+    $anioActual = date('Y');
+    $mesActual = (int)date('m');
+
+    for ($mes = $mesActual; $mes <= 12; $mes++) {
+        $cuota = new CuotaMensual(
+            null,
+            $atletaId,
+            $mes,
+            $anioActual,
+            $montoMensual,
+            'Pendiente'
+        );
+        $repoCuota->create($cuota);
     }
 
     // ---- 4k. Confirmar transacción ----

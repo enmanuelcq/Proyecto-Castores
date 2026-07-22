@@ -19,6 +19,7 @@ interface IAtletaRepository
     // Listados
     public function findAll(): array;                  // todos
     public function findAllActive(): array;            // solo activos (status = 1)
+    public function findAllWithFilters(?bool $status = true, string $busqueda = ''): array;
     public function findAllInactive(): array;          // solo inactivos
 
     // Búsquedas por criterios (pueden devolver varios)

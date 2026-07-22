@@ -1,8 +1,4 @@
-// Manejador del botón Sí en el modal de eliminación
-    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-        alert('El registro del atleta ha sido eliminado del sistema.');
-        bootstrap.Modal.getInstance(document.getElementById('modalEliminar')).hide();
-    });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // ============================================
@@ -529,6 +525,17 @@ function confirmarPagoRevision(cedula) {
     }
 }
 
+    // Preservar filtro al buscar
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(e) {
+                const filterInput = document.getElementById('filterInput');
+                filterInput.value = '<?php echo $current_filter; ?>';
+            });
+        }
+    });
+
 // Función para rechazar pago en revisión
 function rechazarPagoRevision(cedula) {
     if (confirm('¿Estás seguro de rechazar este pago?')) {
@@ -557,4 +564,154 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    
+
 });
+
+function cargarDetalleCuota(atletaId, cuotaId) {
+    // Verificar que se haya recibido un cuotaId válido
+    if (!cuotaId || cuotaId === 'null' || cuotaId === 'undefined') {
+        console.error('ID de cuota no válido:', cuotaId);
+        alert('Error: No se pudo identificar la cuota.');
+        return;
+    }
+    
+    // Mostrar estado de carga en el modal
+    document.getElementById('pendienteMes_' + atletaId).textContent = 'Cargando...';
+    document.getElementById('pendienteMonto_' + atletaId).textContent = 'Bs ...';
+    
+    // Realizar petición AJAX para obtener los datos de la cuota
+    fetch('Controller/ObtenerDetalleCuotaController.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'cuota_id=' + encodeURIComponent(cuotaId)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error:', data.error);
+            document.getElementById('pendienteMes_' + atletaId).textContent = 'Error';
+            document.getElementById('pendienteMonto_' + atletaId).textContent = 'Error';
+            alert('Error al cargar los datos de la cuota: ' + data.error);
+            return;
+        }
+        
+        // Actualizar el modal con los datos recibidos
+        var mesNombre = data.mes_nombre || 'Mes no especificado';
+        var monto = parseFloat(data.monto) || 0;
+        var montoFormateado = 'Bs ' + monto.toLocaleString('es-VE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        
+        // Actualizar elementos del encabezado
+        document.getElementById('pendienteMes_' + atletaId).textContent = mesNombre;
+        document.getElementById('pendienteMonto_' + atletaId).textContent = montoFormateado;
+        
+        // Actualizar elementos de detalle
+        document.getElementById('pendienteMesDetalle_' + atletaId).textContent = mesNombre;
+        document.getElementById('pendienteMontoDetalle_' + atletaId).textContent = montoFormateado;
+        
+        // Asignar valores al formulario
+        document.getElementById('pendienteCuotaId_' + atletaId).value = cuotaId;
+        document.getElementById('pendienteMontoInput_' + atletaId).value = monto.toFixed(2);
+    })
+    .catch(error => {
+        console.error('Error en la petición AJAX:', error);
+        document.getElementById('pendienteMes_' + atletaId).textContent = 'Error';
+        document.getElementById('pendienteMonto_' + atletaId).textContent = 'Error';
+        alert('Error al cargar los datos de la cuota. Por favor, intenta de nuevo.');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Capturar todos los botones que abren el modal de pendiente
+    document.querySelectorAll('[data-bs-target^="#modalSolvenciaPendiente"]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            // Obtener datos de los atributos data-*
+            var mes = this.getAttribute('data-mes') || 'Mes no especificado';
+            var monto = this.getAttribute('data-monto') || '0';
+            var cuotaId = this.getAttribute('data-cuota') || '';
+            var atletaId = this.getAttribute('data-atleta') || '';
+            var estado = this.getAttribute('data-estado') || 'Pendiente';
+            
+            // Llamar a la función que actualiza el modal
+            if (window.mostrarDetallePendiente) {
+                window.mostrarDetallePendiente(mes, monto, atletaId, cuotaId, estado);
+            } else {
+                console.warn('Función mostrarDetallePendiente no definida');
+            }
+        });
+    });
+});
+
+function mostrarDetallePendiente(mes, monto, atletaId, cuotaId, estado) {
+    // Validar valores
+    if (!mes) mes = 'Mes no especificado';
+    if (!monto || isNaN(parseFloat(monto))) monto = '0';
+    
+    var montoNum = parseFloat(monto) || 0;
+    var montoFormateado = 'Bs ' + montoNum.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    
+    // Actualizar elementos
+    function actualizarElemento(id, valor) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = valor;
+    }
+    
+    actualizarElemento('pendienteMes_' + atletaId, mes);
+    actualizarElemento('pendienteMesDetalle_' + atletaId, mes);
+    actualizarElemento('pendienteMonto_' + atletaId, montoFormateado);
+    actualizarElemento('pendienteMontoDetalle_' + atletaId, montoFormateado);
+    actualizarElemento('pendienteEstado_' + atletaId, estado || 'Pendiente');
+    
+    // Asignar cuota_id al campo oculto
+    var cuotaInput = document.getElementById('pendienteCuotaId_' + atletaId);
+    if (cuotaInput) cuotaInput.value = cuotaId || '';
+    
+    // Asignar monto al input
+    var montoInput = document.getElementById('pendienteMontoInput_' + atletaId);
+    if (montoInput) montoInput.value = montoNum.toFixed(2);
+    
+    // Inicializar toggle de campos de banco
+    if (typeof toggleCamposPendiente === 'function') {
+        toggleCamposPendiente(atletaId);
+    }
+}
+
+function mostrarDetallePago(mes, monto, tipoPago, referencia, atletaId, fechaPago = '', banco = '') {
+    // Validar valores
+    if (!mes) mes = 'Mes no especificado';
+    if (!monto || isNaN(parseFloat(monto))) monto = '0';
+    if (!tipoPago) tipoPago = 'No especificado';
+    if (!referencia) referencia = 'Sin referencia';
+    if (!fechaPago) fechaPago = 'No registrada';
+    
+    var montoNum = parseFloat(monto) || 0;
+    var montoFormateado = 'Bs ' + montoNum.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    
+    // Actualizar elementos
+    function actualizarElemento(id, valor) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = valor;
+    }
+    
+    actualizarElemento('detalleMes_' + atletaId, mes);
+    actualizarElemento('detalleMonto_' + atletaId, montoFormateado);
+    actualizarElemento('detalleFecha_' + atletaId, fechaPago);  // Recibe '15/01/2024' o 'No registrada'
+    
+    var tipoPagoEl = document.getElementById('detalleTipoPago_' + atletaId);
+    if (tipoPagoEl) {
+        tipoPagoEl.innerHTML = '<span class="badge bg-info">' + tipoPago + '</span>';
+    }
+    
+    actualizarElemento('detalleReferencia_' + atletaId, referencia);
+    
+    var bancoEl = document.getElementById('detalleBanco_' + atletaId);
+    if (bancoEl) {
+        bancoEl.textContent = banco || 'No especificado';
+    }
+}

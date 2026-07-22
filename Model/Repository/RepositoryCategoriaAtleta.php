@@ -29,7 +29,7 @@ class RepositoryCategoriaAtleta implements ICategoriaAtletaRepository
     // ──────────── UPDATE ────────────
     public function update(CategoriaAtleta $relacion): bool
     {
-        $sql = "UPDATE categoria_atleta SET año = ?, Atleta_id = ?, categoria_id = ? WHERE año_id = ?";
+        $sql = "UPDATE categoria_atleta SET `año` = ?, Atleta_id = ?, categoria_id = ? WHERE año_id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $relacion->getAnio(),
