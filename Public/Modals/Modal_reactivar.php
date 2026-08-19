@@ -26,6 +26,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <form action="Controller/CambiarStatusAtleta_controller.php" method="POST" class="d-inline">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="atleta_id" value="<?php echo $atleta_id; ?>">
                     <input type="hidden" name="accion" value="reactivar">
                     <button type="submit" class="btn btn-success">

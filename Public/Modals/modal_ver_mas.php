@@ -12,9 +12,12 @@
                 <!-- ===== CABECERA DEL ATLETA ===== -->
                 <div class="atleta-header-modal mb-4">
                     <div class="atleta-avatar-modal">
-                        <?php 
-                        echo strtoupper(substr($atleta->getPrimerNombre() ?? 'A', 0, 1) . substr($atleta->getPrimerApellido() ?? 'A', 0, 1));
-                        ?>
+                        <?php $foto = $atleta->getFoto(); ?>
+                        <?php if (!empty($foto)): ?>
+                            <img src="./Public/uploads/<?php echo htmlspecialchars($foto); ?>" alt="Foto" class="avatar-img-modal">
+                        <?php else: ?>
+                            <?php echo strtoupper(substr($atleta->getPrimerNombre() ?? 'A', 0, 1) . substr($atleta->getPrimerApellido() ?? 'A', 0, 1)); ?>
+                        <?php endif; ?>
                     </div>
                     <div class="atleta-info-modal">
                         <h4><?php echo htmlspecialchars($nombre_completo); ?></h4>
@@ -32,110 +35,186 @@
                     </div>
                 </div>
 
-                <!-- ===== TABLA DE INFORMACIÓN PRINCIPAL ===== -->
-                <div class="table-responsive">
-                    <table class="table table-dashboard table-sm">
-                        <thead>
-                            <tr>
-                                <th style="width: 25%;">Datos del Representante</th>
-                                <th style="width: 25%;">Datos del Atleta</th>
-                                <th style="width: 20%;">Categoría</th>
-                                <th style="width: 30%;">Indumentaria</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <?php if ($representante): ?>
-                                    <div class="info-item">
-                                        <span class="label-title">Cédula</span>
-                                        <span class="value"><?php echo htmlspecialchars($representante->getCedula()); ?></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="label-title">Nombre</span>
-                                        <span class="value"><?php echo htmlspecialchars($representante->getNombre() . ' ' . $representante->getApellido()); ?></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="label-title">Teléfono</span>
-                                        <span class="value"><?php echo htmlspecialchars($representante->getTelefono()); ?></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="label-title">Email</span>
-                                        <span class="value"><?php echo htmlspecialchars($representante->getCorreo()); ?></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="label-title">Ocupación</span>
-                                        <span class="value"><?php echo htmlspecialchars($representante->getOcupacion() ?: 'No especificada'); ?></span>
-                                    </div>
-                                    <?php else: ?>
-                                    <p>No hay representante registrado.</p>
+                <!-- ===== FOTO GRANDE DEL ATLETA ===== -->
+                <?php if (!empty($foto)): ?>
+                <div class="text-center mb-4">
+                    <img src="./Public/uploads/<?php echo htmlspecialchars($foto); ?>" alt="Foto de <?php echo htmlspecialchars($nombre_completo); ?>" class="foto-grande-atleta">
+                    <div class="mt-2">
+                        <a href="./Public/uploads/<?php echo htmlspecialchars($foto); ?>" download="<?php echo htmlspecialchars($atleta->getPrimerNombre()) . '_' . htmlspecialchars($atleta->getPrimerApellido()) . '.jpg'; ?>" class="btn btn-sm btn-action-green">
+                            <i class="bi bi-download me-1"></i> Descargar foto
+                        </a>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- ===== INFORMACIÓN PRINCIPAL EN BLOQUES ===== -->
+                <div class="row g-3 mb-3">
+                    <!-- Representantes -->
+                    <div class="col-lg-6">
+                        <div class="card form-section-card">
+                            <h4 class="section-card-title"><i class="bi bi-people-fill me-2 text-primary"></i>Representante(s)</h4>
+                            <?php if (!empty($representantes)): ?>
+                                <?php foreach ($representantes as $idx => $repData): 
+                                    $rep = $repData['representante'];
+                                    $parentesco = $repData['parentesco'] ?? '';
+                                ?>
+                                <?php if ($idx > 0): ?>
+                                    <hr class="my-2">
+                                <?php endif; ?>
+                                <div class="mb-1">
+                                    <?php if (count($representantes) > 1): ?>
+                                        <small class="text-muted fw-bold text-uppercase"><?php echo htmlspecialchars($parentesco); ?></small>
                                     <?php endif; ?>
-                                </td>
-                                <td>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <span class="label-title">Cédula</span>
+                                            <span class="value"><?php echo htmlspecialchars($rep->getCedula()); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <span class="label-title">Nombre</span>
+                                            <span class="value"><?php echo htmlspecialchars($rep->getNombre() . ' ' . $rep->getApellido()); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <span class="label-title">Teléfono</span>
+                                            <span class="value"><?php echo htmlspecialchars($rep->getTelefono()); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <span class="label-title">Email</span>
+                                            <span class="value"><?php echo htmlspecialchars($rep->getCorreo()); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <span class="label-title">Ocupación</span>
+                                            <span class="value"><?php echo htmlspecialchars($rep->getOcupacion() ?: 'No especificada'); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                            <p class="text-muted mb-0">No hay representante registrado.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Datos del Atleta -->
+                    <div class="col-lg-6">
+                        <div class="card form-section-card">
+                            <h4 class="section-card-title"><i class="bi bi-person-fill me-2 text-success"></i>Datos del Atleta</h4>
+                            <div class="row g-2">
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Cédula</span>
                                         <span class="value"><?php echo htmlspecialchars($atleta->getCedula() ?: 'No registrada'); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Fecha Nac.</span>
                                         <span class="value"><?php echo date('d/m/Y', strtotime($atleta->getFechaNacimiento())); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Nombres</span>
                                         <span class="value"><?php echo htmlspecialchars($atleta->getPrimerNombre() . ' ' . $atleta->getSegundoNombre()); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Apellidos</span>
                                         <span class="value"><?php echo htmlspecialchars($atleta->getPrimerApellido() . ' ' . $atleta->getSegundoApellido()); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Sexo</span>
                                         <span class="value"><?php echo htmlspecialchars($atleta->getSexo()); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Pie Dominante</span>
                                         <span class="value"><?php echo htmlspecialchars($atleta->getPieDominante()); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-12">
                                     <div class="info-item">
                                         <span class="label-title">Dirección</span>
                                         <span class="value"><?php echo htmlspecialchars($atleta->getDireccion()); ?></span>
                                     </div>
-                                </td>
-                                <td>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <!-- Categoría -->
+                    <div class="col-lg-6">
+                        <div class="card form-section-card">
+                            <h4 class="section-card-title"><i class="bi bi-shield-fill me-2 text-warning"></i>Categoría</h4>
+                            <div class="row g-2">
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Categoría</span>
                                         <span class="value"><?php echo htmlspecialchars($categoria); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Año</span>
                                         <span class="value"><?php echo htmlspecialchars($categoriaAnio); ?></span>
                                     </div>
-                                </td>
-                                <td>
-                                    <?php if ($uniforme): ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Indumentaria -->
+                    <div class="col-lg-6">
+                        <div class="card form-section-card">
+                            <h4 class="section-card-title"><i class="bi bi-shirt me-2 text-info"></i>Indumentaria</h4>
+                            <?php if ($uniforme): ?>
+                            <div class="row g-2">
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Dorsal</span>
                                         <span class="value"><?php echo htmlspecialchars($numeroFranela); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Talla Franela</span>
                                         <span class="value"><?php echo htmlspecialchars($uniforme->getFranelaTalla()); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Talla Short</span>
                                         <span class="value"><?php echo htmlspecialchars($uniforme->getShortTalla()); ?></span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item">
                                         <span class="label-title">Talla Zapatos</span>
                                         <span class="value"><?php echo htmlspecialchars($uniforme->getZapatosTalla()); ?></span>
                                     </div>
-                                    <?php else: ?>
-                                    <p>No hay uniforme registrado.</p>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                </div>
+                            </div>
+                            <?php else: ?>
+                            <p class="text-muted mb-0">No hay uniforme registrado.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ===== INFORMACIÓN DE SALUD ===== -->
@@ -181,7 +260,6 @@
                             <?php endif; ?>
                         </div>
                     </div>
-<script>console.log("Usuario: ' <?php echo $salud->getPolizaSeguro(); ?> . '");</script>
                     <div class="col-lg-6">
                         <?php if ($salud && $salud->getPolizaSeguro() === 'posee'): ?>
                         <div class="card form-section-card">

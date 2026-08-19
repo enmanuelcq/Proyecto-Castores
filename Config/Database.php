@@ -20,15 +20,15 @@ class Database {
         try {
             // Configuramos los datos de tu servidor
             $host = 'localhost';
-            $db   = 'deportivocastores';
+            $db   = 'castores';
             $user = 'root'; 
             $pass = '';     
 
             // Creamos la instancia de PDO
-            $this->connection = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
+            $this->connection = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
             
-            // Configuramos para que PHP nos avise si hay errores de SQL
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->connection->exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
             
         } catch (PDOException $e) {
             // Si hay un error, lo registramos en un archivo de log

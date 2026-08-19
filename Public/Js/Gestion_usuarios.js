@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Marcar formularios AJAX de esta página para evitar doble envío con ajax.js
+    // Solo FormularioAjax (registros/actualizaciones), NO FormularioAjax1 (desactivar/reactivar)
+    document.querySelectorAll('.FormularioAjax').forEach(function(form) {
+        form.dataset.ajaxBound = 'true';
+    });
+
     // ==============================================================
     // 1. FUNCIONALIDAD PARA MOSTRAR/OCULTAR CONTRASEÑA (para todos)
     // ==============================================================
@@ -7,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const toggle = e.target.closest('.password-toggle-icon');
         if (!toggle) return;
         
-        const inputId = toggle.id.replace('toggle', '');
+        const inputId = toggle.getAttribute('data-target');
         const passwordInput = document.getElementById(inputId);
         if (!passwordInput) return;
         

@@ -1,95 +1,81 @@
-:root {
-    --azul: #0D4866;
-    --verde: #436C3F;               
-    --blanco-puro: #ffffff;
-    --texto-oscuro: #000000;         
-    --verde-vivido: #0bd872;        
-    --gris-card: rgba(239, 239, 239, 0.95);
-}
-
-body {
-    background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
-        url('../img/17.png');
-    color: #fff;
-    font-family: 'Segoe UI', sans-serif;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
+/* ==========================================
+   Partidos
+   ========================================== */
 
 .contenido {
     padding: 20px 0;
 }
 
-/* ===== BOTÓN VOLVER ===== */
-
+/* --- Back Button --- */
 .btn-volver {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 20px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.26);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.6);
+    gap: 6px;
+    padding: 9px 20px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
     text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    backdrop-filter: blur(5px);
+    transition: all 0.2s;
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .btn-volver:hover {
-    background: #a9ffff3b;
-    color: #fff;
-    transform: translateX(-3px);
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
 }
 
 .btn-volver i {
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
-/* ===== HEADER DEL ATLETA ===== */
+/* --- Athlete Header --- */
 .atleta-header {
-    background: rgba(255, 255, 255, 0.26);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
-    padding: 18px 24px;
-    margin-bottom: 25px;
+    background: linear-gradient(135deg, #eef3ef 0%, #e8f5ec 100%);
+    border: 1.5px solid #b8dcc4;
+    border-left: 5px solid var(--primary);
+    border-radius: var(--radius-lg);
+    padding: 16px 22px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
     flex-wrap: wrap;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+    box-shadow: var(--shadow-sm);
 }
 
 .atleta-avatar {
-    width: 55px;
-    height: 55px;
-    min-width: 55px;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ffc107, #ff9800);
+    background: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    color: #212529;
+    color: white;
+    box-shadow: 0 3px 8px rgba(13, 122, 63, 0.35);
 }
 
 .atleta-info h5 {
-    color: #000000;
+    color: var(--text-primary);
     font-weight: 700;
+    font-size: 1.1rem;
     margin: 0;
 }
 
 .atleta-info small {
-    color: rgb(0, 0, 0);
+    color: var(--text-secondary);
 }
 
 .atleta-estadisticas {
     display: flex;
-    gap: 20px;
+    gap: 18px;
     margin-left: auto;
     flex-wrap: wrap;
 }
@@ -100,79 +86,81 @@ body {
 
 .atleta-estadisticas .numero {
     display: block;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 700;
 }
 
 .atleta-estadisticas .etiqueta {
-    font-size: 0.6rem;
-    color: rgb(255, 255, 255);
+    font-size: 0.7rem;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.atleta-estadisticas .item.verde .numero { color: #198754; }
-.atleta-estadisticas .item.amarillo .numero { color: #ffc107; }
-.atleta-estadisticas .item.rojo .numero { color: #dc3545; }
-.atleta-estadisticas .item.azul .numero { color: #0d6efd; }
-.atleta-estadisticas .item.morado .numero { color: #6f42c1; }
+.atleta-estadisticas .item.verde .numero { color: var(--success); }
+.atleta-estadisticas .item.amarillo .numero { color: var(--warning); }
+.atleta-estadisticas .item.rojo .numero { color: var(--danger); }
+.atleta-estadisticas .item.azul .numero { color: var(--info); }
+.atleta-estadisticas .item.morado .numero { color: #7c3aed; }
 
-/* ===== TARJETAS DE ESTADÍSTICAS ===== */
+/* --- Stat Cards --- */
 .card-estadistica {
-    background: rgba(255, 255, 255, 0.26);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
-    padding: 18px;
-    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #eef3ef 0%, #f4f8f5 100%);
+    border: 1.5px solid #b8dcc4;
+    border-top: 3px solid var(--primary);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
     height: 100%;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+    box-shadow: var(--shadow-sm);
 }
 
 .card-estadistica:hover {
-    background: #a9ffff3b;
-    transform: translateY(-3px);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-
 .card-estadistica .icono {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     margin-bottom: 8px;
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 3px 8px rgba(13, 122, 63, 0.35);
 }
 
 .card-estadistica .valor {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--primary-dark);
 }
 
 .card-estadistica .nombre {
-    font-size: 0.75rem;
-    color: rgb(255, 255, 255);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
     margin: 0;
 }
 
-/* ===== LISTA DE PARTIDOS ===== */
+/* --- Match Cards --- */
 .partido-card {
-    background: rgba(255, 255, 255, 0.26);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 16px 20px;
-    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #eef3ef 0%, #f4f8f5 100%);
+    border: 1.5px solid #b8dcc4;
+    border-left: 5px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+    transition: transform 0.2s, box-shadow 0.2s;
     margin-bottom: 10px;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+    box-shadow: var(--shadow-sm);
 }
 
 .partido-card:hover {
-    background: #a9ffff3b;
-    transform: translateX(5px);
+    transform: translateX(3px);
+    box-shadow: var(--shadow-md);
 }
 
 .partido-card .partido-header {
@@ -180,144 +168,138 @@ body {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 8px;
+    margin-bottom: 6px;
 }
 
 .partido-card .fecha {
-    font-size: 0.8rem;
-    color: rgb(255, 255, 255);
+    font-size: 0.85rem;
+    color: var(--text-muted);
 }
 
 .partido-card .rival {
-    font-weight: 600;
-    color: #fff;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
 .partido-card .rival i {
-    color: #ffc107;
+    color: var(--primary);
 }
 
 .partido-card .badge-estado {
     padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 0.7rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
     font-weight: 600;
 }
 
-.badge-ganado { background: #198754; color: #fff; }
-.badge-perdido { background: #dc3545; color: #fff; }
-.badge-empatado { background: #ffc107; color: #212529; }
-.badge-por-cargar { background: #fd7e14; color: #fff;}
-.badge-cancelado { background: #6c757d; color: #fff; }
-.badge-por-jugar { background: #0d6efd; color: #fff; }
-
-@keyframes pulse-cargar {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
+.badge-ganado { background: var(--success); color: white; }
+.badge-perdido { background: var(--danger); color: white; }
+.badge-empatado { background: var(--warning); color: #1a1a1a; }
+.badge-por-cargar { background: #f97316; color: white; }
+.badge-cancelado { background: var(--text-muted); color: white; }
+.badge-por-jugar { background: var(--info); color: white; }
 
 .partido-card .estadisticas-jugador {
     display: flex;
-    gap: 20px;
+    gap: 16px;
     flex-wrap: wrap;
     margin-top: 8px;
     padding-top: 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.479);
+    border-top: 1px solid var(--border-color);
 }
 
 .partido-card .estadisticas-jugador .stat {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 0.8rem;
-    color: rgb(255, 255, 255);
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
 }
 
 .partido-card .estadisticas-jugador .stat i {
-    font-size: 0.9rem;
+    font-size: 1rem;
+    color: var(--text-muted);
 }
 
 .partido-card .estadisticas-jugador .stat .numero {
     font-weight: 700;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .partido-card .calificacion {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: rgba(255, 193, 7, 0.1);
-    color: #ffc107;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 6px rgba(13, 122, 63, 0.35);
 }
 
-/* ===== SIN PARTIDOS ===== */
+/* --- Empty State --- */
 .empty-state {
     text-align: center;
-    padding: 60px 20px;
+    padding: 50px 20px;
 }
 
 .empty-state i {
     font-size: 4rem;
-    color: rgb(255, 255, 255);
+    color: var(--text-muted);
 }
 
 .empty-state h5 {
-    color: rgb(255, 255, 255);
-    margin-top: 15px;
+    color: var(--text-primary);
+    margin-top: 12px;
+    font-weight: 700;
 }
 
 .empty-state p {
-    color: rgb(255, 255, 255);
+    color: var(--text-secondary);
 }
 
-/* ===== TOP HEADER CON BOTÓN VOLVER ===== */
+/* --- Top Header --- */
 .top-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 12px;
 }
 
 .top-header h4 {
-    color: #fff;
-    font-weight: 600;
+    color: var(--text-primary);
+    font-weight: 700;
     margin: 0;
 }
 
 .top-header h4 i {
-    color: #ffc107;
+    color: var(--primary);
 }
 
-/* ===== RESPONSIVE ===== */
+/* --- Responsive --- */
 @media (max-width: 768px) {
     .atleta-header {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .atleta-estadisticas {
         margin-left: 0;
         justify-content: center;
     }
-    
+
     .partido-card .partido-header {
         flex-direction: column;
         align-items: flex-start;
     }
-    
-    .partido-card .estadisticas-jugador {
-        gap: 12px;
-    }
-    
+
     .top-header {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .top-header .btn-volver {
         width: 100%;
         justify-content: center;

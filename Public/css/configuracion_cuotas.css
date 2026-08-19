@@ -1,227 +1,166 @@
-/* ============================================================
-   CONFIGURACIÓN DE CUOTAS - Estilos personalizados
-   ============================================================ */
+/* ==========================================
+   Configuración de Cuotas
+   ========================================== */
 
-/* --- Contenedor principal --- */
-
- .header-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #1a2a3a;
-    margin-bottom: 0.25rem;
-    letter-spacing: -0.5px;
+.header-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--text-primary);
 }
 
- .header-subtitle {
-    color: #6c757d;
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
+.header-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
 }
 
-/* --- Tarjetas --- */
- .card {
-    border: none;
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
-    background: #ffffff;
+/* --- Card --- */
+.card {
+    border: 1.5px solid #b8dcc4;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, transform 0.2s;
+    background: var(--bg-card);
     overflow: hidden;
 }
 
- .card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+.card:hover { box-shadow: var(--shadow-md); }
+.card-body { padding: 1.8rem; }
+
+/* --- Form Labels --- */
+.form-label {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    margin-bottom: 0.35rem;
 }
 
- .card-body {
-    padding: 2rem 2rem 1.8rem;
-}
-
-/* --- Etiquetas de formulario --- */
- .form-label {
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
-}
-
-/* --- Campos de entrada --- */
- .form-control,
- .input-group-text {
-    border-radius: 10px;
-    border: 1px solid #dce1e8;
-    padding: 0.65rem 1rem;
+/* --- Form Controls --- */
+.form-control,
+.input-group-text {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    padding: 0.7rem 1rem;
     font-size: 0.95rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    background: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: var(--bg-input);
+    color: var(--text-primary);
 }
 
- .form-control:focus {
-    border-color: #2c7be5;
-    box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.15);
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26, 122, 76, 0.12);
     outline: none;
 }
 
- .form-control:disabled,
- .form-control[disabled] {
-    background-color: #f8f9fa;
-    color: #495057;
+.form-control:disabled,
+.form-control[disabled] {
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
     cursor: not-allowed;
 }
 
-/* --- Input group --- */
- .input-group-text {
-    background: #f8f9fa;
+/* --- Input Group --- */
+.input-group-text {
+    background: var(--bg-secondary);
     border-left: none;
-    color: #6c757d;
+    color: var(--text-muted);
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
 }
 
- .input-group .form-control {
-    border-right: none;
-}
+.input-group .form-control { border-right: none; }
+.input-group .form-control:focus + .input-group-text { border-color: var(--primary); }
+.input-group .form-control:focus { border-right: 1px solid var(--primary); }
 
- .input-group .form-control:focus + .input-group-text {
-    border-color: #2c7be5;
-}
-
- .input-group .form-control:focus {
-    border-right: 1px solid #2c7be5;
-}
-
-/* --- Textos de ayuda --- */
- .text-muted {
-    font-size: 0.8rem;
-    color: #8a9aa8 !important;
-    margin-top: 0.3rem;
+/* --- Helper Text --- */
+.text-muted {
+    font-size: 0.75rem;
+    color: var(--text-muted) !important;
+    margin-top: 0.25rem;
     display: block;
 }
 
-/* --- Botones --- */
- .btn {
-    border-radius: 10px;
+/* --- Buttons --- */
+.btn {
+    border-radius: var(--radius-sm);
     font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.6rem 1.5rem;
-    transition: all 0.25s ease;
-    letter-spacing: 0.3px;
+    font-size: 0.92rem;
+    padding: 0.65rem 1.5rem;
+    transition: all 0.2s;
 }
 
- .btn-primary {
-    background: linear-gradient(135deg, #2c7be5, #1a5dc9);
+.btn-primary {
+    background: var(--primary);
     border: none;
-    color: #fff;
+    color: white;
 }
 
- .btn-primary:hover {
-    background: linear-gradient(135deg, #1a5dc9, #0f4ba8);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(44, 123, 229, 0.35);
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
 }
 
- .btn-warning {
-    background: linear-gradient(135deg, #f6c445, #f5a623);
+.btn-warning {
+    background: var(--primary);
     border: none;
-    color: #1a2a3a;
+    color: white;
 }
 
- .btn-warning:hover {
-    background: linear-gradient(135deg, #f5a623, #e0941a);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(245, 166, 35, 0.35);
+.btn-warning:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
- .btn i {
-    margin-right: 0.5rem;
+.btn i { margin-right: 0.4rem; }
+
+.btn-group-actions { gap: 0.4rem; }
+
+.btn-outline-primary {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
 }
 
-/* --- Espaciado entre botones --- */
- .btn-group-actions {
-    gap: 0.5rem;
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
 }
 
-/* --- Alertas --- */
- .alert {
-    border-radius: 12px;
+/* --- Alerts --- */
+.alert {
+    border-radius: var(--radius-md);
     border: none;
-    padding: 1rem 1.25rem;
+    padding: 0.9rem 1.1rem;
     font-size: 0.95rem;
-    border-left: 4px solid transparent;
-    margin-bottom: 1.5rem;
+    border-left: 3px solid transparent;
+    margin-bottom: 1.25rem;
 }
 
- .alert-success {
-    background: #ecfdf5;
-    border-left-color: #10b981;
-    color: #065f46;
-}
+.alert-success { background: #f0fdf4; border-left-color: var(--success); color: #166534; }
+.alert-danger { background: #fef2f2; border-left-color: var(--danger); color: #991b1b; }
 
- .alert-danger {
-    background: #fef2f2;
-    border-left-color: #ef4444;
-    color: #991b1b;
-}
-
- .alert .btn-close {
-    padding: 0.75rem 1rem;
-}
+/* --- Padding fix --- */
+.p-3 { background-color: transparent; border-color: transparent; }
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
-     .card-body {
-        padding: 1.5rem;
-    }
-
-     .col-md-6.d-flex.align-items-end {
-        margin-top: 1rem;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-     .col-md-6.d-flex.align-items-end .btn {
-        width: 100%;
-        justify-content: center;
-    }
-
-     .header-title {
-        font-size: 1.4rem;
-    }
+    .card-body { padding: 1.4rem; }
+    .col-md-6.d-flex.align-items-end { margin-top: 0.8rem; flex-wrap: wrap; gap: 0.4rem; }
+    .col-md-6.d-flex.align-items-end .btn { width: 100%; justify-content: center; }
+    .header-title { font-size: 1.3rem; }
 }
 
 @media (max-width: 576px) {
-     .card-body {
-        padding: 1.25rem 1rem;
-    }
-
-     .form-control,
-     .input-group-text {
-        font-size: 0.9rem;
-        padding: 0.5rem 0.8rem;
-    }
-
-     .btn {
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-    }
+    .card-body { padding: 1.2rem 0.9rem; }
+    .form-control, .input-group-text { font-size: 0.85rem; padding: 0.45rem 0.7rem; }
+    .btn { font-size: 0.8rem; padding: 0.45rem 0.9rem; }
 }
 
-/* --- Animación para el botón de actualizar tasa --- */
- .btn-warning i {
-    display: inline-block;
-    transition: transform 0.6s ease;
-}
-
- .btn-warning:hover i {
-    transform: rotate(180deg);
-}
-
-/* --- Sombra sutil en campos deshabilitados --- */
- .form-control[disabled] {
-    background: #f8f9fa;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-/* --- Separador sutil entre filas --- */
- .row.g-3 {
-    row-gap: 0.5rem;
-}
+.btn-warning i { display: inline-block; transition: transform 0.5s ease; }
+.btn-warning:hover i { transform: rotate(180deg); }
+.form-control[disabled] { box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03); }
+.row.g-3 { row-gap: 0.4rem; }

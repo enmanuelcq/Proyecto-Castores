@@ -196,6 +196,6 @@
 </div>
 
 <!-- Incluir los modales secundarios -->
-<?php include './Public/Modals/modalSolvenciaPagado.php'; ?>
-<?php include './Public/Modals/modalSolvenciaPendiente.php'; ?>
-<?php include './Public/Modals/modalSolvenciaRevision.php'; ?>
+<?php include __DIR__ . '/modalSolvenciaPagado.php'; ?>
+<?php include __DIR__ . '/modalSolvenciaPendiente.php'; ?>
+<?php include __DIR__ . '/modalSolvenciaRevision.php'; ?>

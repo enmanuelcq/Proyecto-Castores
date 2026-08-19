@@ -43,7 +43,8 @@
                 </div>
 
                 <!-- ===== FORMULARIO DE PAGO ===== -->
-                <form id="formRegistrarPagoRepresentante_<?php echo $atleta['atleta_cedula']; ?>" method="POST">
+                <form id="formRegistrarPagoRepresentante_<?php echo $atleta['atleta_cedula']; ?>" method="POST" action="./Controller/RegistrarPago_controller.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="atleta_cedula" value="<?php echo $atleta['atleta_cedula']; ?>">
                     <input type="hidden" name="representante_cedula" value="<?php echo $representante['usuario_cedula']; ?>">
                     

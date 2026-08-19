@@ -1,4 +1,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./Public/Js/form-validator.js"></script>
+    <script src="./Public/Js/ajax.js"></script>
     
     <script>
         // JS dinámico para cargar datos en el Modal Único de Noticias [cite: 8]

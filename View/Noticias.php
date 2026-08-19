@@ -1,398 +1,653 @@
 <?php
-    require_once './Model/Atletas.php';
-    require_once './Model/Noticias.php';
-    require_once './Config/main.php';
-    
-    // Determinar el rol de la sesión
-    $rol_usuario = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
-    $es_secretaria = ($rol_usuario === "Secretaria");
-    $es_entrenador = ($rol_usuario === "Entrenador");
-    $es_admin = ($rol_usuario === "Administrador");
-    
-    // Obtener la URL actual sin el parámetro 'pagina'
-    $url_actual = $_SERVER['REQUEST_URI'];
-    // Eliminar el parámetro 'pagina' si existe
-    $url_base = strtok($url_actual, '?');
-    $parametros = $_GET;
-    unset($parametros['pagina']);
-    $query_string = http_build_query($parametros);
-    $url_con_parametros = $url_base . ($query_string ? '?' . $query_string . '&' : '?');
+$root = dirname(__DIR__);
+require_once $root . '/Config/main.php';
+require_once $root . '/Controller/NoticiasController.php';
+require_once $root . '/Controller/PartidosController.php';
+require_once $root . '/Model/Repository/RepositoryGol.php';
+require_once $root . '/Model/Repository/RepositoryPartidoTarjeta.php';
+require_once $root . '/Model/Repository/RepositoryCambio.php';
+require_once $root . '/Model/Repository/RepositoryIncidencia.php';
 
-    // ============ PAGINACIÓN ============
-    // Número de partidos por página
-    $partidos_por_pagina = 5;
-    
-    // Obtener el número de página actual
-    $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-    if ($pagina_actual < 1) $pagina_actual = 1;
-    
-    // Calcular el total de partidos
-    $total_partidos = count($todos_los_partidos);
-    
-    // Calcular el total de páginas
-    $total_paginas = ceil($total_partidos / $partidos_por_pagina);
-    
-    // Calcular el índice de inicio
-    $indice_inicio = ($pagina_actual - 1) * $partidos_por_pagina;
-    
-    // Obtener los partidos de la página actual
-    $partidos_pagina = array_slice($todos_los_partidos, $indice_inicio, $partidos_por_pagina);
-    
-    // Determinar el rango de páginas a mostrar
-    $rango_paginas = 2; // Número de páginas a mostrar a cada lado de la actual
-    $pagina_inicio = max(1, $pagina_actual - $rango_paginas);
-    $pagina_fin = min($total_paginas, $pagina_actual + $rango_paginas);
+$repoGol = new RepositoryGol();
+$repoPartidoTarjeta = new RepositoryPartidoTarjeta();
+$repoIncidencia = new RepositoryIncidencia();
+$repoCambio = new RepositoryCambio();
+
+$rol_usuario = $_SESSION['usuario']['id_rol'] ?? '';
+$es_secretaria = ($rol_usuario == 2);
+$es_admin = ($rol_usuario == 1);
+$es_entrenador = ($rol_usuario == 3);
+
+function urlConParametros($params = []) {
+    $url = $_SERVER['SCRIPT_NAME'];
+    $query = array_merge($_GET, $params);
+    unset($query['pagina_noticias']);
+    unset($query['pagina_partidos']);
+    unset($query['tab']);
+    return $url . '?' . http_build_query($query);
+}
+
+$tabActiva = $_GET['tab'] ?? 'noticias';
 ?>
-<div class="container-img">
-    <div class="container py-5">
-        
-        <!-- SECCIÓN DE NOTICIAS Y NOVEDADES -->
-        <section class="mb-5">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                <div>
-                    <h2 class="fw-bold mb-1">
-                        <i class="bi bi-newspaper me-2 text-warning"></i>NOTICIAS Y NOVEDADES
-                    </h2>
-                    <p class="text-white-50 m-0">No te pierdas de nada</p>
-                </div>
-                <?php if($es_admin || $es_secretaria): ?>
-                <div>
-                    <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalCrearNoticia">
-                        <i class="bi bi-plus-circle-fill me-2"></i>Crear Noticia
-                    </button>
+
+<link rel="stylesheet" href="Public/css/Noticias.css">
+
+<div class="container py-4">
+
+    <!-- ===== BARRA DE FILTRO TABS ===== -->
+    <div class="noticias-tabs-bar d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <div class="section-icon-box">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </div>
+            <div>
+                <h1 class="section-main-title mb-0">Academia Los Castores</h1>
+                <p class="section-subtitle mb-0">Noticias, partidos y novedades</p>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <?php if($es_admin || $es_secretaria): ?>
+            <button class="btn btn-sm-accent btn-round-sm" data-bs-toggle="modal" data-bs-target="#modalCrearNoticia">
+                <i class="bi bi-plus-lg me-1"></i>Nueva Noticia
+            </button>
+            <?php endif; ?>
+            <?php if($es_secretaria || $es_admin): ?>
+            <button class="btn btn-sm-accent btn-round-sm" data-bs-toggle="modal" data-bs-target="#modalRegistrarPartido">
+                <i class="bi bi-plus-lg me-1"></i>Registrar Partido
+            </button>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- ===== NAV PILLS ===== -->
+    <div class="nav-pills-container mb-4">
+        <button class="nav-pill active" data-target="panel-noticias" onclick="switchTab(this, 'panel-noticias')">
+            <i class="bi bi-newspaper me-2"></i>Noticias
+        </button>
+        <button class="nav-pill" data-target="panel-partidos" onclick="switchTab(this, 'panel-partidos')">
+            <i class="bi bi-trophy me-2"></i>Partidos
+        </button>
+    </div>
+
+    <!-- Mensajes de éxito/error -->
+    <?php if(isset($_GET['success']) && isset($_GET['mensaje'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <?php echo htmlspecialchars($_GET['mensaje']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php endif; ?>
+    
+    <?php if(isset($_GET['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <?php echo htmlspecialchars($_GET['error']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php endif; ?>
+
+    <?php if(isset($_GET['mensaje'])): ?>
+    <script>
+        setTimeout(function() {
+            window.location.href = "index.php?View=Noticias";
+        }, 1500);
+    </script>
+    <?php endif; ?>
+
+    <!-- ============================================================
+    PANEL: NOTICIAS (ESTILO NEWSPAPER)
+    ============================================================ -->
+    <div id="panel-noticias" class="tab-panel <?php echo $tabActiva === 'partidos' ? 'd-none' : ''; ?>">
+
+        <!-- --- Headline / Noticia Destacada --- -->
+        <?php if ($noticiaDestacada instanceof Noticia): ?>
+        <div class="headline mb-5">
+            <div class="headline-inner position-relative overflow-hidden">
+                <?php if ($noticiaDestacada->getImagen()): ?>
+                <div class="headline-img-bg">
+                    <img src="<?php echo htmlspecialchars($noticiaDestacada->getImagen()); ?>" 
+                         alt="" class="headline-img">
+                    <div class="headline-overlay"></div>
                 </div>
                 <?php endif; ?>
+                <div class="headline-content">
+                    <div class="headline-meta d-flex align-items-center gap-3 mb-3">
+                        <span class="headline-badge"><i class="bi bi-star-fill me-1"></i>Destacada</span>
+                        <span class="headline-date">
+                            <i class="bi bi-clock me-1"></i>
+                            <?php 
+                            setlocale(LC_TIME, 'es_ES.UTF-8', 'Spanish_Spain.1252');
+                            $ts = strtotime($noticiaDestacada->getFechaPublicacion());
+                            echo strftime('%d %b %Y · %H:%M', $ts);
+                            ?>
+                        </span>
+                    </div>
+                    <h1 class="headline-title"><?php echo htmlspecialchars($noticiaDestacada->getTitulo()); ?></h1>
+                    <p class="headline-excerpt"><?php echo htmlspecialchars(substr($noticiaDestacada->getContenido(), 0, 400)); ?></p>
+                    <div class="d-flex gap-2 flex-wrap mt-3">
+                        <button class="btn btn-headline-read" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalVerNoticia<?php echo $noticiaDestacada->getId(); ?>">
+                            Leer artículo <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
+                        <?php if($es_admin || $es_secretaria): ?>
+                        <button class="btn btn-headline-edit" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalEditarNoticia<?php echo $noticiaDestacada->getId(); ?>">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-headline-delete btn-eliminar" 
+                                data-id="<?php echo $noticiaDestacada->getId(); ?>"
+                                data-titulo="<?php echo htmlspecialchars($noticiaDestacada->getTitulo()); ?>">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?php 
+        $noticia = $noticiaDestacada;
+        include './Public/Modals/modalVerNoticia.php'; 
+        include './Public/Modals/modalEditarNoticia.php'; 
+        ?>
+        <?php endif; ?>
+
+        <!-- --- Separador de columna --- -->
+        <div class="section-divider mb-4">
+            <span class="section-divider-label">Últimas noticias</span>
+        </div>
+
+        <!-- --- Grid de noticias --- -->
+        <div id="noticias-content">
+        <?php if (empty($noticias) && !$noticiaDestacada): ?>
+        <div class="empty-state text-center py-5">
+            <div class="empty-state-icon">
+                <i class="bi bi-newspaper"></i>
+            </div>
+            <h4 class="fw-bold mt-3 mb-1">Sin noticias aún</h4>
+            <p class="text-muted mb-0">No hay noticias publicadas. Sé el primero en compartir una.</p>
+        </div>
+        <?php elseif (!empty($noticias)): ?>
+        <div class="row g-4">
+            <?php foreach ($noticias as $noticia): ?>
+            <?php if ($noticia instanceof Noticia): ?>
+            <div class="col-lg-3 col-md-6">
+                <div class="news-col-card h-100 d-flex flex-column">
+                    <?php if ($noticia->getImagen()): ?>
+                    <div class="news-col-img-wrap">
+                        <img src="<?php echo htmlspecialchars($noticia->getImagen()); ?>" 
+                             class="news-col-img" 
+                             alt="<?php echo htmlspecialchars($noticia->getTitulo()); ?>">
+                    </div>
+                    <?php else: ?>
+                    <div class="news-col-img-placeholder">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    <?php endif; ?>
+                    <div class="news-col-body d-flex flex-column flex-grow-1">
+                        <div class="news-col-date mb-2">
+                            <?php echo date('d/m/Y', strtotime($noticia->getFechaPublicacion())); ?>
+                        </div>
+                        <h6 class="news-col-title"><?php echo htmlspecialchars($noticia->getTitulo()); ?></h6>
+                        <p class="news-col-excerpt flex-grow-1"><?php echo htmlspecialchars(substr($noticia->getContenido(), 0, 110)); ?>…</p>
+                        <div class="news-col-actions mt-auto">
+                            <button class="news-col-read-btn" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#modalVerNoticia<?php echo $noticia->getId(); ?>">
+                                Leer más <i class="bi bi-arrow-right ms-1"></i>
+                            </button>
+                            <?php if($es_admin || $es_secretaria): ?>
+                            <div class="news-col-admin mt-2 d-flex gap-1">
+                                <button class="btn-admin-sm btn-admin-edit" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modalEditarNoticia<?php echo $noticia->getId(); ?>">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn-admin-sm btn-admin-delete btn-eliminar" 
+                                        data-id="<?php echo $noticia->getId(); ?>"
+                                        data-titulo="<?php echo htmlspecialchars($noticia->getTitulo()); ?>">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Noticia 1 - Destacada -->
-                <div class="col-12">
-                    <div class="noticia-horizontal-card p-4 position-relative overflow-hidden">
-                        <!-- Badge de destacada -->
-                        <span class="badge bg-danger position-absolute top-0 end-0 m-3 px-3 py-2">
-                            <i class="bi bi-star-fill me-1"></i>Destacada
+            <?php include './Public/Modals/modalVerNoticia.php'; ?>
+            <?php include './Public/Modals/modalEditarNoticia.php'; ?>
+            <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+
+        <?php if ($paginacionNoticias['total_paginas'] > 1): ?>
+        <div class="mt-4">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <?php echo ($paginaNoticias <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link ajax-page" data-type="noticias" data-page="<?php echo $paginaNoticias - 1; ?>">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <?php for ($i = 1; $i <= $paginacionNoticias['total_paginas']; $i++): ?>
+                    <li class="page-item <?php echo ($i == $paginaNoticias) ? 'active' : ''; ?>">
+                        <a class="page-link ajax-page" data-type="noticias" data-page="<?php echo $i; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?php echo ($paginaNoticias >= $paginacionNoticias['total_paginas']) ? 'disabled' : ''; ?>">
+                        <a class="page-link ajax-page" data-type="noticias" data-page="<?php echo $paginaNoticias + 1; ?>">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="text-center text-muted small">
+                Mostrando <?php echo $offsetNoticias + 1; ?>–<?php echo min($offsetNoticias + $noticiasPorPagina, $paginacionNoticias['total_registros']); ?> de <?php echo $paginacionNoticias['total_registros']; ?> noticias
+            </div>
+        </div>
+        <?php endif; ?>
+        <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    PANEL: PARTIDOS (ESTILO DASHBOARD)
+    ============================================================ -->
+    <div id="panel-partidos" class="tab-panel <?php echo $tabActiva === 'noticias' ? 'd-none' : ''; ?>">
+
+        <!-- --- Resumen rapido --- -->
+        <?php
+        $totalPartidos = count($partidos);
+        $finalizados = 0;
+        $pendientes = 0;
+        $porCargar = 0;
+        foreach ($partidos as $p) {
+            $ev = obtenerEstadoPartido($p);
+            if ($ev === 'Finalizado') $finalizados++;
+            elseif ($ev === 'Por Cargar') $porCargar++;
+            else $pendientes++;
+        }
+        ?>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+                <button class="dash-stat-card stat-total stat-filter-btn active" data-filter="todos" onclick="filtrarPartidos(this, 'todos')">
+                    <div class="dash-stat-icon"><i class="bi bi-calendar3"></i></div>
+                    <div class="dash-stat-value"><?php echo $totalPartidos; ?></div>
+                    <div class="dash-stat-label">Total partidos</div>
+                </button>
+            </div>
+            <div class="col-md-3 col-6">
+                <button class="dash-stat-card stat-pendiente stat-filter-btn" data-filter="pendiente" onclick="filtrarPartidos(this, 'pendiente')">
+                    <div class="dash-stat-icon"><i class="bi bi-calendar-event"></i></div>
+                    <div class="dash-stat-value"><?php echo $pendientes; ?></div>
+                    <div class="dash-stat-label">Pendientes</div>
+                </button>
+            </div>
+            <div class="col-md-3 col-6">
+                <button class="dash-stat-card stat-por-cargar stat-filter-btn" data-filter="por-cargar" onclick="filtrarPartidos(this, 'por-cargar')">
+                    <div class="dash-stat-icon"><i class="bi bi-pencil-square"></i></div>
+                    <div class="dash-stat-value"><?php echo $porCargar; ?></div>
+                    <div class="dash-stat-label">Por cargar</div>
+                </button>
+            </div>
+            <div class="col-md-3 col-6">
+                <button class="dash-stat-card stat-finalizado stat-filter-btn" data-filter="finalizado" onclick="filtrarPartidos(this, 'finalizado')">
+                    <div class="dash-stat-icon"><i class="bi bi-check-circle"></i></div>
+                    <div class="dash-stat-value"><?php echo $finalizados; ?></div>
+                    <div class="dash-stat-label">Finalizados</div>
+                </button>
+            </div>
+        </div>
+
+        <div id="partidos-filter-msg" class="d-none text-center text-muted py-3"></div>
+
+        <!-- --- Filtro por categoría --- -->
+        <div class="cat-filter-bar mb-3">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="cat-filter-label"><i class="bi bi-funnel me-1"></i>Categoría:</span>
+                <div class="cat-filter-pills">
+                    <button class="cat-pill active" onclick="filtrarPorCategoria(this, 'todas')">Todas</button>
+                    <?php foreach ($categorias as $cat): ?>
+                    <button class="cat-pill" onclick="filtrarPorCategoria(this, '<?php echo $cat->getId(); ?>')">
+                        <?php echo htmlspecialchars($cat->getSubCategoria()); ?>
+                    </button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+
+        <div id="partidos-content">
+        <?php if (empty($partidos)): ?>
+        <div class="empty-state text-center py-5">
+            <div class="empty-state-icon empty-state-icon-green">
+                <i class="bi bi-trophy"></i>
+            </div>
+            <h4 class="fw-bold mt-3 mb-1">Sin partidos registrados</h4>
+            <p class="text-muted mb-0">Registra el primer partido de la temporada.</p>
+        </div>
+        <?php else: ?>
+        <div class="row g-3">
+            <?php foreach ($partidos as $partido): 
+                $estadoVisual = obtenerEstadoPartido($partido);
+                $estado_clase = match($estadoVisual) {
+                    'Finalizado' => 'finalizado',
+                    'Por Cargar' => 'por-cargar',
+                    default => 'pendiente'
+                };
+                $icono_estado = match($estadoVisual) {
+                    'Finalizado' => 'bi-check-circle-fill',
+                    'Por Cargar' => 'bi-pencil-square',
+                    default => 'bi-calendar-event'
+                };
+
+                $goleadores = $repoGol->findByPartido($partido['partido_id']);
+                $tarjetas = $repoPartidoTarjeta->findByPartido($partido['partido_id']);
+                $incidencias = $repoIncidencia->findByPartido($partido['partido_id']);
+                $cambios = $repoCambio->findByPartido($partido['partido_id']);
+                
+                $fecha_obj = new DateTime($partido['fecha_partido']);
+                $dia = $fecha_obj->format('d');
+                $meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                $mes_nombre = $meses[(int)$fecha_obj->format('m') - 1];
+                $diaSemana = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][(int)$fecha_obj->format('w')];
+                
+                $modalVer = ($estadoVisual === 'Finalizado') ? 'modalVerPartidoFinalizado' : 'modalVerPartidoPendiente';
+
+                $convocados = $repoConvocado->findByPartido($partido['partido_id']);
+                $convocadoIds = $repoConvocado->findIdsByPartido($partido['partido_id']);
+                $numConvocados = count($convocados);
+
+                $catsElegibles = array_filter([
+                    (int)$partido['categoria_id'],
+                    (int)$partido['categoria_id'] - 1,
+                    (int)$partido['categoria_id'] - 2
+                ], fn($c) => $c >= 1);
+                $atletasCategoria = $repoAtleta->findByCategorias($catsElegibles, (int)$partido['categoria_id']);
+                $catAtletaIds = array_map(fn($a) => $a->getAtletaId(), $atletasCategoria);
+                $mapaCatAtletas = $repoAtleta->mapaCategorias($catAtletaIds);
+            ?>
+            <div class="col-12 partido-item" data-id="<?php echo $partido['partido_id']; ?>" data-status="<?php echo $estado_clase; ?>" data-categoria="<?php echo $partido['categoria_id']; ?>">
+                <div class="dash-match-card"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#<?php echo $modalVer . $partido['partido_id']; ?>"
+                     style="cursor: pointer;">
+                    
+                    <div class="dash-match-left">
+                        <div class="dash-match-datebox">
+                            <span class="dash-match-day"><?php echo $dia; ?></span>
+                            <span class="dash-match-month"><?php echo $mes_nombre; ?></span>
+                            <span class="dash-match-weekday"><?php echo $diaSemana; ?></span>
+                        </div>
+                        <div class="dash-match-separator"></div>
+                        <div class="dash-match-info">
+                            <div class="dash-match-cat">
+                                <?php echo htmlspecialchars($partido['categoria_nombre'] ?? 'Sin categoría'); ?>
+                            </div>
+                            <div class="dash-match-rival">
+                                vs <?php echo htmlspecialchars($partido['equipo_rival'] ?? 'Rival'); ?>
+                            </div>
+                            <div class="dash-match-meta">
+                                <span><i class="bi bi-clock me-1"></i><?php echo date('H:i', strtotime($partido['fecha_partido'])); ?></span>
+                                <span><i class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($partido['campo_nombre'] ?? 'Sin campo'); ?></span>
+                                <?php if (!empty($partido['tipo_partido']) && $partido['tipo_partido'] !== 'Amistoso'): ?>
+                                <span class="dash-match-type"><?php echo htmlspecialchars($partido['tipo_partido']); ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dash-match-right d-flex align-items-center gap-2">
+                        <span class="dash-status-pill <?php echo $estado_clase; ?>">
+                            <i class="<?php echo $icono_estado; ?> me-1"></i><?php echo $estadoVisual; ?>
                         </span>
                         
-                        <div class="row align-items-center g-4">
-                            <div class="col-md-8">
-                                <div class="d-flex align-items-center gap-2 mb-2">
-                                    <span class="badge bg-warning text-dark">📢 Anuncio</span>
-                                    <span class="text-white small">
-                                        <i class="bi bi-clock me-1"></i>Hace 2 días
-                                    </span>
-                                </div>
-                                <h4 class="fw-bold mb-2">¡Súmate al Deportivo los Castores!</h4>
-                                <p class="mb-3 text-white">
-                                    Abriremos el proceso de captación de nuevos talentos para la temporada 2026. 
-                                    Si naciste entre los años 2010 y 2016, ven a nuestras pruebas técnicas este 
-                                    sábado en la cancha principal. ¡Cupos limitados por categoría!
-                                </p>
-                                <div class="d-flex gap-3 flex-wrap">
-                                    <span class="text-white small">
-                                        <i class="bi bi-calendar me-1"></i>15 Enero 2026
-                                    </span>
-                                    <span class="text-white small">
-                                        <i class="bi bi-tag me-1"></i>Captación
-                                    </span>
-                                    <button class="btn btn-sm btn-outline-light rounded-pill px-3">
-                                        Leer más <i class="bi bi-arrow-right ms-1"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div class="noticia-imagen-wrapper">
-                                    <img src="Public/img/5.png" alt="Captación" class="img-noticia-vignette img-fluid rounded-3 shadow">
-                                    <div class="noticia-overlay">
-                                        <span class="badge bg-dark">Ver más</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Noticia 2 -->
-                <div class="col-lg-6">
-                    <div class="noticia-vertical-card p-3 h-100">
-                        <div class="d-flex align-items-start gap-3">
-                            <div class="noticia-icono">
-                                <i class="bi bi-trophy-fill text-warning display-6"></i>
-                            </div>
-                            <div>
-                                <div class="d-flex align-items-center gap-2 mb-1">
-                                    <span class="badge bg-success">🏆 Torneo</span>
-                                    <span class="text-white small">
-                                        <i class="bi bi-clock me-1"></i>Hace 5 días
-                                    </span>
-                                </div>
-                                <h5 class="fw-bold mb-1">A la gran final del Torneo de Distrito Capital</h5>
-                                <p class="mb-2 small text-white">
-                                    Nuestra categoría Sub-15 logró el pase a la final tras vencer 2-1 en un 
-                                    emocionante partido. ¡Vamos por la copa este domingo!
-                                </p>
-                                <div class="d-flex gap-2">
-                                    <span class="badge bg-info">Sub-15</span>
-                                    <span class="badge bg-secondary">Final</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Noticia 3 - Próximamente -->
-                <div class="col-lg-6">
-                    <div class="noticia-vertical-card p-3 h-100">
-                        <div class="d-flex align-items-start gap-3">
-                            <div class="noticia-icono">
-                                <i class="bi bi-calendar-event text-primary display-6"></i>
-                            </div>
-                            <div>
-                                <div class="d-flex align-items-center gap-2 mb-1">
-                                    <span class="badge bg-primary">📅 Evento</span>
-                                    <span class="text-white small">
-                                        <i class="bi bi-clock me-1"></i>Próximamente
-                                    </span>
-                                </div>
-                                <h5 class="fw-bold mb-1">Clínica Deportiva de Verano</h5>
-                                <p class="mb-2 small text-white">
-                                    Del 15 al 30 de julio, nuestros entrenadores ofrecerán clínicas especializadas 
-                                    para todas las categorías. ¡Inscripciones abiertas!
-                                </p>
-                                <div class="d-flex gap-2">
-                                    <span class="badge bg-warning text-dark">¡Plazas limitadas!</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN DE TORNEOS Y ENCUENTROS -->
-        <section>
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                <div>
-                    <h2 class="fw-bold mb-1">TORNEOS Y ENCUENTROS</h2>
-                    <p class="text-white m-0">Mantente preparado para el siguiente</p>
-                    <small class="text-white-50">
-                        Mostrando <?php echo count($partidos_pagina); ?> de <?php echo $total_partidos; ?> partidos
-                    </small>
-                </div>
-                <?php if($es_secretaria || $es_admin): ?>
-                <div>
-                    <button class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalRegistrarPartido">
-                        <i class="bi bi-plus-circle-fill me-2"></i>Registrar Partido
-                    </button>
-                </div>
-                <?php endif; ?>
-            </div>
-
-            <div class="row g-3" id="listaPartidos">
-                <?php if(count($partidos_pagina) > 0): ?>
-                    <?php foreach($partidos_pagina as $partido):
-                        $id = $partido['id'];
-                        
-                        // Determinar el estado del partido
-                        $status = $partido['status'];
-                        
-                        // Clases de estado para los colores
-                        $estado_clase = match($status) {
-                            'Ganado' => 'ganado',
-                            'Perdido' => 'perdido',
-                            'Empatado' => 'empatado',
-                            'Por Cargar' => 'por-cargar',
-                            'Cancelado' => 'cancelado',
-                            default => 'programado'
-                        };
-                        
-                        // Formatear fecha
-                        $fecha_obj = DateTime::createFromFormat('d/m/Y', $partido['fecha']);
-                        $dia = $fecha_obj ? $fecha_obj->format('d') : '';
-                        $mes_numero = $fecha_obj ? $fecha_obj->format('m') : '';
-                        
-                        // Nombre del mes
-                        $meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-                        $mes_nombre = $mes_numero ? $meses[(int)$mes_numero - 1] : '';
-                        
-                        // Determinar qué modal mostrar al hacer clic en la tarjeta
-                        $modal_principal = '';
-                        if(in_array($status, ['Ganado', 'Perdido', 'Empatado'])) {
-                            $modal_principal = 'modalVerPartidoFinalizado';
-                        } elseif($status === 'Por Cargar') {
-                            $modal_principal = 'modalVerPartidoPorCargar';
-                        } else {
-                            $modal_principal = 'modalVerPartidoPendiente';
-                        }
-                    ?>
-                    <div class="col-12 partido-item" data-id="<?php echo $id; ?>">
-                        <div class="torneo-list-card p-3 d-flex align-items-center justify-content-between flex-wrap gap-3" 
-                             data-bs-toggle="modal" 
-                             data-bs-target="#<?php echo $modal_principal . $id; ?>"
-                             style="cursor: pointer;">
-                            
-                            <!-- Información del partido -->
-                            <div class="d-flex align-items-center">
-                                <div class="badge-fecha-box me-3">
-                                    <span class="dia"><?php echo $dia; ?></span>
-                                    <span class="mes"><?php echo $mes_nombre; ?></span>
-                                </div>
-                                <div>
-                                    <h5 class="fw-bold mb-1">
-                                        <?php echo $partido['tipo'] . ' — ' . $partido['rival']; ?>
-                                    </h5>
-                                    <div class="text-white small">
-                                        <span class="me-3">
-                                            <i class="bi bi-clock me-1"></i><?php echo $partido['hora']; ?>
-                                        </span>
-                                        <span>
-                                            <i class="bi bi-geo-alt me-1"></i><?php echo $partido['estadio']; ?>
-                                        </span>
-                                        <span class="ms-3">
-                                            <i class="bi bi-tag me-1"></i><?php echo $partido['categoria']; ?>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Acciones y estado -->
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="pill-estado <?php echo $estado_clase; ?>">
-                                    <?php 
-                                    $icono_estado = match($status) {
-                                        'Ganado' => '🏆',
-                                        'Perdido' => '❌',
-                                        'Empatado' => '🤝',
-                                        'Por Cargar' => '📝',
-                                        'Cancelado' => '🚫',
-                                        default => '⏳'
-                                    };
-                                    echo $icono_estado . ' ' . $status; 
-                                    ?>
-                                </span>
-                                
-                                <!-- Botón Cargar Resultado - SOLO para ENTRENADOR y ADMIN -->
-                                <?php if(($es_entrenador || $es_admin) && $status === 'Por Cargar'): ?>
-                                    <button class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#modalCargarResultado<?php echo $id; ?>"
-                                            onclick="event.stopPropagation();">
-                                        <i class="bi bi-pencil-square me-1"></i> Cargar Resultado
-                                    </button>
-                                <?php endif; ?>
-                                
-                                <!-- Botón de editar para Secretaria/Admin -->
-                                <?php if($es_secretaria || $es_admin): ?>
-                                    <button class="btn btn-info btn-sm rounded-pill px-3 fw-bold text-dark" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#modalEditarPartido<?php echo $id; ?>"
-                                            onclick="event.stopPropagation();">
-                                        <i class="bi bi-pencil me-1"></i>
-                                    </button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- MODALES -->
-                    <?php 
-                    // Modal de Ver Partido Finalizado
-                    include './Public/Modals/modalVerPartidoFinalizado.php';
-                    
-                    // Modal de Ver Partido Por Cargar
-                    include './Public/Modals/modalVerPartidoPorCargar.php';
-                    
-                    // Modal de Ver Partido Pendiente
-                    include './Public/Modals/modalVerPartidoPendiente.php';
-                    
-                    // Modal de Cargar Resultado
-                    if($es_entrenador || $es_admin) {
-                        include './Public/Modals/modalCargarResultado.php';
-                    }
-                    
-                    // Modal de Editar
-                    if($es_secretaria || $es_admin) {
-                        include './Public/Modals/modalEditarPartido.php';
-                    }
-                    ?>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="col-12">
-                        <div class="alert alert-info text-center">
-                            <i class="bi bi-info-circle me-2"></i>
-                            No hay partidos registrados
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- PAGINADOR -->
-            <?php if($total_paginas > 1): ?>
-            <div class="mt-4">
-                <nav aria-label="Navegación de partidos">
-                    <ul class="pagination justify-content-center pagination-custom">
-                        <!-- Botón Anterior -->
-                        <li class="page-item <?php echo ($pagina_actual <= 1) ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="<?php echo $url_con_parametros; ?>pagina=<?php echo $pagina_actual - 1; ?>" aria-label="Anterior">
-                                <i class="bi bi-chevron-left"></i>
-                            </a>
-                        </li>
-                        
-                        <!-- Primera página -->
-                        <?php if($pagina_inicio > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="<?php echo $url_con_parametros; ?>pagina=1">1</a>
-                            </li>
-                            <?php if($pagina_inicio > 2): ?>
-                                <li class="page-item disabled">
-                                    <span class="page-link">...</span>
-                                </li>
-                            <?php endif; ?>
+                        <?php if(($es_entrenador || $es_admin) && $estadoVisual === 'Por Cargar'): ?>
+                        <button class="btn btn-sm-accent btn-round-sm" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalCargarResultado<?php echo $partido['partido_id']; ?>"
+                                onclick="event.stopPropagation();">
+                            <i class="bi bi-pencil-square me-1"></i>Cargar
+                        </button>
                         <?php endif; ?>
                         
-                        <!-- Páginas del rango -->
-                        <?php for($i = $pagina_inicio; $i <= $pagina_fin; $i++): ?>
-                            <li class="page-item <?php echo ($i == $pagina_actual) ? 'active' : ''; ?>">
-                                <a class="page-link" href="<?php echo $url_con_parametros; ?>pagina=<?php echo $i; ?>"><?php echo $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
-                        
-                        <!-- Última página -->
-                        <?php if($pagina_fin < $total_paginas): ?>
-                            <?php if($pagina_fin < $total_paginas - 1): ?>
-                                <li class="page-item disabled">
-                                    <span class="page-link">...</span>
-                                </li>
-                            <?php endif; ?>
-                            <li class="page-item">
-                                <a class="page-link" href="<?php echo $url_con_parametros; ?>pagina=<?php echo $total_paginas; ?>"><?php echo $total_paginas; ?></a>
-                            </li>
+                        <?php if($es_secretaria || $es_admin): ?>
+                        <button class="btn-admin-sm btn-admin-edit" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalEditarPartido<?php echo $partido['partido_id']; ?>"
+                                onclick="event.stopPropagation();">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-admin-sm btn-admin-delete" 
+                                onclick="event.stopPropagation(); if(confirm('¿Eliminar este partido?')) window.location.href='Controller/EliminarPartidoController.php?id=<?php echo $partido['partido_id']; ?>'">
+                            <i class="bi bi-trash"></i>
+                        </button>
                         <?php endif; ?>
-                        
-                        <!-- Botón Siguiente -->
-                        <li class="page-item <?php echo ($pagina_actual >= $total_paginas) ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="<?php echo $url_con_parametros; ?>pagina=<?php echo $pagina_actual + 1; ?>" aria-label="Siguiente">
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                
-                <!-- Información de paginación -->
-                <div class="text-center text-white-50 small mt-2">
-                    Página <?php echo $pagina_actual; ?> de <?php echo $total_paginas; ?> 
-                    | Mostrando <?php echo count($partidos_pagina); ?> de <?php echo $total_partidos; ?> partidos
+                    </div>
                 </div>
             </div>
-            <?php endif; ?>
-        </section>
+
+            <?php 
+            if ($estadoVisual === 'Por Cargar') {
+                $tiposTarjetas = $repoTarjeta->findAll();
+            }
+            if ($estadoVisual === 'Finalizado') {
+                include './Public/Modals/modalVerPartidoFinalizado.php';
+            } else {
+                include './Public/Modals/modalVerPartidoPendiente.php';
+            }
+            ?>
+            <?php include './Public/Modals/modalEditarPartido.php'; ?>
+            <?php include './Public/Modals/modalCargarResultado.php'; ?>
+            <?php endforeach; ?>
+        </div>
+
+        <?php if ($paginacionPartidos['total_paginas'] > 1): ?>
+        <div class="mt-4">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <?php echo ($paginaPartidos <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link ajax-page" data-type="partidos" data-page="<?php echo $paginaPartidos - 1; ?>">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <?php for ($i = 1; $i <= $paginacionPartidos['total_paginas']; $i++): ?>
+                    <li class="page-item <?php echo ($i == $paginaPartidos) ? 'active' : ''; ?>">
+                        <a class="page-link ajax-page" data-type="partidos" data-page="<?php echo $i; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?php echo ($paginaPartidos >= $paginacionPartidos['total_paginas']) ? 'disabled' : ''; ?>">
+                        <a class="page-link ajax-page" data-type="partidos" data-page="<?php echo $paginaPartidos + 1; ?>">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="text-center text-muted small">
+                Mostrando <?php echo $offsetPartidos + 1; ?>–<?php echo min($offsetPartidos + $partidosPorPagina, $paginacionPartidos['total_registros']); ?> de <?php echo $paginacionPartidos['total_registros']; ?> partidos
+            </div>
+        </div>
+        <?php endif; ?>
+        <?php endif; ?>
+        </div>
     </div>
+
 </div>
 
-<!-- Modal Registrar Partido -->
-<?php include './Public/Modals/modalRegistrarPartido.php'; ?>
-<!-- Modal Crear Noticia -->
 <?php include './Public/Modals/modalCrearNoticia.php'; ?>
-<script src="./Public/Js/Noticias.js"></script>
+<?php include './Public/Modals/modalRegistrarPartido.php'; ?>
 
+<script>
+var filtroEstado = 'todos';
+var filtroCategoria = 'todas';
 
+function switchTab(btn, panelId) {
+    document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.add('d-none');
+    });
+    document.getElementById(panelId).classList.remove('d-none');
+    var otherPanel = panelId === 'panel-noticias' ? 'panel-partidos' : 'panel-noticias';
+    document.getElementById(otherPanel).classList.add('d-none');
+    history.replaceState(null, '', '?View=Noticias&tab=' + (panelId === 'panel-noticias' ? 'noticias' : 'partidos'));
+}
 
+function aplicarFiltros() {
+    document.querySelectorAll('.partido-item').forEach(function(item) {
+        var matchEstado = (filtroEstado === 'todos') || (item.getAttribute('data-status') === filtroEstado);
+        var matchCat = (filtroCategoria === 'todas') || (item.getAttribute('data-categoria') === filtroCategoria);
+        if (matchEstado && matchCat) {
+            item.style.display = '';
+            item.style.opacity = '0';
+            requestAnimationFrame(() => {
+                item.style.opacity = '1';
+                item.style.transition = 'opacity 0.3s ease';
+            });
+        } else {
+            item.style.display = 'none';
+        }
+    });
+
+    var visible = document.querySelectorAll('.partido-item:not([style*="display: none"])').length;
+    var msg = document.getElementById('partidos-filter-msg');
+    if (visible === 0) {
+        msg.textContent = 'No hay partidos que coincidan con los filtros seleccionados.';
+        msg.classList.remove('d-none');
+    } else {
+        msg.classList.add('d-none');
+    }
+}
+
+function filtrarPartidos(btn, filtro) {
+    document.querySelectorAll('.stat-filter-btn').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    filtroEstado = filtro;
+    aplicarFiltros();
+}
+
+function filtrarPorCategoria(btn, catId) {
+    document.querySelectorAll('.cat-pill').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    filtroCategoria = catId;
+    aplicarFiltros();
+}
+
+function toggleConvocado(btn, partidoId, atletaId) {
+    var isConvocado = btn.classList.contains('convocado-active');
+    var action = isConvocado ? 'desconvocar' : 'convocar';
+
+    var fd = new FormData();
+    fd.append('action', action);
+    fd.append('partido_id', partidoId);
+    fd.append('atleta_id', atletaId);
+
+    fetch('Controller/ConvocarJugadores_controller.php', {
+        method: 'POST',
+        body: fd
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            btn.classList.toggle('convocado-active');
+            var icon = btn.querySelector('i');
+            if (action === 'convocar') {
+                icon.className = 'bi bi-check-circle-fill';
+                btn.closest('.convocado-row').classList.add('ya-convocado');
+            } else {
+                icon.className = 'bi bi-plus-circle';
+                btn.closest('.convocado-row').classList.remove('ya-convocado');
+            }
+            actualizarContadorConvocados(partidoId);
+        } else {
+            alert(data.msg);
+        }
+    })
+    .catch(() => alert('Error de conexión'));
+}
+
+function actualizarContadorConvocados(partidoId) {
+    var container = document.getElementById('convocadosContainer_' + partidoId);
+    if (!container) return;
+    var activos = container.querySelectorAll('.convocado-active').length;
+    var counter = document.getElementById('convocadoCount_' + partidoId);
+    if (counter) counter.textContent = activos;
+}
+
+var ajaxPageCache = {};
+
+function ajaxPaginate(el) {
+    var type = el.getAttribute('data-type');
+    var page = parseInt(el.getAttribute('data-page'));
+    if (page < 1 || el.closest('.disabled')) return;
+    var container = document.getElementById(type + '-content');
+    if (!container) return;
+
+    var url = 'Controller/AjaxPaginacion.php?type=' + type + '&page=' + page;
+    if (type === 'atletas') {
+        url += '&buscar=' + (el.getAttribute('data-buscar') || '');
+        url += '&categoria=' + (el.getAttribute('data-categoria') || '0');
+        url += '&estado=' + (el.getAttribute('data-estado') || 'activos');
+    }
+
+    container.style.opacity = '0.5';
+    container.style.transition = 'opacity 0.2s';
+
+    fetch(url)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                container.innerHTML = data.html;
+                container.style.opacity = '1';
+                container.querySelectorAll('.ajax-page').forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        ajaxPaginate(this);
+                    });
+                });
+                container.querySelectorAll('.btn-eliminar').forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var id = this.getAttribute('data-id');
+                        var titulo = this.getAttribute('data-titulo');
+                        if (confirm('¿Eliminar la noticia "' + titulo + '"?')) {
+                            window.location.href = 'Controller/EliminarNoticiaController.php?id=' + id;
+                        }
+                    });
+                });
+                if (typeof ajustarAlturas === 'function') ajustarAlturas();
+            }
+        })
+        .catch(function() {
+            container.style.opacity = '1';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.ajax-page').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            ajaxPaginate(this);
+        });
+    });
+    document.querySelectorAll('.btn-eliminar').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var id = this.getAttribute('data-id');
+            var titulo = this.getAttribute('data-titulo');
+            if (confirm('¿Eliminar la noticia "' + titulo + '"? Esta acción no se puede deshacer.')) {
+                window.location.href = 'Controller/EliminarNoticiaController.php?id=' + id;
+            }
+        });
+    });
+});
+</script>

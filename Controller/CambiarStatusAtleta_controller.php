@@ -7,7 +7,7 @@
 // Definir la ruta base absoluta
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
 $host = $_SERVER['HTTP_HOST'];
-$baseUrl = $protocol . $host . '/Castores2/'; // Cambia 'Castores2' por el nombre de tu proyecto
+$baseUrl = $protocol . $host . '/Castores3/';
 
 // O usar ruta relativa desde la raíz del servidor
 $root = dirname(__DIR__); // Sube un nivel desde Controller/

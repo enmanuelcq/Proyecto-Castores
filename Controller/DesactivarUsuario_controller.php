@@ -8,9 +8,18 @@ require_once $root .'/Config/Database.php';
 require_once $root .'/Model/Interfaces/IUsuarioRepository.php';
 require_once $root .'/Model/Repository/RepositoryUsuario.php';
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $id = $_POST['id'] ?? '';
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        echo '<div class="alert alert-danger py-2 small text-start" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> Token de seguridad inválido.</div>';
+        exit();
+    }
+
+    $id = limpiar_cadena($_POST['id'] ?? '');
     if (empty($id)) {
         
         $mensaje = 'ID de usuario no proporcionado.';
@@ -26,30 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $repo = new RepositoryUsuario();
     
     $resultado = $repo->deactivate($id);
-    try{
     if ($resultado) {
-        
-        $mensaje = 'Usuario desactivado correctamente.';
-            // Redirigir de vuelta al dashboard
-        echo '
-            <div class="alert alert-success py-2 small text-start" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> 
-                <strong>Listo:</strong> Usuario desactivado.
-            </div>
-        ';
-        header('Location: ../index.php?View=Gestion_usuarios&mensaje='. $mensaje. '');
+        echo '<div class="alert alert-success py-2 small text-start" role="alert"><i class="bi bi-check-circle-fill me-2"></i> <strong>Listo:</strong> Usuario desactivado.</div>';
     } else {
-        $mensaje = 'Error al desactivar el usuario.';
-        echo '
-            <div class="alert alert-danger py-2 small text-start" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> 
-                <strong>Error:</strong> El usuario no se pudo desactivar.
-            </div>
-        ';
-        header('Location: ../index.php?View=Gestion_usuarios&mensaje='. $mensaje. '');
-    }
-    }catch (Exception $e) {
-        $mensaje = 'Error en la base de datos: ' . $e->getMessage();
+        echo '<div class="alert alert-danger py-2 small text-start" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> El usuario no se pudo desactivar.</div>';
     }
 
 }

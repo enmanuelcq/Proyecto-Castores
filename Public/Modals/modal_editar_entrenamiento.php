@@ -28,10 +28,11 @@
                     </div>
                 </div>
 
-                <form id="formEditarEntrenamiento<?php echo $e['id']; ?>" method="POST">
+                <form id="formEditarEntrenamiento<?php echo $e['id']; ?>" method="POST" action="./Controller/ActualizarEntrenamiento_controller.php" class="FormularioAjax">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="id" value="<?php echo $e['id']; ?>">
-                    <input type="hidden" name="entrenador_cedula" value="26804373">
-                    <input type="hidden" name="entrenador_nombre" value="Carlos Entrenador">
+                    <input type="hidden" name="entrenador_cedula" value="<?php echo $_SESSION['usuario']['usuario_cedula'] ?? ''; ?>">
+                    <input type="hidden" name="entrenador_nombre" value="<?php echo ($_SESSION['usuario']['usuario_nombre'] ?? '') . ' ' . ($_SESSION['usuario']['usuario_apellido'] ?? ''); ?>">
                     
                     <div class="row g-3">
                         <div class="col-md-4">

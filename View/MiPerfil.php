@@ -168,7 +168,8 @@ if($usuario_rol == 'Entrenador') {
                     La cédula no puede ser modificada por razones de seguridad.
                 </p>
                 
-                <form id="formActualizarPerfil" method="POST">
+                <form id="formActualizarPerfil" method="POST" action="./Controller/ActualizarPerfil_controller.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="row g-3">
                         <!-- Cédula (solo lectura) -->
                         <div class="col-md-6">

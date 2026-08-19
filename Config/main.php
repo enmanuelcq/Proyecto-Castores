@@ -1,28 +1,21 @@
 <?php
 #Verificar Datos#
 function verificar_datos($filtro, $cadena){
-    // Escapar caracteres especiales en el filtro
-    $filtro_escapado = preg_quote($filtro, '/');
-    if(preg_match('/^' . $filtro_escapado . '$/', $cadena)){
-        return false;
-    } else {
+    if(preg_match($filtro, $cadena)){
         return true;
+    } else {
+        return false;
     }
 }
 
 #Verificar fechas
 function verificar_fecha($filtro, $fecha) {
-    // Validar parámetros
     if (empty($filtro) || !is_string($filtro) || empty($fecha)) {
         return false;
     }
-    $filtro_escapado = preg_quote($filtro, '/');
-    // 1. Primero verificar el formato con regex
-    if (preg_match('/^' . $filtro_escapado . '$/', $fecha)) {
-        // 2. Luego validar si es una fecha REAL
-        return validar_fecha_real($fecha, $filtro_escapado);
+    if (preg_match($filtro, $fecha)) {
+        return validar_fecha_real($fecha, $filtro);
     }
-    
     return false;
 }
 
@@ -81,34 +74,10 @@ function validar_fecha_real($fecha, $formato = null) {
 #Limpiar Cadenas de Texto#
 
     function limpiar_cadena($cadena){
-        $cadena = trim($cadena); // elimina espacios en blanco
-        $cadena = stripslashes($cadena); // elimina las barras en un string
-        #Eliminar inyección SQL
-        $cadena = str_ireplace("<script>","",$cadena);
-        $cadena = str_ireplace("</script>","",$cadena);
-        $cadena = str_ireplace("<script src","",$cadena);
-        $cadena = str_ireplace("<script type =","",$cadena);
-        $cadena = str_ireplace("SELECT * FROM","",$cadena);
-        $cadena = str_ireplace("DELETE FROM","",$cadena);
-        $cadena = str_ireplace("INSERT INTO","",$cadena);
-        $cadena = str_ireplace("DROP TABLE","",$cadena);
-        $cadena = str_ireplace("DROP DATABASE","",$cadena);
-        $cadena = str_ireplace("TRUNCATE TABLE","",$cadena);
-        $cadena = str_ireplace("SHOW TABLES","",$cadena);
-        $cadena = str_ireplace("SHOW DATABASES","",$cadena);
-        $cadena = str_ireplace("<?php","",$cadena);
-        $cadena = str_ireplace("?>","",$cadena);
-        $cadena = str_ireplace("<?PHP","",$cadena);
-        $cadena = str_ireplace("--","",$cadena);
-        $cadena = str_ireplace("<","",$cadena);
-        $cadena = str_ireplace("[","",$cadena);
-        $cadena = str_ireplace("]","",$cadena);
-        $cadena = str_ireplace("<?PHP","",$cadena);
-        $cadena = str_ireplace("==","",$cadena);
-        $cadena = str_ireplace(";","",$cadena);
-        $cadena = str_ireplace("::","",$cadena);
         $cadena = trim($cadena);
         $cadena = stripslashes($cadena);
+        $cadena = htmlspecialchars($cadena, ENT_QUOTES, 'UTF-8');
+        $cadena = strip_tags($cadena);
         return $cadena;
     }
 
@@ -172,3 +141,39 @@ function validar_fecha_real($fecha, $formato = null) {
         $tabla.='</nav>';
         return $tabla;
     }
+
+// ============================================================
+//  FUNCIÓN AUXILIAR
+// ============================================================
+if (!function_exists('time_elapsed')) {
+    function time_elapsed($datetime) {
+        $timestamp = strtotime($datetime);
+        $diff = time() - $timestamp;
+        
+        if ($diff < 60) return 'Hace ' . $diff . ' segundos';
+        if ($diff < 3600) return 'Hace ' . floor($diff / 60) . ' minutos';
+        if ($diff < 86400) return 'Hace ' . floor($diff / 3600) . ' horas';
+        if ($diff < 2592000) return 'Hace ' . floor($diff / 86400) . ' días';
+        if ($diff < 31536000) return 'Hace ' . floor($diff / 2592000) . ' meses';
+        return 'Hace ' . floor($diff / 31536000) . ' años';
+    }
+}
+
+function obtenerEstadoPartido($partido) {
+    $estado = $partido['estado'] ?? 'Pendiente';
+    
+    // Si ya está finalizado, mostrar Finalizado
+    if ($estado === 'Finalizado') {
+        return 'Finalizado';
+    }
+    
+    // Si la fecha es pasada y no está finalizado, mostrar "Por Cargar"
+    $fechaPartido = new DateTime($partido['fecha_partido']);
+    $hoy = new DateTime();
+    if ($fechaPartido < $hoy && $estado !== 'Finalizado') {
+        return 'Por Cargar';
+    }
+    
+    // Si es futuro o está en curso
+    return $estado;
+}

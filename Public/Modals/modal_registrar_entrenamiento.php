@@ -17,7 +17,7 @@
                         <div class="atleta-badges">
                             <span class="badge bg-info">
                                 <i class="bi bi-person-badge me-1"></i>
-                                Entrenador: 26804373
+                                Entrenador: <?php echo $_SESSION['usuario']['usuario_cedula'] ?? ''; ?>
                             </span>
                         </div>
                     </div>
@@ -29,10 +29,11 @@
                     </div>
                 </div>
 
-                <form id="formRegistrarEntrenamiento" method="POST">
+                <form id="formRegistrarEntrenamiento" method="POST" action="./Controller/RegistrarEntrenamiento_controller.php" class="FormularioAjax">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <!-- Campos ocultos -->
-                    <input type="hidden" name="entrenador_cedula" value="26804373">
-                    <input type="hidden" name="entrenador_nombre" value="Carlos Entrenador">
+                    <input type="hidden" name="entrenador_cedula" value="<?php echo $_SESSION['usuario']['usuario_cedula'] ?? ''; ?>">
+                    <input type="hidden" name="entrenador_nombre" value="<?php echo ($_SESSION['usuario']['usuario_nombre'] ?? '') . ' ' . ($_SESSION['usuario']['usuario_apellido'] ?? ''); ?>">
                     
                     <div class="row g-3">
                         <div class="col-md-4">
@@ -96,8 +97,8 @@
                             <div class="alert alert-info" style="background: rgba(13,202,240,0.08); border: 1px solid rgba(13,202,240,0.12); border-radius: 10px; padding: 10px 15px;">
                                 <i class="bi bi-info-circle-fill me-2 text-info"></i>
                                 <small class="text-white-50">
-                                    Entrenador asignado: <strong class="text-white">Carlos Entrenador</strong> 
-                                    <span class="text-white-50">(Cédula: 26804373)</span>
+                                    Entrenador asignado: <strong class="text-white"><?php echo ($_SESSION['usuario']['usuario_nombre'] ?? '') . ' ' . ($_SESSION['usuario']['usuario_apellido'] ?? ''); ?></strong> 
+                                    <span class="text-white-50">(Cédula: <?php echo $_SESSION['usuario']['usuario_cedula'] ?? ''; ?>)</span>
                                 </small>
                             </div>
                         </div>

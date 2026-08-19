@@ -4,6 +4,7 @@
 $root = dirname(__DIR__);
 require_once $root . '/Config/Database.php';
 
+
 // Repositorios necesarios
 require_once $root . '/Model/Repository/RepositoryAtleta.php';
 require_once $root . '/Model/Repository/RepositoryAtletaRepresentante.php';
@@ -49,7 +50,7 @@ $repoTipoPago = new RepositoryTipoPago();
 // ============================================================
 // 2. FILTROS
 // ============================================================
-$estado = $_GET['estado'] ?? 'activos'; // activos, inactivos, todos
+$estado = $_GET['estado'] ?? 'activos';
 $categoriaFiltro = isset($_GET['categoria']) ? (int)$_GET['categoria'] : 0;
 $busqueda = trim($_GET['buscar'] ?? '');
 
@@ -104,17 +105,40 @@ if (!empty($busqueda)) {
 }
 
 // ============================================================
-// 7. CONSTRUIR ARRAY DE DATOS
+// 7. PAGINACIÓN
+// ============================================================
+$pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$registrosPorPagina = 5;
+$offset = ($pagina - 1) * $registrosPorPagina;
+
+$totalAtletas = count($atletas);
+$totalPaginas = max(1, ceil($totalAtletas / $registrosPorPagina));
+
+if ($pagina < 1) $pagina = 1;
+if ($pagina > $totalPaginas) $pagina = $totalPaginas;
+
+$atletasPaginados = array_slice($atletas, $offset, $registrosPorPagina);
+
+// ============================================================
+// 8. CONSTRUIR ARRAY DE DATOS (solo con los paginados)
 // ============================================================
 $todos_los_atletas = [];
 
-foreach ($atletas as $atleta) {
-    // --- Representante ---
+foreach ($atletasPaginados as $atleta) {
+    // --- Representantes (todos) ---
     $relaciones = $repoAtletaRep->findByAtleta($atleta->getAtletaId());
-    $representante = null;
+    $representantes = [];
+    $representante = null; // legacy key for capsule display
     if (!empty($relaciones)) {
-        $cedulaRep = $relaciones[0]->getCedulaRepresentante();
-        $representante = $repoRepresentante->findByCedula($cedulaRep);
+        foreach ($relaciones as $rel) {
+            $rep = $repoRepresentante->findByCedula($rel->getCedulaRepresentante());
+            if ($rep) {
+                $representantes[] = ['representante' => $rep, 'parentesco' => $rel->getParentesco()];
+            }
+        }
+        if (!empty($representantes)) {
+            $representante = $representantes[0]['representante'];
+        }
     }
 
     // --- Categoría ---
@@ -152,7 +176,7 @@ foreach ($atletas as $atleta) {
     }
 
     // ============================================================
-    // 8. SOLVENCIA (CORREGIDO)
+    // SOLVENCIA
     // ============================================================
     $cuotas = $repoCuota->findByAtleta($atleta->getAtletaId());
     $mesesSolvencia = [];
@@ -160,7 +184,6 @@ foreach ($atletas as $atleta) {
     $mesActual = (int)date('m');
 
     for ($mes = 1; $mes <= 12; $mes++) {
-        // Buscar cuota para este mes/año
         $cuota = null;
         foreach ($cuotas as $c) {
             if ($c->getMes() == $mes && $c->getAnio() == $anioActual) {
@@ -172,7 +195,6 @@ foreach ($atletas as $atleta) {
         $nombreMes = ucfirst(strftime('%B', mktime(0, 0, 0, $mes, 1, $anioActual)));
         $esFuturo = ($mes > $mesActual && $anioActual == date('Y'));
 
-        // ===== INICIALIZAR VARIABLES CON VALORES POR DEFECTO =====
         $estadoCuota = 'Por Vencer';
         $monto = 0;
         $abonado = 0;
@@ -188,10 +210,8 @@ foreach ($atletas as $atleta) {
             $monto = $cuota->getMontoEstablecido();
             $saldo = $monto - $abonado;
 
-            // Determinar estado
             if ($saldo <= 0) {
                 $estadoCuota = 'Pagado';
-                // Obtener último pago asociado para mostrar detalles
                 $pagosCuota = $repoPagoCuota->findByCuota($cuota->getId());
                 $ultimoPago = !empty($pagosCuota) ? $pagosCuota[0] : null;
                 if ($ultimoPago) {
@@ -218,7 +238,6 @@ foreach ($atletas as $atleta) {
             $cuotaId = $cuota->getId();
         }
 
-        // Agregar el mes al array
         $mesesSolvencia[] = [
             'mes' => $mes,
             'nombre_mes' => $nombreMes,
@@ -229,18 +248,16 @@ foreach ($atletas as $atleta) {
             'tipo_pago' => $tipoPagoNombre,
             'referencia' => $referencia,
             'cuota_id' => $cuotaId,
-            'es_futuro' => $esFuturo,          // ← COMA AGREGADA
+            'es_futuro' => $esFuturo,
             'fecha_pago' => $fechaPago,
             'banco' => $banco,
         ];
     }
 
-    // ============================================================
-    // 9. AGREGAR ATLETA AL ARRAY PRINCIPAL
-    // ============================================================
     $todos_los_atletas[] = [
         'atleta' => $atleta,
         'representante' => $representante,
+        'representantes' => $representantes,
         'categoria_nombre' => $categoriaNombre,
         'categoria_anio' => $categoriaAnio,
         'numero_franela' => $numeroFranela,
@@ -253,3 +270,15 @@ foreach ($atletas as $atleta) {
         'solvencia' => $mesesSolvencia,
     ];
 }
+
+// ============================================================
+// 9. PASAR DATOS A LA VISTA
+// ============================================================
+$paginacion = [
+    'pagina_actual' => $pagina,
+    'total_paginas' => $totalPaginas,
+    'total_registros' => $totalAtletas,
+    'registros_por_pagina' => $registrosPorPagina,
+    'offset' => $offset,
+];
+

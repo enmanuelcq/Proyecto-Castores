@@ -36,12 +36,6 @@ require_once $root . '/Model/Repository/RepositoryConfiguracion.php';
 
 
 
-// Función para generar ID de atleta
-function generarIdAtleta() {
-    return 'atl_' . uniqid();
-}
-
-
 // ============================================
 // 1. VERIFICAR MÉTODO POST
 // ============================================
@@ -52,17 +46,57 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // ============================================
+// 1b. MANEJAR FOTO DEL ATLETA
+// ============================================
+$fotoRuta = '';
+if (!empty($_FILES['foto_atleta']['name'])) {
+    $fotoTmp = $_FILES['foto_atleta']['tmp_name'];
+    $fotoError = $_FILES['foto_atleta']['error'];
+    $fotoSize = $_FILES['foto_atleta']['size'];
+    $fotoType = $_FILES['foto_atleta']['type'];
+
+    if ($fotoError === UPLOAD_ERR_OK) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $maxSize = 2 * 1024 * 1024; // 2MB
+
+        if (!in_array($fotoType, $allowedTypes)) {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> Solo se permiten imágenes JPG, PNG o GIF.</div>';
+            exit;
+        }
+        if ($fotoSize > $maxSize) {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> La imagen no puede superar 2MB.</div>';
+            exit;
+        }
+
+        $ext = strtolower(pathinfo($_FILES['foto_atleta']['name'], PATHINFO_EXTENSION));
+        $fotoNombre = 'atleta_' . uniqid() . '.' . $ext;
+        $uploadDir = dirname(__DIR__) . '/Public/uploads/fotos_atletas/';
+
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        if (!move_uploaded_file($fotoTmp, $uploadDir . $fotoNombre)) {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> No se pudo guardar la imagen.</div>';
+            exit;
+        }
+        $fotoRuta = 'fotos_atletas/' . $fotoNombre;
+    }
+}
+
+// ============================================
 // 2. RECOGER Y SANITIZAR DATOS
 // ============================================
 
 $datos = [
-    // Representante
-    'cedula_representante' => limpiar_cadena($_POST['cedula_representante'] ?? ''),
-    'correo_representante' => limpiar_cadena($_POST['correo_representante'] ?? ''),
-    'nombres_representante' => limpiar_cadena($_POST['nombres_representante'] ?? ''),
-    'apellidos_representante' => limpiar_cadena($_POST['apellidos_representante'] ?? ''),
-    'ocupacion_representante' => limpiar_cadena($_POST['ocupacion_representante'] ?? ''),
-    'telefono_representante' => limpiar_cadena($_POST['telefono_representante'] ?? ''),
+    // Representantes (arrays)
+    'cedula_representante' => array_map('limpiar_cadena', $_POST['cedula_representante'] ?? []),
+    'correo_representante' => array_map('limpiar_cadena', $_POST['correo_representante'] ?? []),
+    'nombres_representante' => array_map('limpiar_cadena', $_POST['nombres_representante'] ?? []),
+    'apellidos_representante' => array_map('limpiar_cadena', $_POST['apellidos_representante'] ?? []),
+    'ocupacion_representante' => array_map('limpiar_cadena', $_POST['ocupacion_representante'] ?? []),
+    'telefono_representante' => array_map('limpiar_cadena', $_POST['telefono_representante'] ?? []),
+    'parentesco_representante' => array_map('limpiar_cadena', $_POST['parentesco'] ?? []),
 
     // Atleta
     'primer_nombre' => limpiar_cadena($_POST['primer_nombre'] ?? ''),
@@ -120,12 +154,35 @@ $errores = [];
 
 // --- 3.1 Validar campos obligatorios ---
 
-// Representante
-if (empty($datos['cedula_representante'])) $errores[] = "La cédula del representante es obligatoria.";
-if (empty($datos['correo_representante'])) $errores[] = "El correo del representante es obligatorio.";
-if (empty($datos['nombres_representante'])) $errores[] = "Los nombres del representante son obligatorios.";
-if (empty($datos['apellidos_representante'])) $errores[] = "Los apellidos del representante son obligatorios.";
-if (empty($datos['telefono_representante'])) $errores[] = "El teléfono del representante es obligatorio.";
+// Representantes (al menos uno con datos completos)
+if (empty($datos['cedula_representante']) || empty($datos['cedula_representante'][0])) {
+    $errores[] = "Al menos un representante con cédula es obligatorio.";
+} else {
+    $telefonoRegexRep = '/^[\d\s\-\+\(\)]{7,20}$/';
+    $correoRegexRep = '/^[^\s@]+@[^\s@]+\.[^\s@]+$/';
+    $nombreRegexRep = '/^[A-Za-záéíóúñÑ\s]+$/';
+    $cedulaRegexRep = '/^[VEJvej]{1}-?\d{5,10}$/';
+    $cedulasVistas = [];
+
+    for ($i = 0; $i < count($datos['cedula_representante']); $i++) {
+        $ced = $datos['cedula_representante'][$i];
+        $cor = $datos['correo_representante'][$i] ?? '';
+        $nom = $datos['nombres_representante'][$i] ?? '';
+        $ape = $datos['apellidos_representante'][$i] ?? '';
+        $tel = $datos['telefono_representante'][$i] ?? '';
+        $tieneDatos = !empty($ced) || !empty($cor) || !empty($nom) || !empty($ape) || !empty($tel);
+        if (!$tieneDatos) continue;
+
+        if (empty($ced)) { $errores[] = "La cédula del representante #" . ($i + 1) . " es obligatoria."; continue; }
+        if (!verificar_datos($cedulaRegexRep, $ced)) { $errores[] = "La cédula del representante #" . ($i + 1) . " no tiene formato válido (ej. V-12345678)."; }
+        if (in_array($ced, $cedulasVistas)) { $errores[] = "Hay representantes duplicados con la misma cédula: " . $ced . "."; }
+        $cedulasVistas[] = $ced;
+        if (empty($cor) || !verificar_datos($correoRegexRep, $cor)) { $errores[] = "El correo del representante #" . ($i + 1) . " no es válido."; }
+        if (empty($nom) || !verificar_datos($nombreRegexRep, $nom)) { $errores[] = "Los nombres del representante #" . ($i + 1) . " no son válidos."; }
+        if (empty($ape) || !verificar_datos($nombreRegexRep, $ape)) { $errores[] = "Los apellidos del representante #" . ($i + 1) . " no son válidos."; }
+        if (empty($tel) || !verificar_datos($telefonoRegexRep, $tel)) { $errores[] = "El teléfono del representante #" . ($i + 1) . " no es válido (ej. +58 412-1234567)."; }
+    }
+}
 
 // Atleta
 if (empty($datos['primer_nombre'])) $errores[] = "El primer nombre del atleta es obligatorio.";
@@ -153,24 +210,9 @@ if (empty($datos['grado_cursante'])) $errores[] = "El grado cursante es obligato
 
 // --- 3.2 Validar formatos con regex ---
 
-// Cédula representante (ej. V-12345678)
-if (!empty($datos['cedula_representante']) && !verificar_datos("/^[VEJvej]{1}-?\d{5,10}$/", $datos['cedula_representante'])) {
-    $errores[] = "La cédula del representante no tiene un formato válido (ej. V-12345678).";
-}
-// Correo
-if (!empty($datos['correo_representante']) && !filter_var($datos['correo_representante'], FILTER_VALIDATE_EMAIL)) {
-    $errores[] = "El correo electrónico no es válido.";
-}
-// Nombres y apellidos representante (solo letras y espacios)
-if (!empty($datos['nombres_representante']) && !verificar_datos("/^[A-Za-záéíóúñÑ\s]+$/", $datos['nombres_representante'])) {
-    $errores[] = "Los nombres del representante solo deben contener letras y espacios.";
-}
-if (!empty($datos['apellidos_representante']) && !verificar_datos("/^[A-Za-záéíóúñÑ\s]+$/", $datos['apellidos_representante'])) {
-    $errores[] = "Los apellidos del representante solo deben contener letras y espacios.";
-}
-// Teléfono
-if (!empty($datos['telefono_representante']) && !verificar_datos("/^[0-9+\-\s()]{7,15}$/", $datos['telefono_representante'])) {
-    $errores[] = "El teléfono no tiene un formato válido (ej. 0412-1234567).";
+// Cédula del atleta (opcional, formato V/E + dígitos)
+if (!empty($datos['atleta_cedula']) && !verificar_datos("/^[VEJvej]{1}-?\d{5,10}$/", $datos['atleta_cedula'])) {
+    $errores[] = "La cédula del atleta no tiene un formato válido (ej. V-12345678).";
 }
 
 // Atleta (nombres y apellidos)
@@ -197,10 +239,7 @@ if (!empty($datos['atleta_fecha'])) {
     }
 }
 
-// Cédula del atleta (opcional, pero si se envía, debe ser numérica de 5-8 dígitos)
-if (!empty($datos['atleta_cedula']) && !verificar_datos("/^[0-9]{5,8}$/", $datos['atleta_cedula'])) {
-    $errores[] = "La cédula del atleta debe tener entre 5 y 8 dígitos numéricos.";
-}
+// Cédula del atleta (ya validada arriba)
 
 // Dirección
 if (!empty($datos['atleta_direccion']) && !verificar_datos("/^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ*#,. ]{3,100}$/", $datos['atleta_direccion'])) {
@@ -307,18 +346,7 @@ $datos['nombre_hobbie'] = ucfirst(strtolower($datos['nombre_hobbie']));;
 $repoRepresentante = new RepositoryRepresentante();
 $repoAtleta = new RepositoryAtleta();
 
-// Representante: verificar si ya existe
-$representanteExistente = $repoRepresentante->findByCedula($datos['cedula_representante']);
-if ($representanteExistente) {
-    // Si existe, reutilizamos (no hay error)
-    // Pero podríamos verificar si el correo cambió y actualizar
-    if ($representanteExistente->getCorreo() !== $datos['correo_representante']) {
-        // Actualizar correo (opcional)
-        $representanteExistente->setCorreo($datos['correo_representante']);
-        $repoRepresentante->update($representanteExistente);
-    }
-    // Similar con teléfono, etc.
-} // si no existe, se creará más adelante
+// Representantes: verificar si ya existen (no es error, se reutilizan)
 
 // Atleta: verificar duplicado de cédula (si aplica)
 if (!empty($datos['atleta_cedula'])) {
@@ -382,7 +410,7 @@ try {
         $datos['atleta_cedula'] ?: '',
         $datos['pie_dominante'],
         $datos['atleta_direccion'],
-        '', // foto (vacía por ahora)
+        $fotoRuta,
         true, // status activo
         $uniformeId
     );
@@ -420,33 +448,39 @@ try {
         throw new Exception("Error al guardar la ficha de salud.");
     }
 
-    // ---- 4d. Insertar Representante (si no existe) ----
-    if (!$representanteExistente) {
-        $representante = new Representante(
-            $datos['cedula_representante'],
-            $datos['nombres_representante'],
-            $datos['apellidos_representante'],
-            $datos['correo_representante'],
-            $datos['ocupacion_representante'] ?: '',
-            $datos['telefono_representante']
-        );
-        if (!$repoRepresentante->create($representante)) {
-            throw new Exception("Error al guardar el representante.");
-        }
-    }
-
-    // ---- 4e. Relación Atleta-Representante ----
+    // ---- 4d. Insertar Representantes (múltiples) ----
     $repoAtletaRepresentante = new RepositoryAtletaRepresentante();
-    $parentesco = $_POST['parentesco'] ?? 'Representante legal';
-    $relacionAR = new AtletaRepresentante(
-        null,
-        $parentesco,
-        date('Y-m-d'),
-        $atletaId,
-        $datos['cedula_representante']
-    );
-    if (!$repoAtletaRepresentante->create($relacionAR)) {
-        throw new Exception("Error al asociar el atleta con el representante.");
+    for ($i = 0; $i < count($datos['cedula_representante']); $i++) {
+        $ced = $datos['cedula_representante'][$i];
+        if (empty($ced)) continue;
+
+        $repExistente = $repoRepresentante->findByCedula($ced);
+        if (!$repExistente) {
+            $representante = new Representante(
+                $ced,
+                $datos['nombres_representante'][$i] ?? '',
+                $datos['apellidos_representante'][$i] ?? '',
+                $datos['correo_representante'][$i] ?? '',
+                $datos['ocupacion_representante'][$i] ?? '',
+                $datos['telefono_representante'][$i] ?? ''
+            );
+            if (!$repoRepresentante->create($representante)) {
+                throw new Exception("Error al guardar el representante #" . ($i + 1) . ".");
+            }
+        }
+
+        // ---- 4e. Relación Atleta-Representante ----
+        $parentesco = $datos['parentesco_representante'][$i] ?? 'Representante legal';
+        $relacionAR = new AtletaRepresentante(
+            null,
+            $parentesco,
+            date('Y-m-d'),
+            $atletaId,
+            $ced
+        );
+        if (!$repoAtletaRepresentante->create($relacionAR)) {
+            throw new Exception("Error al asociar el atleta con el representante #" . ($i + 1) . ".");
+        }
     }
 
     // ---- 4f. Categoría ----
@@ -580,15 +614,43 @@ try {
         setTimeout(function(){
             var form = document.getElementById("athleteRegisterForm");
             if (form) form.reset();
-            // Resetear campos del seguro
-            var seguroFields = document.querySelectorAll(".seguro-field input, .seguro-field select");
+            var seguroFields = document.querySelectorAll(".seguro-field input");
             seguroFields.forEach(function(field) {
                 field.value = "";
                 field.disabled = true;
             });
-            // También resetear el select de póliza a su opción por defecto
             var polizaSelect = document.getElementById("polizaSeguro");
-            if (polizaSelect) polizaSelect.value = "";
+            if (polizaSelect) { polizaSelect.value = ""; window.toggleSeguroFields(); }
+            // Reset wizard to step 1
+            var panels = document.querySelectorAll(".wizard-panel");
+            var steps = document.querySelectorAll(".wizard-step");
+            panels.forEach(function(p) { p.classList.remove("active"); });
+            steps.forEach(function(s) {
+                s.classList.remove("active", "completed");
+                var sn = parseInt(s.dataset.step);
+                if (sn === 1) s.classList.add("active");
+            });
+            var firstPanel = document.querySelector("[data-panel=\"1\"]");
+            if (firstPanel) firstPanel.classList.add("active");
+            var btnPrev = document.getElementById("btn-wizard-prev");
+            var btnNext = document.getElementById("btn-wizard-next");
+            var btnSubmit = document.getElementById("btn-wizard-submit");
+            if (btnPrev) btnPrev.classList.add("d-none");
+            if (btnNext) btnNext.classList.remove("d-none");
+            if (btnSubmit) btnSubmit.classList.add("d-none");
+            // Reset photo preview
+            var photoPreview = document.getElementById("photoPreview");
+            var photoPlaceholder = document.getElementById("photoPlaceholder");
+            if (photoPreview) photoPreview.classList.add("d-none");
+            if (photoPlaceholder) photoPlaceholder.classList.remove("d-none");
+            // Remove field validation states
+            document.querySelectorAll(".is-valid, .is-invalid").forEach(function(el) {
+                el.classList.remove("is-valid", "is-invalid");
+            });
+            document.querySelectorAll(".field-feedback").forEach(function(el) {
+                el.textContent = "";
+                el.className = "field-feedback";
+            });
         }, 1500);
     </script>';
 

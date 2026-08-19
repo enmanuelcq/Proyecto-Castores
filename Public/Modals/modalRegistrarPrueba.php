@@ -10,9 +10,10 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="formRegistrarPrueba" method="POST" action="">
+                <form id="formRegistrarPrueba" method="POST" action="./Controller/RegistrarPrueba_controller.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="atleta_cedula" id="registroAtletaCedula" value="">
-                    <input type="hidden" name="usuario_cedula" value="26804373">
+                    <input type="hidden" name="usuario_cedula" value="<?php echo $_SESSION['usuario']['usuario_cedula'] ?? ''; ?>">
                     
                     <!-- Selección del tipo de prueba -->
                     <div class="row g-3">

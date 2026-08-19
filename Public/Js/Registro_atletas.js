@@ -1,540 +1,427 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ============================================
-    // 1. OBTENER REFERENCIAS DEL FORMULARIO
-    // ============================================
     const athleteForm = document.getElementById('athleteRegisterForm');
     const formRest = document.querySelector('.form-rest');
-    const cedula_representante = document.getElementById('cedula_representante');
-    const correo_representante = document.getElementById('correo_representante');
-    const nombres_representante = document.getElementById('nombres_representante');
-    const apellidos_representante = document.getElementById('apellidos_representante');
-    const ocupacion_representante = document.getElementById('ocupacion_representante');
-    const telefono_representante = document.getElementById('telefono_representante');
-
-    // Datos del atleta
-    const primer_nombre = document.getElementById('primer_nombre');
-    const segundo_nombre = document.getElementById('segundo_nombre');
-    const primer_apellido = document.getElementById('primer_apellido');
-    const segundo_apellido = document.getElementById('segundo_apellido');
-    const atleta_fecha = document.getElementById('atleta_fecha');
-    const atleta_sexo = document.getElementById('atleta_sexo');
-    const atleta_cedula = document.getElementById('atleta_cedula');
-    const pie_dominante = document.getElementById('pie_dominante');
-    const atleta_direccion = document.getElementById('atleta_direccion');
-
-    // Categoría
-    const categoria_atleta = document.getElementById('categoria_atleta');
-    const categoria_anio = document.getElementById('categoria_anio');
-
-    // Uniforme
-    const talla_franela = document.getElementById('talla_franela');
-    const numero_franela = document.getElementById('numero_franela');
-    const talla_short = document.getElementById('talla_short');
-    const talla_zapatos = document.getElementById('talla_zapatos');
-
-    // Ficha de Salud
-    const tipo_sangre = document.getElementById('tipo_sangre');
-    const alergias = document.getElementById('alergias');
-    const padecimiento_cronico = document.getElementById('padecimiento_cronico');
-    const medicamento_restriccion = document.getElementById('medicamento_restriccion');
-    const lesiones_previas = document.getElementById('lesiones_previas');
-    const poliza_seguro = document.getElementById('polizaSeguro');
-
-    // Campos del seguro (solo si aplica)
-    const vigencia_seguro = document.getElementById('vigencia_seguro');
-    const empresa_aseguradora = document.getElementById('empresa_aseguradora');
-    const cobertura_contratada = document.getElementById('cobertura_contratada');
-    const numero_poliza = document.getElementById('numero_poliza');
-    const medico_tratante = document.getElementById('medico_tratante');
-    const telefono_medico = document.getElementById('telefono_medico');
-
-    // Información Académica
-    const nombre_colegio = document.getElementById('nombre_colegio');
-    const direccion_colegio = document.getElementById('direccion_colegio');
-    const grado_cursante = document.getElementById('grado_cursante');
-
-    // Actividades Extra / Hobbie
-    const nombre_hobbie = document.getElementById('nombre_hobbie');
-    const horario_hobbie = document.getElementById('horario_hobbie');
-
-
-    // Si no existe el formulario o el contenedor de mensajes, no continuamos
-    if (!athleteForm || !formRest) {
-        console.warn('Formulario o contenedor de mensajes no encontrado');
-        return;
-    }
-
+    if (!athleteForm || !formRest) return;
 
     // ============================================
-    // 3. FUNCIÓN PARA VALIDAR FECHAS
+    // REGEX
+    // ============================================
+    const regex = {
+        cedulaRep: /^[VEJvej]{1}-?\d{5,10}$/,
+        cedulaAtleta: /^[VEJvej]{1}-?\d{5,10}$/,
+        correo: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        nombre: /^[A-Za-záéíóúñÑ\s]+$/,
+        telefono: /^[\d\s\-\+\(\)]{7,20}$/,
+        texto: /^[A-Za-záéíóúñÑ\s,\.\-]+$/,
+        nombreAtleta: /^[A-Za-záéíóúÁÉÍÓÚñÑ ]{3,40}$/,
+        direccion: /^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ ,.#\-]{3,100}$/,
+        talla: /^[A-Za-z0-9\s]+$/,
+        tallaZapatos: /^[0-9]+(?:\.[0-9]+)?$/,
+        polizaNumero: /^[A-Za-z0-9\-]+$/,
+        hobbie: /^[A-Za-záéíóúñÑ\s,\.\-]+$/,
+        horario: /^[A-Za-záéíóúñÑ0-9\s,.:apmAPM\-]+$/,
+        colegio: /^[A-Za-záéíóúñÑ\s,.'\-]+$/,
+        direccionColegio: /^[A-Za-záéíóúñÑ0-9\s,.°#\-]+$/,
+        grado: /^[A-Za-záéíóúñÑ0-9\s°]+$/,
+        numeroFranela: /^[0-9]{1,2}$/,
+        alergia: /^[A-Za-záéíóúñÑ\s,\/\-]+$/
+    };
+
+    const pv = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+    };
+
+    // ============================================
+    // FIELD FEEDBACK HELPERS
+    // ============================================
+    function setFieldValid(input) {
+        const fb = input.parentElement.querySelector('.field-feedback');
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+        if (fb) { fb.textContent = ''; fb.className = 'field-feedback'; }
+    }
+
+    function setFieldInvalid(input, msg) {
+        const fb = input.parentElement.querySelector('.field-feedback');
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+        if (fb) { fb.textContent = msg; fb.className = 'field-feedback text-danger small mt-1'; }
+    }
+
+    function clearFieldState(input) {
+        const fb = input.parentElement.querySelector('.field-feedback');
+        input.classList.remove('is-valid', 'is-invalid');
+        if (fb) { fb.textContent = ''; fb.className = 'field-feedback'; }
+    }
+
+    function mostrarAlerta(mensaje) {
+        formRest.innerHTML = '<div class="alert alert-danger py-2 small text-start" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> ' + mensaje + '</div>';
+        formRest.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // ============================================
+    // WIZARD NAVIGATION
+    // ============================================
+    let currentStep = 1;
+    const totalSteps = 5;
+    const panels = document.querySelectorAll('.wizard-panel');
+    const steps = document.querySelectorAll('.wizard-step');
+    const btnPrev = document.getElementById('btn-wizard-prev');
+    const btnNext = document.getElementById('btn-wizard-next');
+    const btnSubmit = document.getElementById('btn-wizard-submit');
+
+    function goToStep(step) {
+        if (step < 1 || step > totalSteps) return;
+        panels.forEach(p => p.classList.remove('active'));
+        steps.forEach(s => {
+            s.classList.remove('active', 'completed');
+            const sn = parseInt(s.dataset.step);
+            if (sn < step) s.classList.add('completed');
+            if (sn === step) s.classList.add('active');
+        });
+        document.querySelector('[data-panel="' + step + '"]').classList.add('active');
+        currentStep = step;
+        btnPrev.classList.toggle('d-none', step === 1);
+        btnNext.classList.toggle('d-none', step === totalSteps);
+        btnSubmit.classList.toggle('d-none', step !== totalSteps);
+        formRest.innerHTML = '';
+    }
+
+    btnNext.addEventListener('click', () => {
+        if (validateStep(currentStep)) {
+            goToStep(currentStep + 1);
+        }
+    });
+
+    btnPrev.addEventListener('click', () => {
+        goToStep(currentStep - 1);
+    });
+
+    // ============================================
+    // STEP VALIDATIONS
+    // ============================================
+    function validateStep(step) {
+        switch (step) {
+            case 1: return validateRepresentantes();
+            case 2: return validateAtleta();
+            case 3: return validateCategoriaUniforme();
+            case 4: return validateSalud();
+            case 5: return validateAcademico();
+        }
+        return true;
+    }
+
+    function validateRepresentantes() {
+        const blocks = document.querySelectorAll('.representante-block');
+        const cedulas = new Set();
+        for (let i = 0; i < blocks.length; i++) {
+            const b = blocks[i];
+            const ced = (b.querySelector('[name="cedula_representante[]"]')?.value || '').trim();
+            const cor = (b.querySelector('[name="correo_representante[]"]')?.value || '').trim();
+            const nom = (b.querySelector('[name="nombres_representante[]"]')?.value || '').trim();
+            const ape = (b.querySelector('[name="apellidos_representante[]"]')?.value || '').trim();
+            const tel = (b.querySelector('[name="telefono_representante[]"]')?.value || '').trim();
+            const tieneDatos = ced || cor || nom || ape || tel;
+            const esPrimero = (i === 0);
+            if (!tieneDatos && !esPrimero) continue;
+
+            if (!ced) { mostrarAlerta('La cédula del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' es obligatoria'); return false; }
+            if (!regex.cedulaRep.test(ced)) { mostrarAlerta('La cédula del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' no es válida (ej. V12345678)'); return false; }
+            if (cedulas.has(ced)) { mostrarAlerta('No puede haber dos representantes con la misma cédula'); return false; }
+            cedulas.add(ced);
+            if (!cor) { mostrarAlerta('El correo del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' es obligatorio'); return false; }
+            if (!regex.correo.test(cor)) { mostrarAlerta('El correo del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' no es válido'); return false; }
+            if (!nom) { mostrarAlerta('Los nombres del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' son obligatorios'); return false; }
+            if (!regex.nombre.test(nom)) { mostrarAlerta('Los nombres del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' solo deben contener letras y espacios'); return false; }
+            if (!ape) { mostrarAlerta('Los apellidos del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' son obligatorios'); return false; }
+            if (!regex.nombre.test(ape)) { mostrarAlerta('Los apellidos del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' solo deben contener letras y espacios'); return false; }
+            if (!tel) { mostrarAlerta('El teléfono del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' es obligatorio'); return false; }
+            if (!regex.telefono.test(tel)) { mostrarAlerta('El teléfono del representante' + (esPrimero ? '' : ' #' + (i + 1)) + ' no es válido (ej. +58 412-1234567)'); return false; }
+        }
+        return true;
+    }
+
+    function validateAtleta() {
+        if (!pv('primer_nombre')) { mostrarAlerta('El primer nombre del atleta es obligatorio'); return false; }
+        if (!regex.nombreAtleta.test(pv('primer_nombre'))) { mostrarAlerta('El primer nombre debe tener entre 3 y 40 caracteres (solo letras)'); return false; }
+        if (pv('segundo_nombre') && !regex.nombreAtleta.test(pv('segundo_nombre'))) { mostrarAlerta('El segundo nombre debe tener entre 3 y 40 caracteres (solo letras)'); return false; }
+        if (!pv('primer_apellido')) { mostrarAlerta('El primer apellido del atleta es obligatorio'); return false; }
+        if (!regex.nombreAtleta.test(pv('primer_apellido'))) { mostrarAlerta('El primer apellido debe tener entre 3 y 40 caracteres (solo letras)'); return false; }
+        if (pv('segundo_apellido') && !regex.nombreAtleta.test(pv('segundo_apellido'))) { mostrarAlerta('El segundo apellido debe tener entre 3 y 40 caracteres (solo letras)'); return false; }
+        if (!pv('atleta_fecha')) { mostrarAlerta('La fecha de nacimiento del atleta es obligatoria'); return false; }
+        if (!validarFecha(pv('atleta_fecha'))) { mostrarAlerta('La fecha debe estar entre el 01/01/2000 y el 31/12/2026'); return false; }
+        if (!pv('atleta_sexo')) { mostrarAlerta('Debe seleccionar el sexo del atleta'); return false; }
+        if (pv('atleta_cedula') && !regex.cedulaAtleta.test(pv('atleta_cedula'))) { mostrarAlerta('La cédula del atleta no es válida (ej. V12345678)'); return false; }
+        if (!pv('pie_dominante')) { mostrarAlerta('Debe seleccionar el pie dominante'); return false; }
+        if (!pv('atleta_direccion')) { mostrarAlerta('La dirección del atleta es obligatoria'); return false; }
+        if (!regex.direccion.test(pv('atleta_direccion'))) { mostrarAlerta('La dirección debe tener entre 3 y 100 caracteres'); return false; }
+        return true;
+    }
+
+    function validateCategoriaUniforme() {
+        if (!pv('categoria_atleta')) { mostrarAlerta('Debe seleccionar una categoría'); return false; }
+        if (!pv('categoria_anio')) { mostrarAlerta('Debe seleccionar el año de la categoría'); return false; }
+        if (!pv('talla_franela')) { mostrarAlerta('La talla de franela es obligatoria'); return false; }
+        if (!regex.talla.test(pv('talla_franela'))) { mostrarAlerta('La talla de franela no es válida'); return false; }
+        if (pv('numero_franela') && !regex.numeroFranela.test(pv('numero_franela'))) { mostrarAlerta('El número de franela debe ser entre 1 y 99'); return false; }
+        if (!pv('talla_short')) { mostrarAlerta('La talla de short es obligatoria'); return false; }
+        if (!regex.talla.test(pv('talla_short'))) { mostrarAlerta('La talla de short no es válida'); return false; }
+        if (!pv('talla_zapatos')) { mostrarAlerta('La talla de zapatos es obligatoria'); return false; }
+        if (!regex.tallaZapatos.test(pv('talla_zapatos'))) { mostrarAlerta('La talla de zapatos no es válida (ej. 39, 40, 41.5)'); return false; }
+        return true;
+    }
+
+    function validateSalud() {
+        if (!pv('tipo_sangre')) { mostrarAlerta('El tipo de sangre es obligatorio'); return false; }
+        if (pv('alergias') && !regex.alergia.test(pv('alergias'))) { mostrarAlerta('Las alergias contienen caracteres no válidos'); return false; }
+        if (pv('padecimiento_cronico') && !regex.alergia.test(pv('padecimiento_cronico'))) { mostrarAlerta('El padecimiento contiene caracteres no válidos'); return false; }
+        if (pv('medicamento_restriccion') && !regex.alergia.test(pv('medicamento_restriccion'))) { mostrarAlerta('Las restricciones contienen caracteres no válidos'); return false; }
+        if (pv('lesiones_previas') && !regex.alergia.test(pv('lesiones_previas'))) { mostrarAlerta('Las lesiones contienen caracteres no válidos'); return false; }
+        if (pv('polizaSeguro') === 'posee') {
+            if (!pv('vigencia_seguro')) { mostrarAlerta('La vigencia del seguro es obligatoria cuando posee póliza'); return false; }
+            if (!pv('empresa_aseguradora')) { mostrarAlerta('La empresa aseguradora es obligatoria cuando posee póliza'); return false; }
+            if (!regex.texto.test(pv('empresa_aseguradora'))) { mostrarAlerta('La empresa aseguradora contiene caracteres no válidos'); return false; }
+            if (!pv('cobertura_contratada')) { mostrarAlerta('La cobertura contratada es obligatoria cuando posee póliza'); return false; }
+            if (!regex.texto.test(pv('cobertura_contratada'))) { mostrarAlerta('La cobertura contiene caracteres no válidos'); return false; }
+            if (!pv('numero_poliza')) { mostrarAlerta('El número de póliza es obligatorio cuando posee seguro'); return false; }
+            if (!regex.polizaNumero.test(pv('numero_poliza'))) { mostrarAlerta('El número de póliza solo admite letras, números y guiones'); return false; }
+        }
+        return true;
+    }
+
+    function validateAcademico() {
+        if (!pv('nombre_colegio')) { mostrarAlerta('El nombre del colegio es obligatorio'); return false; }
+        if (!regex.colegio.test(pv('nombre_colegio'))) { mostrarAlerta('El nombre del colegio contiene caracteres no válidos'); return false; }
+        if (pv('direccion_colegio') && !regex.direccionColegio.test(pv('direccion_colegio'))) { mostrarAlerta('La dirección del colegio contiene caracteres no válidos'); return false; }
+        if (!pv('grado_cursante')) { mostrarAlerta('El grado/año cursante es obligatorio'); return false; }
+        if (!regex.grado.test(pv('grado_cursante'))) { mostrarAlerta('El grado/año no es válido (ej. 4to Grado, 5° Año)'); return false; }
+        if (pv('nombre_hobbie') && !regex.hobbie.test(pv('nombre_hobbie'))) { mostrarAlerta('El nombre del hobbie contiene caracteres no válidos'); return false; }
+        if (pv('horario_hobbie') && !regex.horario.test(pv('horario_hobbie'))) { mostrarAlerta('El horario del hobbie no es válido'); return false; }
+        return true;
+    }
+
+    // ============================================
+    // PER-FIELD BLUR VALIDATION
+    // ============================================
+    const fieldRules = [
+        { id: 'primer_nombre', regex: regex.nombreAtleta, msg: 'Solo letras, 3-40 caracteres', required: true },
+        { id: 'segundo_nombre', regex: regex.nombreAtleta, msg: 'Solo letras, 3-40 caracteres', required: false },
+        { id: 'primer_apellido', regex: regex.nombreAtleta, msg: 'Solo letras, 3-40 caracteres', required: true },
+        { id: 'segundo_apellido', regex: regex.nombreAtleta, msg: 'Solo letras, 3-40 caracteres', required: false },
+        { id: 'atleta_cedula', regex: regex.cedulaAtleta, msg: 'Formato: V12345678', required: false },
+        { id: 'atleta_direccion', regex: regex.direccion, msg: 'Solo letras, números, 3-100 caracteres', required: true },
+        { id: 'talla_franela', regex: regex.talla, msg: 'Solo letras y números', required: true },
+        { id: 'numero_franela', regex: regex.numeroFranela, msg: 'Entre 1 y 99', required: false },
+        { id: 'talla_short', regex: regex.talla, msg: 'Solo letras y números', required: true },
+        { id: 'talla_zapatos', regex: regex.tallaZapatos, msg: 'Solo números (ej. 39, 41.5)', required: true },
+        { id: 'alergias', regex: regex.alergia, msg: 'Solo letras, espacios, comas y guiones', required: false },
+        { id: 'padecimiento_cronico', regex: regex.alergia, msg: 'Solo letras, espacios, comas y guiones', required: false },
+        { id: 'medicamento_restriccion', regex: regex.alergia, msg: 'Solo letras, espacios, comas y guiones', required: false },
+        { id: 'lesiones_previas', regex: regex.alergia, msg: 'Solo letras, espacios, comas y guiones', required: false },
+        { id: 'empresa_aseguradora', regex: regex.texto, msg: 'Solo letras, espacios y puntos', required: false },
+        { id: 'cobertura_contratada', regex: regex.texto, msg: 'Solo letras, espacios y puntos', required: false },
+        { id: 'numero_poliza', regex: regex.polizaNumero, msg: 'Solo letras, números y guiones', required: false },
+        { id: 'medico_tratante', regex: /^[A-Za-záéíóúñÑ\s.]+$/, msg: 'Solo letras y espacios', required: false },
+        { id: 'telefono_medico', regex: regex.telefono, msg: 'Formato: +58 412-1234567', required: false },
+        { id: 'nombre_colegio', regex: regex.colegio, msg: 'Solo letras, espacios y puntos', required: true },
+        { id: 'direccion_colegio', regex: regex.direccionColegio, msg: 'Solo letras, números y símbolos', required: false },
+        { id: 'grado_cursante', regex: regex.grado, msg: 'Ej. 4to Grado', required: true },
+        { id: 'nombre_hobbie', regex: regex.hobbie, msg: 'Solo letras, espacios y puntos', required: false },
+        { id: 'horario_hobbie', regex: regex.horario, msg: 'Formato no válido', required: false }
+    ];
+
+    athleteForm.addEventListener('focusout', function(e) {
+        const input = e.target;
+        if (!input.id) return;
+        const rule = fieldRules.find(r => r.id === input.id);
+        if (!rule) return;
+        const val = input.value.trim();
+
+        if (!val) {
+            if (rule.required) {
+                setFieldInvalid(input, 'Este campo es obligatorio');
+            } else {
+                clearFieldState(input);
+            }
+            return;
+        }
+        if (!rule.regex.test(val)) {
+            setFieldInvalid(input, rule.msg);
+        } else {
+            setFieldValid(input);
+        }
+    });
+
+    // Representante fields (delegated)
+    athleteForm.addEventListener('focusout', function(e) {
+        const input = e.target;
+        const name = input.getAttribute('name');
+        if (!name) return;
+
+        if (name === 'cedula_representante[]') {
+            const val = input.value.trim();
+            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
+            if (!regex.cedulaRep.test(val)) { setFieldInvalid(input, 'Formato: V12345678'); return; }
+            setFieldValid(input);
+        } else if (name === 'correo_representante[]') {
+            const val = input.value.trim();
+            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
+            if (!regex.correo.test(val)) { setFieldInvalid(input, 'Correo no válido'); return; }
+            setFieldValid(input);
+        } else if (name === 'nombres_representante[]') {
+            const val = input.value.trim();
+            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
+            if (!regex.nombre.test(val)) { setFieldInvalid(input, 'Solo letras y espacios'); return; }
+            setFieldValid(input);
+        } else if (name === 'apellidos_representante[]') {
+            const val = input.value.trim();
+            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
+            if (!regex.nombre.test(val)) { setFieldInvalid(input, 'Solo letras y espacios'); return; }
+            setFieldValid(input);
+        } else if (name === 'telefono_representante[]') {
+            const val = input.value.trim();
+            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
+            if (!regex.telefono.test(val)) { setFieldInvalid(input, 'Formato: +58 412-1234567'); return; }
+            setFieldValid(input);
+        }
+    });
+
+    // ============================================
+    // AJAX CÉDULA REPRESENTANTE
+    // ============================================
+    document.addEventListener('focusout', function(e) {
+        if (!e.target.classList.contains('cedula-rep-input')) return;
+        const input = e.target;
+        const cedula = input.value.trim();
+        const infoEl = input.parentElement.querySelector('.cedula-rep-info');
+        if (!cedula || !regex.cedulaRep.test(cedula)) {
+            if (infoEl) infoEl.classList.add('d-none');
+            return;
+        }
+        const fd = new FormData();
+        fd.append('cedula', cedula);
+        fetch('./Controller/VerificarCedulaRepresentante.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                if (data.existe && infoEl) {
+                    infoEl.classList.remove('d-none', 'text-info');
+                    infoEl.classList.add('text-warning');
+                    infoEl.innerHTML = '<i class="bi bi-info-circle"></i> ' + data.nombre + ' ' + data.apellido + ' ya está registrado (' + data.cantidad_atletas + ' atleta(s)). Se reutilizarán sus datos.';
+                } else if (infoEl) {
+                    infoEl.classList.add('d-none');
+                }
+            })
+            .catch(() => { if (infoEl) infoEl.classList.add('d-none'); });
+    }, true);
+
+    // ============================================
+    // ADD/REMOVE REPRESENTANTES
+    // ============================================
+    let repIndex = 0;
+
+    document.getElementById('btn-add-representante')?.addEventListener('click', function() {
+        repIndex++;
+        const container = document.getElementById('representantes-container');
+        const firstBlock = container.querySelector('.representante-block');
+        const newBlock = firstBlock.cloneNode(true);
+        newBlock.dataset.index = repIndex;
+        newBlock.querySelectorAll('input, select').forEach(el => { el.value = ''; clearFieldState(el); });
+        const infoEl = newBlock.querySelector('.cedula-rep-info');
+        if (infoEl) infoEl.classList.add('d-none');
+
+        const removeBtn = document.createElement('div');
+        removeBtn.className = 'text-end mb-2';
+        removeBtn.innerHTML = '<button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 btn-remove-representante"><i class="bi bi-trash"></i> Quitar</button>';
+        newBlock.prepend(removeBtn);
+        container.appendChild(newBlock);
+    });
+
+    document.getElementById('representantes-container')?.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-remove-representante');
+        if (btn) btn.closest('.representante-block').remove();
+    });
+
+    // ============================================
+    // PHOTO UPLOAD PREVIEW
+    // ============================================
+    const photoArea = document.getElementById('photoUploadArea');
+    const photoInput = document.getElementById('foto_atleta');
+    const photoPreview = document.getElementById('photoPreview');
+    const photoPlaceholder = document.getElementById('photoPlaceholder');
+
+    if (photoArea && photoInput) {
+        photoArea.addEventListener('click', () => photoInput.click());
+        photoInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+            if (file.size > 2 * 1024 * 1024) {
+                mostrarAlerta('La imagen no puede superar 2MB');
+                this.value = '';
+                return;
+            }
+            if (!file.type.startsWith('image/')) {
+                mostrarAlerta('Solo se permiten archivos de imagen (JPG, PNG)');
+                this.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                photoPreview.src = ev.target.result;
+                photoPreview.classList.remove('d-none');
+                photoPlaceholder.classList.add('d-none');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // ============================================
+    // FECHA VALIDATION
     // ============================================
     function validarFecha(fecha) {
         if (!fecha) return false;
-        const fechaObj = new Date(fecha);
-        const minDate = new Date('2000-01-01');
-        const maxDate = new Date('2023-12-31');
-        return fechaObj >= minDate && fechaObj <= maxDate;
+        const f = new Date(fecha);
+        return f >= new Date('2000-01-01') && f <= new Date('2026-12-31');
     }
 
     // ============================================
-    // 4. EXPRESIONES REGULARES (DEFINIDAS FUERA DEL EVENTO)
-    // ============================================
-    const cedulaRegex = /^[VEJvej]{1}-?\d{5,10}$/;
-    const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const nombreRegex = /^[A-Za-záéíóúñÑ\s]+$/;
-    const telefonoRegex = /^[\d\s\-]{7,15}$/;
-    const textoRegex = /^[A-Za-záéíóúñÑ\s,\.\-]+$/;
-    const textoBasicoRegex = /^[A-Za-záéíóúñÑ\s]+$/;
-    const nombreAtletaRegex = /^[A-Za-záéíóúÁÉÍÓÚñÑ ]{3,40}$/;
-    const direccionRegex = /^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ ,.#]{3,100}$/;
-    const tallaRegex = /^[A-Za-z0-9\s]+$/;
-    const tallaZapatosRegex = /^[0-9]+(?:\.[0-9]+)?$/;
-    const sangreRegex = /^[A-Za-z0-9+\-]+$/;
-    const polizaNumeroRegex = /^[A-Za-z0-9\-]+$/;
-    const hobbieRegex = /^[A-Za-záéíóúñÑ\s,\.\-]+$/;
-    const horarioRegex = /^[A-Za-záéíóúñÑ0-9\s,.:apmAPM\-]+$/;
-    const colegioRegex = /^[A-Za-záéíóúñÑ\s,.'\-]+$/;
-    const direccionColegioRegex = /^[A-Za-záéíóúñÑ0-9\s,.°#\-]+$/;
-    const gradoRegex = /^[A-Za-záéíóúñÑ0-9\s°]+$/;
-    const numeroFranelaRegex = /^[0-9]{1,2}$/;
-    const alergiaRegex = /^[A-Za-záéíóúñÑ\s,\/\-]+$/;
-
-    // ============================================
-    // 5. VALIDACIÓN Y ENVÍO DEL FORMULARIO
+    // FORM SUBMIT (AJAX)
     // ============================================
     athleteForm.addEventListener('submit', function(e) {
         e.preventDefault();
-
-        const getFieldValue = (field) => field ? field.value.trim() : '';
-
-        const cedulaRepresentanteValue = getFieldValue(cedula_representante);
-        const correoRepresentanteValue = getFieldValue(correo_representante);
-        const nombresRepresentanteValue = getFieldValue(nombres_representante);
-        const apellidosRepresentanteValue = getFieldValue(apellidos_representante);
-        const ocupacionRepresentanteValue = getFieldValue(ocupacion_representante);
-        const telefonoRepresentanteValue = getFieldValue(telefono_representante);
-        const primerNombreValue = getFieldValue(primer_nombre);
-        const segundoNombreValue = getFieldValue(segundo_nombre);
-        const primerApellidoValue = getFieldValue(primer_apellido);
-        const segundoApellidoValue = getFieldValue(segundo_apellido);
-        const atletaFechaValue = getFieldValue(atleta_fecha);
-        const atletaSexoValue = getFieldValue(atleta_sexo);
-        const atletaCedulaValue = getFieldValue(atleta_cedula);
-        const pieDominanteValue = getFieldValue(pie_dominante);
-        const atletaDireccionValue = getFieldValue(atleta_direccion);
-        const categoriaAtletaValue = getFieldValue(categoria_atleta);
-        const categoriaAnioValue = getFieldValue(categoria_anio);
-        const tallaFranelaValue = getFieldValue(talla_franela);
-        const numeroFranelaValue = getFieldValue(numero_franela);
-        const tallaShortValue = getFieldValue(talla_short);
-        const tallaZapatosValue = getFieldValue(talla_zapatos);
-        const tipoSangreValue = getFieldValue(tipo_sangre);
-        const alergiasValue = getFieldValue(alergias);
-        const padecimientoCronicoValue = getFieldValue(padecimiento_cronico);
-        const medicamentoRestriccionValue = getFieldValue(medicamento_restriccion);
-        const lesionesPreviasValue = getFieldValue(lesiones_previas);
-        const polizaSeguroValue = getFieldValue(poliza_seguro);
-        const vigenciaSeguroValue = getFieldValue(vigencia_seguro);
-        const empresaAseguradoraValue = getFieldValue(empresa_aseguradora);
-        const coberturaContratadaValue = getFieldValue(cobertura_contratada);
-        const numeroPolizaValue = getFieldValue(numero_poliza);
-        const medicoTratanteValue = getFieldValue(medico_tratante);
-        const telefonoMedicoValue = getFieldValue(telefono_medico);
-        const nombreColegioValue = getFieldValue(nombre_colegio);
-        const direccionColegioValue = getFieldValue(direccion_colegio);
-        const gradoCursanteValue = getFieldValue(grado_cursante);
-        const nombreHobbieValue = getFieldValue(nombre_hobbie);
-        const horarioHobbieValue = getFieldValue(horario_hobbie);
-
-        if (!cedulaRepresentanteValue) {
-            mostrarAlerta('La cédula del representante es obligatoria');
-            cedula_representante.focus();
-            return;
-        }
-        if (!cedulaRegex.test(cedulaRepresentanteValue)) {
-            mostrarAlerta('La cédula no tiene un formato válido (ej. V-12345678)');
-            cedula_representante.focus();
-            return;
-        }
-
-        if (!correoRepresentanteValue) {
-            mostrarAlerta('El correo del representante es obligatorio');
-            correo_representante.focus();
-            return;
-        }
-        if (!correoRegex.test(correoRepresentanteValue)) {
-            mostrarAlerta('El correo electrónico no es válido');
-            correo_representante.focus();
-            return;
-        }
-
-        if (!nombresRepresentanteValue) {
-            mostrarAlerta('Los nombres del representante son obligatorios');
-            nombres_representante.focus();
-            return;
-        }
-        if (!nombreRegex.test(nombresRepresentanteValue)) {
-            mostrarAlerta('Los nombres solo deben contener letras y espacios');
-            nombres_representante.focus();
-            return;
-        }
-
-        if (!apellidosRepresentanteValue) {
-            mostrarAlerta('Los apellidos del representante son obligatorios');
-            apellidos_representante.focus();
-            return;
-        }
-        if (!nombreRegex.test(apellidosRepresentanteValue)) {
-            mostrarAlerta('Los apellidos solo deben contener letras y espacios');
-            apellidos_representante.focus();
-            return;
-        }
-
-        if (!telefonoRepresentanteValue) {
-            mostrarAlerta('El teléfono del representante es obligatorio');
-            telefono_representante.focus();
-            return;
-        }
-        if (!telefonoRegex.test(telefonoRepresentanteValue)) {
-            mostrarAlerta('El teléfono no tiene un formato válido (ej. 0412-1234567)');
-            telefono_representante.focus();
-            return;
-        }
-
-        if (ocupacionRepresentanteValue && !textoRegex.test(ocupacionRepresentanteValue)) {
-            mostrarAlerta('La ocupación contiene caracteres no válidos');
-            ocupacion_representante.focus();
-            return;
-        }
-
-        if (!primerNombreValue) {
-            mostrarAlerta('El primer nombre del atleta es obligatorio');
-            primer_nombre.focus();
-            return;
-        }
-        if (!nombreAtletaRegex.test(primerNombreValue)) {
-            mostrarAlerta('El primer nombre debe tener entre 3 y 40 caracteres (solo letras)');
-            primer_nombre.focus();
-            return;
-        }
-
-        if (segundoNombreValue && !nombreAtletaRegex.test(segundoNombreValue)) {
-            mostrarAlerta('El segundo nombre debe tener entre 3 y 40 caracteres (solo letras)');
-            segundo_nombre.focus();
-            return;
-        }
-
-        if (!primerApellidoValue) {
-            mostrarAlerta('El primer apellido del atleta es obligatorio');
-            primer_apellido.focus();
-            return;
-        }
-        if (!nombreAtletaRegex.test(primerApellidoValue)) {
-            mostrarAlerta('El primer apellido debe tener entre 3 y 40 caracteres (solo letras)');
-            primer_apellido.focus();
-            return;
-        }
-
-        if (segundoApellidoValue && !nombreAtletaRegex.test(segundoApellidoValue)) {
-            mostrarAlerta('El segundo apellido debe tener entre 3 y 40 caracteres (solo letras)');
-            segundo_apellido.focus();
-            return;
-        }
-
-        if (!atletaFechaValue) {
-            mostrarAlerta('La fecha de nacimiento del atleta es obligatoria');
-            atleta_fecha.focus();
-            return;
-        }
-        if (!validarFecha(atletaFechaValue)) {
-            mostrarAlerta('La fecha debe estar entre el 01/01/2000 y el 31/12/2023');
-            atleta_fecha.focus();
-            return;
-        }
-
-        if (!atletaSexoValue) {
-            mostrarAlerta('Debe seleccionar el sexo del atleta');
-            atleta_sexo.focus();
-            return;
-        }
-        if (atletaCedulaValue && !/^[0-9]{5,8}$/.test(atletaCedulaValue)) {
-            mostrarAlerta('La cédula debe tener entre 5 y 8 dígitos numéricos');
-            atleta_cedula.focus();
-            return;
-        }
-
-        if (!pieDominanteValue) {
-            mostrarAlerta('Debe seleccionar el pie dominante');
-            pie_dominante.focus();
-            return;
-        }
-
-        if (!atletaDireccionValue) {
-            mostrarAlerta('La dirección del atleta es obligatoria');
-            atleta_direccion.focus();
-            return;
-        }
-        if (!direccionRegex.test(atletaDireccionValue)) {
-            mostrarAlerta('La dirección debe tener entre 3 y 100 caracteres');
-            atleta_direccion.focus();
-            return;
-        }
-
-        if (!categoriaAtletaValue) {
-            mostrarAlerta('Debe seleccionar una categoría');
-            categoria_atleta.focus();
-            return;
-        }
-
-        if (!categoriaAnioValue) {
-            mostrarAlerta('Debe seleccionar el año de la categoría');
-            categoria_anio.focus();
-            return;
-        }
-
-        if (!tallaFranelaValue) {
-            mostrarAlerta('La talla de franela es obligatoria');
-            talla_franela.focus();
-            return;
-        }
-        if (!tallaRegex.test(tallaFranelaValue)) {
-            mostrarAlerta('La talla de franela no es válida');
-            talla_franela.focus();
-            return;
-        }
-
-        if (numeroFranelaValue && !numeroFranelaRegex.test(numeroFranelaValue)) {
-            mostrarAlerta('El número de franela debe ser entre 1 y 99');
-            numero_franela.focus();
-            return;
-        }
-
-        if (!tallaShortValue) {
-            mostrarAlerta('La talla de short es obligatoria');
-            talla_short.focus();
-            return;
-        }
-        if (!tallaRegex.test(tallaShortValue)) {
-            mostrarAlerta('La talla de short no es válida');
-            talla_short.focus();
-            return;
-        }
-
-        if (!tallaZapatosValue) {
-            mostrarAlerta('La talla de zapatos es obligatoria');
-            talla_zapatos.focus();
-            return;
-        }
-        if (!tallaZapatosRegex.test(tallaZapatosValue)) {
-            mostrarAlerta('La talla de zapatos no es válida (ej. 39, 40, 41.5)');
-            talla_zapatos.focus();
-            return;
-        }
-
-        if (!tipoSangreValue) {
-            mostrarAlerta('El tipo de sangre es obligatorio');
-            tipo_sangre.focus();
-            return;
-        }
-        if (!sangreRegex.test(tipoSangreValue)) {
-            mostrarAlerta('El tipo de sangre no es válido (ej. A+, B-, O+)');
-            tipo_sangre.focus();
-            return;
-        }
-
-        if (alergiasValue && !alergiaRegex.test(alergiasValue)) {
-            mostrarAlerta('Las alergias contienen caracteres no válidos');
-            alergias.focus();
-            return;
-        }
-
-        if (padecimientoCronicoValue && !alergiaRegex.test(padecimientoCronicoValue)) {
-            mostrarAlerta('El padecimiento contiene caracteres no válidos');
-            padecimiento_cronico.focus();
-            return;
-        }
-
-        if (medicamentoRestriccionValue && !alergiaRegex.test(medicamentoRestriccionValue)) {
-            mostrarAlerta('Las restricciones contienen caracteres no válidos');
-            medicamento_restriccion.focus();
-            return;
-        }
-
-        if (lesionesPreviasValue && !alergiaRegex.test(lesionesPreviasValue)) {
-            mostrarAlerta('Las lesiones contienen caracteres no válidos');
-            lesiones_previas.focus();
-            return;
-        }
-
-        if (polizaSeguroValue === 'posee') {
-            if (!vigenciaSeguroValue) {
-                mostrarAlerta('La vigencia del seguro es obligatoria cuando posee póliza');
-                vigencia_seguro.focus();
-                return;
-            }
-
-            if (!empresaAseguradoraValue) {
-                mostrarAlerta('La empresa aseguradora es obligatoria cuando posee póliza');
-                empresa_aseguradora.focus();
-                return;
-            }
-            if (!textoRegex.test(empresaAseguradoraValue)) {
-                mostrarAlerta('La empresa aseguradora contiene caracteres no válidos');
-                empresa_aseguradora.focus();
-                return;
-            }
-
-            if (!coberturaContratadaValue) {
-                mostrarAlerta('La cobertura contratada es obligatoria cuando posee póliza');
-                cobertura_contratada.focus();
-                return;
-            }
-            if (!textoRegex.test(coberturaContratadaValue)) {
-                mostrarAlerta('La cobertura contiene caracteres no válidos');
-                cobertura_contratada.focus();
-                return;
-            }
-
-            if (!numeroPolizaValue) {
-                mostrarAlerta('El número de póliza es obligatorio cuando posee seguro');
-                numero_poliza.focus();
-                return;
-            }
-            if (!polizaNumeroRegex.test(numeroPolizaValue)) {
-                mostrarAlerta('El número de póliza solo admite letras, números y guiones');
-                numero_poliza.focus();
-                return;
-            }
-
-            if (medicoTratanteValue && !/^[A-Za-záéíóúñÑ\s.]+$/.test(medicoTratanteValue)) {
-                mostrarAlerta('El nombre del médico contiene caracteres no válidos');
-                medico_tratante.focus();
-                return;
-            }
-
-            if (telefonoMedicoValue && !telefonoRegex.test(telefonoMedicoValue)) {
-                mostrarAlerta('El teléfono del médico no tiene un formato válido');
-                telefono_medico.focus();
-                return;
-            }
-        }
-
-        if (!nombreColegioValue) {
-            mostrarAlerta('El nombre del colegio es obligatorio');
-            nombre_colegio.focus();
-            return;
-        }
-        if (!colegioRegex.test(nombreColegioValue)) {
-            mostrarAlerta('El nombre del colegio contiene caracteres no válidos');
-            nombre_colegio.focus();
-            return;
-        }
-
-        if (direccionColegioValue && !direccionColegioRegex.test(direccionColegioValue)) {
-            mostrarAlerta('La dirección del colegio contiene caracteres no válidos');
-            direccion_colegio.focus();
-            return;
-        }
-
-        if (!gradoCursanteValue) {
-            mostrarAlerta('El grado/año cursante es obligatorio');
-            grado_cursante.focus();
-            return;
-        }
-        if (!gradoRegex.test(gradoCursanteValue)) {
-            mostrarAlerta('El grado/año no es válido (ej. 4to Grado, 5° Año)');
-            grado_cursante.focus();
-            return;
-        }
-
-        if (nombreHobbieValue && !hobbieRegex.test(nombreHobbieValue)) {
-            mostrarAlerta('El nombre del hobbie contiene caracteres no válidos');
-            nombre_hobbie.focus();
-            return;
-        }
-
-        if (horarioHobbieValue && !horarioRegex.test(horarioHobbieValue)) {
-            mostrarAlerta('El horario del hobbie no es válido (ej. Martes y Jueves 4pm)');
-            horario_hobbie.focus();
-            return;
-        }
-
-        const formData = new FormData(this);
-
-            // 3. Envío asíncrono con Fetch API
-            fetch(this.action, {
-                method: this.method,
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la comunicación con el servidor');
-                }
-                return response.text(); // Convertimos la respuesta a texto/HTML
-            })
-            .then(htmlResponse => {
-                /* TRUCO CLAVE: innerHTML no ejecuta etiquetas <script> por seguridad.
-                  Usamos createContextualFragment para que el navegador ejecute el 
-                  setTimeout de redirección que envías desde PHP.
-                */
-                formRest.innerHTML = ''; 
-                const fragment = document.createRange().createContextualFragment(htmlResponse);
+        const fd = new FormData(this);
+        fetch(this.action, { method: 'POST', body: fd })
+            .then(r => { if (!r.ok) throw new Error('Error del servidor'); return r.text(); })
+            .then(html => {
+                formRest.innerHTML = '';
+                const fragment = document.createRange().createContextualFragment(html);
                 formRest.appendChild(fragment);
             })
-            .catch(error => {
-                console.error('Error Ajax:', error);
-                mostrarAlertaLocal('Ocurrió un error inesperado al procesar la solicitud');
+            .catch(err => {
+                console.error('Error Ajax:', err);
+                mostrarAlerta('Ocurrió un error inesperado al procesar la solicitud');
             });
     });
 
     // ============================================
-    // 7. FUNCIÓN PARA DESHABILITAR/HABILITAR CAMPOS DEL SEGURO
+    // TOGGLE SEGURO
     // ============================================
     window.toggleSeguroFields = function() {
         const select = document.getElementById('polizaSeguro');
-        const seguroFields = document.querySelectorAll('.seguro-field');
-        const selectedValue = select.value;
-        
-        if (selectedValue === 'no_posee') {
-            seguroFields.forEach(field => {
-                const inputs = field.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    input.disabled = true;
-                    input.value = '';
-                    if (input.tagName === 'SELECT') {
-                        input.selectedIndex = 0;
-                    }
-                });
-                field.style.opacity = '0.6';
+        const fields = document.querySelectorAll('.seguro-field');
+        const disable = select.value === 'no_posee' || select.value === '';
+        fields.forEach(f => {
+            f.querySelectorAll('input').forEach(inp => {
+                inp.disabled = disable;
+                if (disable) inp.value = '';
             });
-        } else {
-            seguroFields.forEach(field => {
-                const inputs = field.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    input.disabled = false;
-                });
-                field.style.opacity = '1';
-            });
-        }
+            f.style.opacity = disable ? '0.5' : '1';
+        });
     };
 
-    // ============================================
-    // 8. EJECUTAR AL CARGAR LA PÁGINA
-    // ============================================
-    const selectSeguro = document.getElementById('polizaSeguro');
-    if (selectSeguro && selectSeguro.value === 'no_posee') {
+    const polizaSelect = document.getElementById('polizaSeguro');
+    if (polizaSelect) {
+        polizaSelect.addEventListener('change', window.toggleSeguroFields);
         window.toggleSeguroFields();
-    }
-
-    console.log('✅ Validaciones del formulario de atleta cargadas correctamente');
-
-    // Función auxiliar para pintar los errores de JS con el mismo diseño de tu PHP
-    function mostrarAlertaLocal(mensaje) {
-        formRest.innerHTML = `
-            <div class="alert alert-danger py-2 small text-start" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> 
-                <strong>Error:</strong> ${mensaje}
-            </div>
-        `;
     }
 });

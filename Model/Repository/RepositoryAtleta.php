@@ -216,6 +216,56 @@ class RepositoryAtleta implements IAtletaRepository
         return $this->mapRowsToAtletas($rows);
     }
 
+    // ──────────── FIND BY MÚLTIPLES CATEGORÍAS ────────────
+    public function findByCategorias(array $categoriaIds, int $primaryCategoriaId = 0): array
+    {
+        if (empty($categoriaIds)) return [];
+        $placeholders = implode(',', array_fill(0, count($categoriaIds), '?'));
+        $sql = "SELECT DISTINCT a.*, ca.categoria_id AS cat_asignada
+                FROM atleta a
+                JOIN categoria_atleta ca ON a.Atleta_id = ca.Atleta_id
+                WHERE ca.categoria_id IN ($placeholders)
+                ORDER BY CASE WHEN ca.categoria_id = ? THEN 0 ELSE 1 END,
+                         a.`1er_apellido`, a.`1er_nombre`";
+        $params = array_values($categoriaIds);
+        $params[] = $primaryCategoriaId;
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->mapRowsToAtletas($rows);
+    }
+
+    // ──────────── OBTENER CATEGORÍA DE UN ATLETA ────────────
+    public function getCategoriaAtleta(string $atletaId): ?string
+    {
+        $sql = "SELECT c.sub_categoria 
+                FROM categoria_atleta ca
+                JOIN categoria c ON ca.categoria_id = c.categoria_id
+                WHERE ca.Atleta_id = ?
+                ORDER BY ca.anio_id DESC LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$atletaId]);
+        return $stmt->fetchColumn() ?: null;
+    }
+
+    // ──────────── OBTENER MAPA ATLETA_ID => CATEGORÍA ────────────
+    public function mapaCategorias(array $atletaIds): array
+    {
+        if (empty($atletaIds)) return [];
+        $placeholders = implode(',', array_fill(0, count($atletaIds), '?'));
+        $sql = "SELECT ca.Atleta_id, c.sub_categoria
+                FROM categoria_atleta ca
+                JOIN categoria c ON ca.categoria_id = c.categoria_id
+                WHERE ca.Atleta_id IN ($placeholders)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($atletaIds);
+        $mapa = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $mapa[$row['Atleta_id']] = $row['sub_categoria'];
+        }
+        return $mapa;
+    }
+
     // ──────────── FIND BY REPRESENTANTE (usa tabla atleta_representante) ────────────
     public function findByRepresentante(string $cedulaRepresentante): array
     {

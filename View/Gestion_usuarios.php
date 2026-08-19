@@ -20,7 +20,7 @@
     <?php if(isset($_GET['mensaje'])): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle-fill me-2"></i>
-        <?php echo $_GET['mensaje']; ?>
+        <?php echo htmlspecialchars($_GET['mensaje'], ENT_QUOTES, 'UTF-8'); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         <?php if(isset($_GET['mensaje'])): ?>
             <script>
@@ -44,6 +44,11 @@
                     🔍 Consultar Usuarios
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="desactivados-tab" data-bs-toggle="tab" data-bs-target="#desactivados-pane" type="button" role="tab" aria-controls="desactivados-pane" aria-selected="false">
+                    🚫 Desactivados
+                </button>
+            </li>
         </ul>
     </div>
 
@@ -61,6 +66,7 @@
             </div>
 
             <form action="./Controller/RegistrarUsuario_controller.php" method="POST" class="FormularioAjax" id="RegistroUsuarioForm">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                 <div class="row g-4 mb-4">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Nombres</label>
@@ -81,12 +87,12 @@
                     <div class="col-md-6 position-relative">
                         <label class="form-label fw-semibold">Contraseña</label>
                         <input type="password" class="form-control custom-input" name="clave_1" id="clave_1" pattern="[a-zA-Z0-9$@#.]{7,99}" maxlength="100" required>
-                        <i class="bi bi-eye password-toggle-icon" id="togglePassword1"></i>
+                        <i class="bi bi-eye password-toggle-icon" data-target="clave_1"></i>
                     </div>
                     <div class="col-md-6 position-relative">
                         <label class="form-label fw-semibold">Confirme contraseña</label>
                         <input type="password" class="form-control custom-input" name="clave_2" id="clave_2" pattern="[a-zA-Z0-9$@#.]{7,99}" maxlength="100" required>
-                        <i class="bi bi-eye password-toggle-icon" id="togglePassword2"></i>
+                        <i class="bi bi-eye password-toggle-icon" data-target="clave_2"></i>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Teléfono</label>
@@ -201,6 +207,7 @@
                             </div>
                             <div class="modal-body">
                                 <form action="./Controller/ActualizarUsuario_controller.php" method="POST" class="FormularioAjax" id="actualizarForm<?= $usuario->getId() ?>">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                     <input type="hidden" name="id" value="<?= $usuario->getId() ?>">
                                     <div class="row g-4 mb-4">
                                         <div class="col-md-6">
@@ -222,12 +229,12 @@
                                         <div class="col-md-6 position-relative">
                                             <label class="form-label fw-semibold">Contraseña (dejar vacío para no cambiar)</label>
                                             <input type="password" class="form-control custom-input" name="clave_1" id="clave_1_<?= $usuario->getId() ?>" pattern="[a-zA-Z0-9$@#.]{7,99}" maxlength="100">
-                                            <i class="bi bi-eye password-toggle-icon" id="togglePassword1_<?= $usuario->getId() ?>"></i>
+                                            <i class="bi bi-eye password-toggle-icon" data-target="clave_1_<?= $usuario->getId() ?>"></i>
                                         </div>
                                         <div class="col-md-6 position-relative">
                                             <label class="form-label fw-semibold">Confirmar contraseña</label>
                                             <input type="password" class="form-control custom-input" name="clave_2" id="clave_2_<?= $usuario->getId() ?>" pattern="[a-zA-Z0-9$@#.]{7,99}" maxlength="100">
-                                            <i class="bi bi-eye password-toggle-icon" id="togglePassword2_<?= $usuario->getId() ?>"></i>
+                                            <i class="bi bi-eye password-toggle-icon" data-target="clave_2_<?= $usuario->getId() ?>"></i>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Teléfono</label>
@@ -288,6 +295,7 @@
                                 <div class="d-flex justify-content-center gap-4 mb-4">
                                     <button class="btn btn-success px-4 rounded-pill fw-bold" data-bs-dismiss="modal">NO</button>
                                     <form action="./Controller/DesactivarUsuario_controller.php" method="POST" class="FormularioAjax1" id="desactivarForm<?= $usuario->getId() ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                         <input type="hidden" name="id" value="<?= $usuario->getId() ?>">
                                         <button type="submit" class="btn btn-warning px-4 rounded-pill fw-bold">SI, DESACTIVAR</button>
                                     </form>
@@ -322,8 +330,114 @@
                 </div>
             </div>
         </div>
+
+        <!-- Pestaña Desactivados -->
+        <div class="tab-pane fade" id="desactivados-pane" role="tabpanel" aria-labelledby="desactivados-tab" tabindex="0">
+            <div class="mb-4">
+                <h3 class="fw-bold h4 mb-4">Usuarios Desactivados</h3>
+            </div>
+
+            <div class="user-list">
+                <?php
+                $desactivados = $repo->findAll();
+                $hayDesactivados = false;
+                foreach ($desactivados as $usuario):
+                    if ($usuario->getStatus() === false && $usuario->getUsername() != $_SESSION['usuario']['username']):
+                        $hayDesactivados = true;
+                        $rolID = $usuario->getIdRol();
+                        $roles = [1 => 'Administrador', 2 => 'Secretaria', 3 => 'Entrenador'];
+                ?>
+                <div class="user-card shadow-sm">
+                    <div class="user-info">
+                        <?= htmlspecialchars($usuario->getNombre() . ' ' . $usuario->getApellido()) ?>:
+                        <?= htmlspecialchars($roles[$rolID] ?? 'Desconocido') ?>
+                        <span class="badge bg-danger ms-2">Desactivado</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-custom-green" data-bs-toggle="modal" data-bs-target="#modalVerDes<?= $usuario->getId() ?>">Ver Información</button>
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalReactivar<?= $usuario->getId() ?>">Reactivar</button>
+                    </div>
+                </div>
+
+                <!-- Modal Ver Desactivado -->
+                <div class="modal fade" id="modalVerDes<?= $usuario->getId() ?>" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content custom-modal-content">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title fw-bold text-uppercase">📋 Información del Usuario</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="inner-white-card shadow-sm">
+                                    <div class="row g-3">
+                                        <div class="col-md-6"><h6><strong>Nombre:</strong> <?= htmlspecialchars($usuario->getNombre()) ?></h6></div>
+                                        <div class="col-md-6"><h6><strong>Apellido:</strong> <?= htmlspecialchars($usuario->getApellido()) ?></h6></div>
+                                        <hr class="my-2">
+                                        <div class="col-md-4"><p class="m-0"><strong>Usuario:</strong> <?= htmlspecialchars($usuario->getUsername()) ?></p></div>
+                                        <div class="col-md-4"><p class="m-0"><strong>Cédula:</strong> <?= htmlspecialchars($usuario->getCedula()) ?></p></div>
+                                        <div class="col-md-4"><p class="m-0"><strong>Email:</strong> <?= htmlspecialchars($usuario->getEmail()) ?></p></div>
+                                        <hr class="my-2">
+                                        <div class="col-md-6"><p class="m-0"><strong>Rol:</strong> <?= htmlspecialchars($roles[$rolID] ?? 'Desconocido') ?></p></div>
+                                        <div class="col-md-6"><p class="m-0"><strong>Teléfono:</strong> <?= htmlspecialchars($usuario->getTelefono()) ?></p></div>
+                                        <div class="col-md-6"><p class="m-0"><strong>Status:</strong> <span class="text-danger fw-bold">Desactivado</span></p></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-action-green px-4" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Reactivar -->
+                <div class="modal fade" id="modalReactivar<?= $usuario->getId() ?>" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content custom-modal-content">
+                            <div class="modal-header border-0 text-center w-100 d-block">
+                                <h4 class="modal-title fw-bold text-white text-center">¿Está seguro de reactivar a este usuario?</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="d-flex justify-content-center gap-4 mb-4">
+                                    <button class="btn btn-secondary px-4 rounded-pill fw-bold" data-bs-dismiss="modal">NO</button>
+                                    <form action="./Controller/ReactivarUsuario_controller.php" method="POST" class="FormularioAjax1" id="reactivarForm<?= $usuario->getId() ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                        <input type="hidden" name="id" value="<?= $usuario->getId() ?>">
+                                        <button type="submit" class="btn btn-success px-4 rounded-pill fw-bold">SI, REACTIVAR</button>
+                                    </form>
+                                </div>
+                                <div class="form-rest1 mt-3"></div>
+                                <div class="inner-white-card">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h4 class="fw-bold m-0"><?= htmlspecialchars($usuario->getNombre() . ' ' . $usuario->getApellido()) ?></h4>
+                                            <p class="fs-5 m-0 text-muted"><?= htmlspecialchars($usuario->getCedula()) ?></p>
+                                            <span class="badge bg-danger px-3 py-2 mt-2"><?= htmlspecialchars($roles[$rolID] ?? 'Desconocido') ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; endforeach; ?>
+
+                <?php if (!$hayDesactivados): ?>
+                    <div class="text-center py-5">
+                        <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                        <h4 class="fw-bold mt-3 text-white-50">No hay usuarios desactivados</h4>
+                        <p class="text-white-50">Todos los usuarios están activos en el sistema.</p>
+                    </div>
+                <?php endif; ?>
+
+                <div class="text-center mt-5">
+                    <button class="btn btn-dark-green px-4 py-2 rounded-5" onclick="document.getElementById('registrar-tab').click()">
+                        Volver al inicio
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<script src="/Castores2/Public/Js/Gestion_usuarios.js"></script>
-<script src="/Castores2/Public/Js/ajax.js"></script>
+<script src="/Castores3/Public/Js/Gestion_usuarios.js"></script>

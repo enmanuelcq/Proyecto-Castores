@@ -525,16 +525,7 @@ function confirmarPagoRevision(cedula) {
     }
 }
 
-    // Preservar filtro al buscar
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchForm = document.getElementById('searchForm');
-        if (searchForm) {
-            searchForm.addEventListener('submit', function(e) {
-                const filterInput = document.getElementById('filterInput');
-                filterInput.value = '<?php echo $current_filter; ?>';
-            });
-        }
-    });
+
 
 // Función para rechazar pago en revisión
 function rechazarPagoRevision(cedula) {

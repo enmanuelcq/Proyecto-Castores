@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-07-2026 a las 03:40:25
+-- Tiempo de generación: 19-08-2026 a las 23:38:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `deportivocastores`
+-- Base de datos: `castores`
 --
 
 -- --------------------------------------------------------
@@ -49,11 +49,12 @@ CREATE TABLE `atleta` (
 
 INSERT INTO `atleta` (`Atleta_id`, `1er_nombre`, `2do_nombre`, `1er_apellido`, `2do_apellido`, `fecha_nacimiento`, `sexo`, `cedula`, `pie_dominante`, `direccion`, `foto`, `Atleta_status`, `Uniforme_id`) VALUES
 ('atl_6a59935c88b', 'Carlos', 'Andrés', 'perez', 'camacho', '2019-02-08', 'Masculino', '2307911', 'Derecho', 'San Antonio', '', 1, 59),
-('atl_6a59996790a', 'Carlos', 'Andrés', 'Camacho', 'Pérez', '2018-12-25', 'Masculino', '', 'Ambidiestro', 'dhdhfjdhfjhdf', '', 1, 121),
-('atl_6a599a02aaa', 'Abraham', 'mikel', 'González', 'Pérez', '2018-12-12', 'Masculino', '', 'Ambidiestro', 'edfdfedfe', '', 1, 122),
-('atl_6a59a404403', 'NORA', 'DEL VALLE', 'González', 'camacho', '2018-12-18', 'Masculino', '23079110', 'Derecho', 'edfdfedfe', '', 1, 140),
-('atl_6a59a5fe7a5', 'Abraham', 'Alejandro', 'Camacho', 'Perez', '2018-12-05', 'Femenino', '', 'Ambidiestro', 'Calle Principal #123, Urbanización Los Pinos', '', 1, 141),
-('atl_6a5ed7b875c', 'Carlos', 'Alejandro', 'perez', 'DUARTE', '2023-12-27', 'Masculino', '', 'Ambidiestro', 'dhdhfjdhfjhdf', '', 1, 142);
+('atl_6a59996790a', 'Carlos', 'Miguel', 'Camacho', 'Castillo', '2018-12-25', 'Masculino', '', 'Ambidiestro', 'dhdhfjdhfjhdf', '', 1, 121),
+('atl_6a599a02aaa', 'Abraham', 'mikel', 'Gonz??lez', 'P??rez', '2018-12-12', 'Masculino', '', 'Ambidiestro', 'edfdfedfe', '', 1, 122),
+('atl_6a59a404403', 'NORA', 'DEL VALLE', 'Gonz??lez', 'camacho', '2018-12-18', 'Masculino', '23079110', 'Derecho', 'edfdfedfe', '', 1, 140),
+('atl_6a59a5fe7a5', 'Abraham', 'Alejandro', 'Camacho', 'Perez', '2018-12-05', 'Femenino', '', 'Ambidiestro', 'Calle Principal #123, Urbanizaci??n Los Pinos', '', 0, 141),
+('atl_6a5ed7b875c', 'Carlos', 'Alejandro', 'perez', 'DUARTE', '2023-12-27', 'Masculino', '', 'Ambidiestro', 'dhdhfjdhfjhdf', '', 1, 142),
+('atl_6a8600a77ee', 'Carlos', 'Andrés', 'perez', 'camacho', '2019-02-06', 'Masculino', '', 'Derecho', 'Calle Principal #123, Urbanización Los Pinos', 'fotos_atletas/atleta_6a8600a77df82.png', 1, 144);
 
 -- --------------------------------------------------------
 
@@ -79,7 +80,11 @@ INSERT INTO `atleta_representante` (`AR_id`, `parentesco`, `fecha_inscripcion`, 
 (120, 'Representante legal', '2026-07-17', 'atl_6a599a02aaa', 'V10053620'),
 (138, 'Representante legal', '2026-07-17', 'atl_6a59a404403', 'V-11111112'),
 (139, 'Representante legal', '2026-07-17', 'atl_6a59a5fe7a5', 'V10053625'),
-(140, 'Representante legal', '2026-07-21', 'atl_6a5ed7b875c', 'v-22222222');
+(140, 'Representante legal', '2026-07-21', 'atl_6a5ed7b875c', 'v-22222222'),
+(141, 'Representante legal', '2026-08-19', 'atl_6a8600a67d2', 'V21111212'),
+(142, 'Padre', '2026-08-19', 'atl_6a8600a67d2', 'V3322222'),
+(143, 'Representante legal', '2026-08-19', 'atl_6a8600a77ee', 'V21111212'),
+(144, 'Padre', '2026-08-19', 'atl_6a8600a77ee', 'V3322222');
 
 -- --------------------------------------------------------
 
@@ -91,7 +96,9 @@ CREATE TABLE `cambios` (
   `cambio_id` int(11) NOT NULL,
   `tiempo` varchar(10) NOT NULL,
   `minuto` varchar(5) NOT NULL,
+  `tipo_cambio` enum('Entra','Sale') DEFAULT NULL,
   `Atleta_id` varchar(15) NOT NULL,
+  `Atleta_sale_id` varchar(15) DEFAULT NULL,
   `partido_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -105,8 +112,16 @@ CREATE TABLE `campo` (
   `campo_id` int(11) NOT NULL,
   `nombre_campo` varchar(100) NOT NULL,
   `direccion_campo` varchar(500) NOT NULL,
-  `mapa_campo` varchar(500) NOT NULL
+  `mapa_campo` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `campo`
+--
+
+INSERT INTO `campo` (`campo_id`, `nombre_campo`, `direccion_campo`, `mapa_campo`) VALUES
+(1, 'Polideportivo AVP', '', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3924.6405820928508!2d-67.0101995!3d10.3705959!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c2a8caf84406987%3A0x6236f9a6bd44d2b5!2sPOLIDEPORTIVO%20AVP!5e0!3m2!1ses!2sve!4v1787171886760!5m2!1ses!2sve\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\"'),
+(2, 'Campo Liceo San Jos??', '', 'https://www.google.com/maps/place/Liceo+San+Jos??/@10.3518375,-67.0342911,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgICk4czFgQE!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWl85cc6DkDtLJb8Sgf8Vl11snHoaEKgiExMk6T-wAAL-Wy0l65YxGtQlgcNfwpjO8sUR4e1wADr2KeBjYkCnc_diRn5Ibc08_ZmH7dslrBi8CVDRLvCaq2o8FwyVSIlsH9ROO8taw%3Dw152-h86-k-no!7i4160!8i2340!4m11!1m2!2m1!1sliceo+san+jose+campo!3m7!1s0x8c2a8cefd646e149:0x97950a25c46e9e8!8m2!3d10.3518375!4d-67.0342911!10e5!15sChRsaWNlbyBzYW4ga');
 
 -- --------------------------------------------------------
 
@@ -147,8 +162,8 @@ INSERT INTO `categoria` (`categoria_id`, `sub_categoria`) VALUES
 --
 
 CREATE TABLE `categoria_atleta` (
-  `año_id` int(11) NOT NULL,
-  `año` varchar(40) NOT NULL,
+  `anio_id` int(11) NOT NULL,
+  `anio` varchar(40) NOT NULL,
   `Atleta_id` varchar(15) NOT NULL,
   `categoria_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -157,13 +172,15 @@ CREATE TABLE `categoria_atleta` (
 -- Volcado de datos para la tabla `categoria_atleta`
 --
 
-INSERT INTO `categoria_atleta` (`año_id`, `año`, `Atleta_id`, `categoria_id`) VALUES
+INSERT INTO `categoria_atleta` (`anio_id`, `anio`, `Atleta_id`, `categoria_id`) VALUES
 (2, 'Segundo', 'atl_6a59935c88b', 9),
 (64, 'Segundo', 'atl_6a59996790a', 7),
 (65, 'Primero', 'atl_6a599a02aaa', 9),
 (83, 'Segundo', 'atl_6a59a404403', 4),
 (84, 'Segundo', 'atl_6a59a5fe7a5', 9),
-(85, 'Primero', 'atl_6a5ed7b875c', 2);
+(85, 'Primero', 'atl_6a5ed7b875c', 2),
+(86, 'Primero', 'atl_6a8600a67d2', 5),
+(87, 'Primero', 'atl_6a8600a77ee', 5);
 
 -- --------------------------------------------------------
 
@@ -194,10 +211,11 @@ CREATE TABLE `colegio` (
 --
 
 INSERT INTO `colegio` (`colegio_id`, `nombre_colegio`, `direccion_colegio`) VALUES
-(1, 'Colegio San José', 'Panamericana'),
+(1, 'Colegio San Jos??', 'Panamericana'),
 (2, 'martin tovar y tovar', 'Madre Isabel'),
-(7, 'Santa maría', 'Panamericana'),
-(9, 'Carlos Gauna', 'Panamericana');
+(7, 'Santa mar??a', 'Panamericana'),
+(9, 'Carlos Gauna', 'Panamericana'),
+(10, 'Colegio San José', 'Panamericana');
 
 -- --------------------------------------------------------
 
@@ -218,10 +236,32 @@ CREATE TABLE `configuracion` (
 --
 
 INSERT INTO `configuracion` (`id`, `clave`, `valor`, `descripcion`, `fecha_actualizacion`) VALUES
-(1, 'monto_mensual_usd', '50.00', 'Monto de la mensualidad en dólares', '2026-07-21 21:35:40'),
-(2, 'tasa_dolar_bcv', '737.2321', 'Tasa de cambio del dólar BCV obtenida por API', '2026-07-21 18:15:57'),
-(3, 'ultima_actualizacion_tasa', '2026-07-22 03:35:41', 'Fecha de la última actualización de la tasa', '2026-07-21 21:35:41'),
+(1, 'monto_mensual_usd', '50.00', 'Monto de la mensualidad en d??lares', '2026-07-21 21:35:40'),
+(2, 'tasa_dolar_bcv', '775.3356', 'Tasa de cambio del d??lar BCV obtenida por API', '2026-08-19 17:20:26'),
+(3, 'ultima_actualizacion_tasa', '2026-08-19 23:29:54', 'Fecha de la ??ltima actualizaci??n de la tasa', '2026-08-19 17:29:54'),
 (10, 'ultima_actualizacion_cuotas', '2026-07-22 03:35:40', NULL, '2026-07-21 21:35:40');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `convocado`
+--
+
+CREATE TABLE `convocado` (
+  `convocado_id` int(11) NOT NULL,
+  `partido_id` int(11) NOT NULL,
+  `Atleta_id` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `convocado`
+--
+
+INSERT INTO `convocado` (`convocado_id`, `partido_id`, `Atleta_id`) VALUES
+(3, 15, 'atl_6a59935c88b'),
+(6, 15, 'atl_6a59996790a'),
+(2, 15, 'atl_6a599a02aaa'),
+(1, 15, 'atl_6a59a5fe7a5');
 
 -- --------------------------------------------------------
 
@@ -233,7 +273,7 @@ CREATE TABLE `cuota_mensual` (
   `cuota_id` int(11) NOT NULL,
   `Atleta_id` varchar(15) NOT NULL,
   `mes` int(2) NOT NULL,
-  `año` int(4) NOT NULL,
+  `anio` int(4) NOT NULL,
   `monto_establecido` decimal(10,2) NOT NULL,
   `estatus_cuota` varchar(20) NOT NULL DEFAULT 'Pendiente',
   `fecha_creacion` datetime DEFAULT current_timestamp(),
@@ -244,7 +284,7 @@ CREATE TABLE `cuota_mensual` (
 -- Volcado de datos para la tabla `cuota_mensual`
 --
 
-INSERT INTO `cuota_mensual` (`cuota_id`, `Atleta_id`, `mes`, `año`, `monto_establecido`, `estatus_cuota`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+INSERT INTO `cuota_mensual` (`cuota_id`, `Atleta_id`, `mes`, `anio`, `monto_establecido`, `estatus_cuota`, `fecha_creacion`, `fecha_actualizacion`) VALUES
 (1, 'atl_6a59935c88b', 7, 2026, 14744.64, 'Pagado', '2026-07-21 12:38:57', '2026-07-21 19:41:54'),
 (2, 'atl_6a59935c88b', 8, 2026, 36861.61, 'Parcial', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
 (3, 'atl_6a59935c88b', 9, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
@@ -280,18 +320,28 @@ INSERT INTO `cuota_mensual` (`cuota_id`, `Atleta_id`, `mes`, `año`, `monto_esta
 (33, 'atl_6a5ed7b875c', 9, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
 (34, 'atl_6a5ed7b875c', 10, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
 (35, 'atl_6a5ed7b875c', 11, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
-(36, 'atl_6a5ed7b875c', 12, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40');
+(36, 'atl_6a5ed7b875c', 12, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
+(37, 'atl_6a8600a67d2', 8, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
+(38, 'atl_6a8600a67d2', 9, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
+(39, 'atl_6a8600a67d2', 10, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
+(40, 'atl_6a8600a67d2', 11, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
+(41, 'atl_6a8600a67d2', 12, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
+(42, 'atl_6a8600a77ee', 8, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:47', '2026-08-19 15:14:47'),
+(43, 'atl_6a8600a77ee', 9, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:47', '2026-08-19 15:14:47'),
+(44, 'atl_6a8600a77ee', 10, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:47', '2026-08-19 15:14:47'),
+(45, 'atl_6a8600a77ee', 11, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:47', '2026-08-19 15:14:47'),
+(46, 'atl_6a8600a77ee', 12, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:47', '2026-08-19 15:14:47');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `desempeño_entrenamiento`
+-- Estructura de tabla para la tabla `desempe??o_entrenamiento`
 --
 
-CREATE TABLE `desempeño_entrenamiento` (
-  `desempeño_id` int(11) NOT NULL,
+CREATE TABLE `desempe??o_entrenamiento` (
+  `desempenio_id` int(11) NOT NULL,
   `asistencia` tinyint(1) NOT NULL,
-  `desempeño` varchar(500) NOT NULL,
+  `desempenio` varchar(500) NOT NULL,
   `Atleta_id` varchar(15) NOT NULL,
   `entrenamiento_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -322,6 +372,15 @@ CREATE TABLE `equipo_rival` (
   `nombre_equipo` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
+--
+-- Volcado de datos para la tabla `equipo_rival`
+--
+
+INSERT INTO `equipo_rival` (`equipo_id`, `nombre_equipo`) VALUES
+(1, 'Caracas FC'),
+(2, 'Club Atl??tico Colinas de Miranda'),
+(3, 'San Jos??');
+
 -- --------------------------------------------------------
 
 --
@@ -336,6 +395,15 @@ CREATE TABLE `goles` (
   `Atleta_id` varchar(15) NOT NULL,
   `partido_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `goles`
+--
+
+INSERT INTO `goles` (`gol_id`, `cant_goles`, `tiempo`, `descripcion`, `Atleta_id`, `partido_id`) VALUES
+(1, 1, '05:00:00', 'Gol de Cabeza', 'atl_6a59996790a', 12),
+(2, 1, '05:00:00', 'Gol de Cabeza', 'atl_6a59996790a', 10),
+(3, 1, '15:00:00', 'Gol de Penalti', 'atl_6a59996790a', 10);
 
 -- --------------------------------------------------------
 
@@ -356,11 +424,13 @@ CREATE TABLE `grado` (
 
 INSERT INTO `grado` (`grado_id`, `grado`, `Atleta_id`, `colegio_id`) VALUES
 (2, '3ro grado', 'atl_6a59935c88b', 9),
-(64, '2do grado', 'atl_6a59996790a', 1),
+(64, '2do grado', 'atl_6a59996790a', 10),
 (65, '4to grado', 'atl_6a599a02aaa', 1),
 (83, '5to grado', 'atl_6a59a404403', 1),
 (84, '4to grado', 'atl_6a59a5fe7a5', 1),
-(85, '1er año', 'atl_6a5ed7b875c', 7);
+(85, '1er a??o', 'atl_6a5ed7b875c', 7),
+(86, '6to grado', 'atl_6a8600a67d2', 10),
+(87, '6to grado', 'atl_6a8600a77ee', 10);
 
 -- --------------------------------------------------------
 
@@ -381,30 +451,30 @@ INSERT INTO `hobbies` (`hobbie_id`, `nombre_hobbie`) VALUES
 (1, 'Cantar'),
 (2, 'tenis'),
 (3, 'Pintura'),
-(13, 'Fútbol'),
+(13, 'F??tbol'),
 (14, 'Baloncesto'),
 (15, 'Voleibol'),
-(16, 'Natación'),
+(16, 'Nataci??n'),
 (17, 'Atletismo'),
 (18, 'Ciclismo'),
 (19, 'Patinaje'),
 (20, 'Escalada'),
-(21, 'Gimnasia artística'),
+(21, 'Gimnasia art??stica'),
 (22, 'Taekwondo'),
 (23, 'Karate'),
 (24, 'Judo'),
 (25, 'Boxeo'),
 (26, 'Esgrima'),
 (27, 'Tenis'),
-(28, 'Pádel'),
-(29, 'Bádminton'),
+(28, 'P??del'),
+(29, 'B??dminton'),
 (30, 'Ping pong'),
 (31, 'Ajedrez'),
 (32, 'Damas'),
 (33, 'Puzzle'),
 (34, 'Lego'),
-(35, 'Robótica'),
-(36, 'Programación'),
+(35, 'Rob??tica'),
+(36, 'Programaci??n'),
 (37, 'Videojuegos'),
 (38, 'Dibujo'),
 (39, 'Pintura'),
@@ -415,19 +485,19 @@ INSERT INTO `hobbies` (`hobbie_id`, `nombre_hobbie`) VALUES
 (44, 'Teatro'),
 (45, 'Baile'),
 (46, 'Canto'),
-(47, 'Música'),
+(47, 'M??sica'),
 (48, 'Piano'),
 (49, 'Guitarra'),
-(50, 'Violín'),
-(51, 'Batería'),
+(50, 'Viol??n'),
+(51, 'Bater??a'),
 (52, 'Cocina'),
-(53, 'Repostería'),
-(54, 'Jardinería'),
+(53, 'Reposter??a'),
+(54, 'Jardiner??a'),
 (55, 'Acampada'),
 (56, 'Senderismo'),
-(57, 'Observación de aves'),
-(58, 'Astronomía'),
-(59, 'Fotografía'),
+(57, 'Observaci??n de aves'),
+(58, 'Astronom??a'),
+(59, 'Fotograf??a'),
 (60, 'Cine'),
 (61, 'Lectura'),
 (62, 'Escritura creativa'),
@@ -455,9 +525,11 @@ INSERT INTO `hobbie_atleta` (`hobbie_atleta_id`, `horario_hobbie`, `Atleta_id`, 
 (2, 'miercoles', 'atl_6a59a404403', 3),
 (3, 'domingo 4:00pm', 'atl_6a59a5fe7a5', 63),
 (165, 'domingo 4:00pm', 'atl_6a599a02aaa', 63),
-(167, 'Lunes 4:00pm', 'atl_6a59996790a', 14),
 (168, 'domingo 4:00pm', 'atl_6a5ed7b875c', 76),
-(171, 'Martes 4:00pm', 'atl_6a59935c88b', 76);
+(172, 'domingo 4:00pm', 'atl_6a8600a67d2', 3),
+(173, 'domingo 4:00pm', 'atl_6a8600a77ee', 3),
+(174, 'Martes 4:00pm', 'atl_6a59935c88b', 76),
+(175, 'Lunes 4:00pm', 'atl_6a59996790a', 14);
 
 -- --------------------------------------------------------
 
@@ -471,6 +543,37 @@ CREATE TABLE `incidencia` (
   `Atleta_id` varchar(15) NOT NULL,
   `partido_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `incidencia`
+--
+
+INSERT INTO `incidencia` (`incidencia_id`, `descripcion`, `Atleta_id`, `partido_id`) VALUES
+(1, 'Se lastim?? al chocar con otro ni??o', 'atl_6a59996790a', 13);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `noticias`
+--
+
+CREATE TABLE `noticias` (
+  `noticia_id` int(11) NOT NULL,
+  `titulo` varchar(200) NOT NULL,
+  `contenido` text NOT NULL,
+  `imagen` varchar(500) DEFAULT NULL,
+  `fecha_publicacion` datetime DEFAULT current_timestamp(),
+  `usuario_creador` varchar(20) NOT NULL,
+  `estado` tinyint(1) DEFAULT 1,
+  `es_destacada` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `noticias`
+--
+
+INSERT INTO `noticias` (`noticia_id`, `titulo`, `contenido`, `imagen`, `fecha_publicacion`, `usuario_creador`, `estado`, `es_destacada`) VALUES
+(6, 'Bienvenido a la Academia de F??tbol \"Deportivo Castores\"', 'La Escuela de F??tbol EFAR Deportivo Los Castores (ahora Castores Performance Club) es una de las instituciones formativas m??s tradicionales de los Altos Mirandinos. Fundada en 2012, opera en el Polideportivo Los Castores en San Antonio de los Altos, entrenando a m??s de 220 atletas desde la categor??a Sub-5 hasta Sub-17.', 'Public/Uploads/noticias/1784774481_6a617f51cde74.png', '2026-07-23 04:41:00', 'sec_6a5700c52c8c9', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -529,7 +632,7 @@ CREATE TABLE `pagos` (
 --
 
 INSERT INTO `pagos` (`pago_id`, `total_pago`, `concepto_pago`, `cedula_representante`, `fecha_pago`, `estatus_pago`) VALUES
-(1, 5000.00, 'Inscripción', 'v32323232', '2026-07-21 16:53:18', 'Completado'),
+(1, 5000.00, 'Inscripci??n', 'v32323232', '2026-07-21 16:53:18', 'Completado'),
 (2, 2000.00, 'Uniforme', 'v32323232', '2026-07-21 17:04:02', 'Completado'),
 (3, 5000.00, 'Pago de Torneo - Atleta atl_6a59935c88b', 'v32323232', '2026-07-21 17:20:17', 'Completado'),
 (4, 1000.00, 'Pago de Uniforme - Atleta atl_6a59935c88b', 'v32323232', '2026-07-21 17:20:44', 'Completado'),
@@ -537,7 +640,7 @@ INSERT INTO `pagos` (`pago_id`, `total_pago`, `concepto_pago`, `cedula_represent
 (6, 10000.00, 'Pago de mensualidad - Atleta atl_6a59935c88b', 'v32323232', '2026-07-22 01:24:54', 'Completado'),
 (7, 4744.64, 'Pago de mensualidad - Atleta atl_6a59935c88b', 'v32323232', '2026-07-22 01:41:54', 'Completado'),
 (8, 2000.00, 'Pago de mensualidad - Atleta atl_6a59935c88b', 'v32323232', '2026-07-22 01:42:44', 'Completado'),
-(9, 3000.00, 'Pago de Inscripción - Atleta atl_6a59996790a', 'V-32499689', '2026-07-22 01:58:45', 'Completado'),
+(9, 3000.00, 'Pago de Inscripci??n - Atleta atl_6a59996790a', 'V-32499689', '2026-07-22 01:58:45', 'Completado'),
 (10, 14744.64, 'Pago de mensualidad - Atleta atl_6a59996790a', 'V-32499689', '2026-07-22 02:23:36', 'Completado'),
 (11, 3000.00, 'Pago de mensualidad - Atleta atl_6a599a02aaa', 'V10053620', '2026-07-22 02:24:36', 'Completado'),
 (12, 3000.00, 'Pago de mensualidad - Atleta atl_6a59a404403', 'V-11111112', '2026-07-22 02:25:14', 'Completado'),
@@ -582,14 +685,29 @@ INSERT INTO `pago_cuota` (`pago_cuota_id`, `pago_id`, `cuota_id`, `monto_abonado
 
 CREATE TABLE `partido` (
   `partido_id` int(11) NOT NULL,
-  `fecha_partido` date NOT NULL,
-  `duracion` time NOT NULL,
+  `fecha_partido` datetime NOT NULL,
+  `duracion` varchar(20) NOT NULL,
+  `estado` enum('Pendiente','En Curso','Finalizado') DEFAULT 'Pendiente',
+  `tipo_partido` enum('Torneo','Liga','Copa','Amistoso') DEFAULT 'Amistoso',
+  `nombre_competencia` varchar(100) DEFAULT NULL,
   `goles_favor` int(3) NOT NULL,
   `goles_contra` int(3) NOT NULL,
   `categoria_id` int(11) NOT NULL,
   `equipo_id` int(11) NOT NULL,
   `campo_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `partido`
+--
+
+INSERT INTO `partido` (`partido_id`, `fecha_partido`, `duracion`, `estado`, `tipo_partido`, `nombre_competencia`, `goles_favor`, `goles_contra`, `categoria_id`, `equipo_id`, `campo_id`) VALUES
+(9, '2026-07-31 16:00:00', '90 min', 'Pendiente', 'Amistoso', NULL, 0, 0, 7, 2, 1),
+(10, '2026-07-22 17:00:00', '50 min', 'Finalizado', 'Torneo', 'Olga Marina', 2, 0, 7, 2, 1),
+(12, '2026-07-22 17:00:00', '30 min', 'Finalizado', 'Amistoso', NULL, 1, 0, 7, 2, 1),
+(13, '2026-07-22 17:00:00', '60 min', 'Finalizado', 'Amistoso', NULL, 0, 0, 7, 3, 2),
+(14, '2026-08-19 22:10:00', '60 min', 'Pendiente', 'Amistoso', NULL, 0, 0, 9, 1, 1),
+(15, '2026-08-31 22:11:00', '30 min', 'Pendiente', 'Amistoso', NULL, 0, 0, 9, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -603,6 +721,13 @@ CREATE TABLE `partido_tarjetas` (
   `partido_id` int(11) NOT NULL,
   `tarjeta_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `partido_tarjetas`
+--
+
+INSERT INTO `partido_tarjetas` (`p_t_id`, `Atleta_id`, `partido_id`, `tarjeta_id`) VALUES
+(1, 'atl_6a59996790a', 13, 1);
 
 -- --------------------------------------------------------
 
@@ -799,7 +924,9 @@ INSERT INTO `representante` (`cedula_representante`, `nombre_representante`, `ap
 ('V-32499689', 'Clara Gabriela', 'Medina Gutierrez', 'clara18medin@gmail.com', 'doctor', '04242476942'),
 ('V10053620', 'fdgfdghdfgf', 'perez gimenez', 'clara18medin@gmail.com', 'dgdfgdfgdfgdfgdfg', '0412-0000000'),
 ('V10053625', 'enmanuel carlos', 'perez gimenez', 'clara18medin@gmail.com', 'dgdfgdfgdfgdfgdfg', '0414-2589869'),
-('v32323232', 'Clara Gabriela', 'Medina Gutierrez', 'usuario@dominio.com', 'doctor', '0412-0000000');
+('V21111212', 'pedro', 'perez', 'jjhh@gmail.com', 'ingeniero', '+58 412-0011003'),
+('v32323232', 'Clara Gabriela', 'Medina Gutierrez', 'usuario@dominio.com', 'doctor', '0412-0000000'),
+('V3322222', 'dfdfdf', 'sdfsdfsd', 'ffddfd@dsds.com', 'ama de casa', '0412-3399855');
 
 -- --------------------------------------------------------
 
@@ -852,10 +979,12 @@ CREATE TABLE `salud` (
 INSERT INTO `salud` (`salud_id`, `tipo_sangre`, `alergias`, `padecimiento`, `medicamento_no_tomar`, `lesiones_previas`, `poliza_seguro`, `vigencia`, `empresa`, `cobertura`, `nro_poliza`, `nombre_medico`, `telefono_medico`, `Atleta_id`) VALUES
 (57, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'posee', '2026-07-31', 'Seguros Caracas', 'Completa', 'POL-2024-05', 'Dr. cabeza', '0422-4863258', 'atl_6a59935c88b'),
 (119, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a59996790a'),
-(120, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'posee', '2026-12-31', 'Seguros Caracas', 'Completa', 'POL-2024-001', 'Dr. Luis Rodríguez', '0412-3456789', 'atl_6a599a02aaa'),
+(120, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'posee', '2026-12-31', 'Seguros Caracas', 'Completa', 'POL-2024-001', 'Dr. Luis Rodr??guez', '0412-3456789', 'atl_6a599a02aaa'),
 (138, 'O+', 'Ninguna', 'Asma leve', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a59a404403'),
 (139, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a59a5fe7a5'),
-(140, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a5ed7b875c');
+(140, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a5ed7b875c'),
+(141, 'O+', 'Ninguna', 'Asma leve', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a8600a67d2'),
+(142, 'O+', 'Ninguna', 'Asma leve', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a8600a77ee');
 
 -- --------------------------------------------------------
 
@@ -865,8 +994,17 @@ INSERT INTO `salud` (`salud_id`, `tipo_sangre`, `alergias`, `padecimiento`, `med
 
 CREATE TABLE `tarjetas` (
   `tarjeta_id` int(11) NOT NULL,
-  `tarjeta` varchar(10) NOT NULL
+  `tarjeta` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `tarjetas`
+--
+
+INSERT INTO `tarjetas` (`tarjeta_id`, `tarjeta`) VALUES
+(1, 'Amarilla'),
+(2, 'Roja'),
+(3, 'Doble Amarilla');
 
 -- --------------------------------------------------------
 
@@ -885,7 +1023,7 @@ CREATE TABLE `tipo_pago` (
 
 INSERT INTO `tipo_pago` (`tipo_pago_id`, `tipo_pago`) VALUES
 (1, 'Efectivo'),
-(2, 'Pago Móvil'),
+(2, 'Pago M??vil'),
 (3, 'Transferencia');
 
 -- --------------------------------------------------------
@@ -912,7 +1050,8 @@ INSERT INTO `uniforme` (`Uniforme_id`, `franela_talla`, `franela_nro`, `short_ta
 (122, 'M', 9, '12', '12'),
 (140, '12', 98, '12', '38'),
 (141, 'M', 99, 'M', '40'),
-(142, '6', 21, '6', '30');
+(142, '6', 21, '6', '30'),
+(144, '10', 21, '12', '36');
 
 -- --------------------------------------------------------
 
@@ -941,6 +1080,10 @@ INSERT INTO `usuario` (`usuario_id`, `usuario_nombre`, `usuario_apellido`, `usua
 ('adm_6a56fab470e5f', 'admi', 'admi', '1718196', '04123332222', 'admi.admi', '$2y$10$P.fJdZAQZaZf0hyoDDqP1u0vD/6Oh6/IS.m8E0GcKKTpNgfmrllzS', 'admi@example.com', 1, 1),
 ('adm_6a5847a191a8a', 'representante', 'representante', '33225588', '262253333', 'representante', '$2y$10$IBoXJ0p0tXDC90oznxZ6MuiZxH3vGhuxBTELxBXw0Rg3xTdFNiMIi', 'representante@example.com', 0, 3),
 ('adm_6a5870b278367', 'Juan', 'Castillo', '22558877', '04243697882', 'sffsssfff', '$2y$10$xLnkWVluv1wWnUp78aMnaumvZFUHufBOv6l5p/s7SssG5/K3rkds2', 'dfgdgdfg@hhh.com', 0, 1),
+('adm_6a8370afbd3b3', 'luis', 'diaz', '336622255', '51515515151515', 'luis.diaz', '$2y$10$qRzoQY7rEGIdfI34NU8rAuVYX/iJlDY40h4yY3KSNbyReNq.MoGCi', 'luis@gmail.com', 1, 1),
+('adm_6a8370fbc338b', 'luis', 'Castillo', '99663322', '3332626262', 'luis.castillo', '$2y$10$jsmvhgSlnssZ/juWTgoUretXtGWuWBJpwAkix6WsVky.DBdBwLmvy', 'luis@gmail.com', 1, 1),
+('adm_6a83728405473', 'pedrito', 'Castillo', '99666885', '04123701222', 'pedrito', '$2y$10$gYljJ6yvzrnkOUlZ1SX1wOpa1YoVg..CeCx1Ck5G5v/oKqMXapBUO', 'pedr@gmail.com', 0, 1),
+('adm_6a837490b4d06', 'representante', 'representante', '11447722', '04123701222', 'fgfggf', '$2y$10$7Z2MaQJU.ojbWGUVAAOBEOUs7KSbjHUqIOIZRDFEav/b.uXpmuRGi', 'fgfgfgfgfg@ggg.com', 1, 1),
 ('ent_6a56fbbf78870', 'entrenador', 'entrenador', '1718199', '04123701221', 'entrenador.entrenado', '$2y$10$FsaSt2N4dK9qC5o2tGXDyuciWqgpm8biYVKQX4UBtaA3M0xoImAH6', 'entrenador@example.com', 1, 3),
 ('sec_6a5700c52c8c9', 'secretaria', 'secretaria', '124578960', '04123332222', 'secretaria.1', '$2y$10$pG2N0w90FdhilHUU.Zx48.K6FaC/CrzAR.gddy4Y5ORFzzqo0t40W', 'secretaria@example.com', 1, 2),
 ('sec_6a585cc9d00b9', 'Juan', 'Perez', '11111111', '0412-9876543', 'jose.perez', '$2y$10$06y.p.HrBAXzEypeeBQmzu/sHqXCZCARB67zxmM0ePP6Vj8Sq0k5K', 'saassas@example.com', 0, 1),
@@ -950,7 +1093,7 @@ INSERT INTO `usuario` (`usuario_id`, `usuario_nombre`, `usuario_apellido`, `usua
 ('sec_6a5901a872d31', 'pedrito', 'perez', '12345699', '014725896', 'pedro..a', '$2y$10$witt9FwN2.ZfCkGjQPnrnezuHYEI5El07M0HNUFnq85HVxqou3Q/G', 'pedro@example.com', 0, 2),
 ('sec_6a59035c31ba8', 'jusus', 'lopez', '12154578', '14722588', 'jesus..', '$2y$10$HoR2gb.4tlTg2F9UsQ6oj.V8HEaguahZCTGXdh1NJH2aD6sW6bUFS', 'jessus@example.com', 0, 2),
 ('sec_6a59072d18387', 'jose', 'Castillo', '014722333', '014725833', 'asasasasas', '$2y$10$7nXWGQSAqY464c37PX9eGenBm7DihTEO1YX3EvCmJ5Zq.BXhn4XnK', 'assaaasas@example.com', 0, 2),
-('sec_6a5957cfc90c9', 'silvana', 'silvana', '369852147', '0101047744', 'silvana', '$2y$10$uaZkDmgpvOGePWQhUSF.a.uL1VDGh2w7RaUwgUpeQvH0OkSSPuweG', 'silvana@example.com', 0, 2);
+('sec_6a5957cfc90c9', 'silvana', 'silvana', '369852147', '0101047744', 'silvana', '$2y$10$uaZkDmgpvOGePWQhUSF.a.uL1VDGh2w7RaUwgUpeQvH0OkSSPuweG', 'silvana@example.com', 1, 2);
 
 --
 -- Índices para tablas volcadas
@@ -977,7 +1120,8 @@ ALTER TABLE `atleta_representante`
 ALTER TABLE `cambios`
   ADD PRIMARY KEY (`cambio_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
-  ADD KEY `partido_id` (`partido_id`);
+  ADD KEY `partido_id` (`partido_id`),
+  ADD KEY `Atleta_sale_id` (`Atleta_sale_id`);
 
 --
 -- Indices de la tabla `campo`
@@ -995,7 +1139,7 @@ ALTER TABLE `categoria`
 -- Indices de la tabla `categoria_atleta`
 --
 ALTER TABLE `categoria_atleta`
-  ADD PRIMARY KEY (`año_id`),
+  ADD PRIMARY KEY (`anio_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
   ADD KEY `categoria_id` (`categoria_id`);
 
@@ -1021,6 +1165,14 @@ ALTER TABLE `configuracion`
   ADD UNIQUE KEY `clave` (`clave`);
 
 --
+-- Indices de la tabla `convocado`
+--
+ALTER TABLE `convocado`
+  ADD PRIMARY KEY (`convocado_id`),
+  ADD UNIQUE KEY `uk_convocado` (`partido_id`,`Atleta_id`),
+  ADD KEY `fk_conv_atleta` (`Atleta_id`);
+
+--
 -- Indices de la tabla `cuota_mensual`
 --
 ALTER TABLE `cuota_mensual`
@@ -1028,10 +1180,10 @@ ALTER TABLE `cuota_mensual`
   ADD KEY `Atleta_id` (`Atleta_id`);
 
 --
--- Indices de la tabla `desempeño_entrenamiento`
+-- Indices de la tabla `desempe??o_entrenamiento`
 --
-ALTER TABLE `desempeño_entrenamiento`
-  ADD PRIMARY KEY (`desempeño_id`),
+ALTER TABLE `desempe??o_entrenamiento`
+  ADD PRIMARY KEY (`desempenio_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
   ADD KEY `entrenamiento_id` (`entrenamiento_id`);
 
@@ -1086,6 +1238,13 @@ ALTER TABLE `incidencia`
   ADD PRIMARY KEY (`incidencia_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
   ADD KEY `partido_id` (`partido_id`);
+
+--
+-- Indices de la tabla `noticias`
+--
+ALTER TABLE `noticias`
+  ADD PRIMARY KEY (`noticia_id`),
+  ADD KEY `usuario_creador` (`usuario_creador`);
 
 --
 -- Indices de la tabla `operacion`
@@ -1264,37 +1423,67 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `atleta_representante`
 --
 ALTER TABLE `atleta_representante`
-  MODIFY `AR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
+  MODIFY `AR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
+
+--
+-- AUTO_INCREMENT de la tabla `cambios`
+--
+ALTER TABLE `cambios`
+  MODIFY `cambio_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `campo`
+--
+ALTER TABLE `campo`
+  MODIFY `campo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria_atleta`
 --
 ALTER TABLE `categoria_atleta`
-  MODIFY `año_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `anio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT de la tabla `colegio`
 --
 ALTER TABLE `colegio`
-  MODIFY `colegio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `colegio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `configuracion`
 --
 ALTER TABLE `configuracion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+
+--
+-- AUTO_INCREMENT de la tabla `convocado`
+--
+ALTER TABLE `convocado`
+  MODIFY `convocado_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `cuota_mensual`
 --
 ALTER TABLE `cuota_mensual`
-  MODIFY `cuota_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `cuota_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+
+--
+-- AUTO_INCREMENT de la tabla `equipo_rival`
+--
+ALTER TABLE `equipo_rival`
+  MODIFY `equipo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `goles`
+--
+ALTER TABLE `goles`
+  MODIFY `gol_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `grado`
 --
 ALTER TABLE `grado`
-  MODIFY `grado_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `grado_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT de la tabla `hobbies`
@@ -1306,7 +1495,19 @@ ALTER TABLE `hobbies`
 -- AUTO_INCREMENT de la tabla `hobbie_atleta`
 --
 ALTER TABLE `hobbie_atleta`
-  MODIFY `hobbie_atleta_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=172;
+  MODIFY `hobbie_atleta_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=176;
+
+--
+-- AUTO_INCREMENT de la tabla `incidencia`
+--
+ALTER TABLE `incidencia`
+  MODIFY `incidencia_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `noticias`
+--
+ALTER TABLE `noticias`
+  MODIFY `noticia_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `operacion`
@@ -1325,6 +1526,18 @@ ALTER TABLE `pagos`
 --
 ALTER TABLE `pago_cuota`
   MODIFY `pago_cuota_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT de la tabla `partido`
+--
+ALTER TABLE `partido`
+  MODIFY `partido_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT de la tabla `partido_tarjetas`
+--
+ALTER TABLE `partido_tarjetas`
+  MODIFY `p_t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `prueba_balon_aereo`
@@ -1366,13 +1579,19 @@ ALTER TABLE `prueba_resistencia`
 -- AUTO_INCREMENT de la tabla `salud`
 --
 ALTER TABLE `salud`
-  MODIFY `salud_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
+  MODIFY `salud_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
+
+--
+-- AUTO_INCREMENT de la tabla `tarjetas`
+--
+ALTER TABLE `tarjetas`
+  MODIFY `tarjeta_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `uniforme`
 --
 ALTER TABLE `uniforme`
-  MODIFY `Uniforme_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
+  MODIFY `Uniforme_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
 
 --
 -- Restricciones para tablas volcadas
@@ -1396,7 +1615,8 @@ ALTER TABLE `atleta_representante`
 --
 ALTER TABLE `cambios`
   ADD CONSTRAINT `cambios_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `cambios_ibfk_2` FOREIGN KEY (`partido_id`) REFERENCES `partido` (`partido_id`);
+  ADD CONSTRAINT `cambios_ibfk_2` FOREIGN KEY (`partido_id`) REFERENCES `partido` (`partido_id`),
+  ADD CONSTRAINT `cambios_ibfk_3` FOREIGN KEY (`Atleta_sale_id`) REFERENCES `atleta` (`Atleta_id`);
 
 --
 -- Filtros para la tabla `categoria_atleta`
@@ -1413,17 +1633,24 @@ ALTER TABLE `categoria_entrenamiento`
   ADD CONSTRAINT `categoria_entrenamiento_ibfk_2` FOREIGN KEY (`entrenamiento_id`) REFERENCES `entrenamiento` (`entrenamiento_id`);
 
 --
+-- Filtros para la tabla `convocado`
+--
+ALTER TABLE `convocado`
+  ADD CONSTRAINT `fk_conv_atleta` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_conv_partido` FOREIGN KEY (`partido_id`) REFERENCES `partido` (`partido_id`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `cuota_mensual`
 --
 ALTER TABLE `cuota_mensual`
   ADD CONSTRAINT `cuota_mensual_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`);
 
 --
--- Filtros para la tabla `desempeño_entrenamiento`
+-- Filtros para la tabla `desempe??o_entrenamiento`
 --
-ALTER TABLE `desempeño_entrenamiento`
-  ADD CONSTRAINT `desempeño_entrenamiento_ibfk_1` FOREIGN KEY (`entrenamiento_id`) REFERENCES `entrenamiento` (`entrenamiento_id`),
-  ADD CONSTRAINT `desempeño_entrenamiento_ibfk_2` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`);
+ALTER TABLE `desempe??o_entrenamiento`
+  ADD CONSTRAINT `desempe??o_entrenamiento_ibfk_1` FOREIGN KEY (`entrenamiento_id`) REFERENCES `entrenamiento` (`entrenamiento_id`),
+  ADD CONSTRAINT `desempe??o_entrenamiento_ibfk_2` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`);
 
 --
 -- Filtros para la tabla `goles`
@@ -1454,6 +1681,12 @@ ALTER TABLE `incidencia`
   ADD CONSTRAINT `incidencia_ibfk_2` FOREIGN KEY (`partido_id`) REFERENCES `partido` (`partido_id`);
 
 --
+-- Filtros para la tabla `noticias`
+--
+ALTER TABLE `noticias`
+  ADD CONSTRAINT `noticias_ibfk_1` FOREIGN KEY (`usuario_creador`) REFERENCES `usuario` (`usuario_id`);
+
+--
 -- Filtros para la tabla `operacion`
 --
 ALTER TABLE `operacion`
@@ -1470,7 +1703,7 @@ ALTER TABLE `pagos`
 -- Filtros para la tabla `pago_cuota`
 --
 ALTER TABLE `pago_cuota`
-  ADD CONSTRAINT `fk_pc_cuota` FOREIGN KEY (`cuota_id`) REFERENCES `cuota_mensual` (`cuota_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pc_cuota` FOREIGN KEY (`cuota_id`) REFERENCES `cuota_mensual_old` (`cuota_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_pc_pago` FOREIGN KEY (`pago_id`) REFERENCES `pagos` (`pago_id`) ON DELETE CASCADE;
 
 --

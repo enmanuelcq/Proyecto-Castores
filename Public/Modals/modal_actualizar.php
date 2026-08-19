@@ -30,6 +30,7 @@
 
                 <!-- ===== FORMULARIO ===== -->
                 <form action="./Controller/ActualizarAtleta_controller.php" method="POST" class="FormularioAjax" id="actualizarAtletaForm<?php echo $atleta_id; ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     
                     <!-- Campos ocultos -->
                     <input type="hidden" name="atleta_id" value="<?php echo $atleta_id; ?>">

@@ -2,7 +2,7 @@
 <div class="modal fade" id="modalDesactivar<?php echo $atleta_id; ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
+            <div class="modal-header  text-white">
                 <h5 class="modal-title">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Desactivación
                 </h5>
@@ -26,6 +26,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <form action="./Controller/CambiarStatusAtleta_controller.php" method="POST" class="FormularioAjax">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="atleta_id" value="<?php echo $atleta_id; ?>">
                     <input type="hidden" name="accion" value="desactivar">
                     <button type="submit" class="btn btn-danger">

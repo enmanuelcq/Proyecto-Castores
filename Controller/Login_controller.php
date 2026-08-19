@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     if(isset($_SESSION['usuario'])) {
-        echo $_SESSION['usuario']['username'];
+        
         echo '<script>console.log("Session started successfully.");</script>';
         // Devolver HTML de éxito
         echo '

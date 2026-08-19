@@ -5,6 +5,13 @@ require_once $root . '/Controller/ConsultarAtleta_controller.php';
 if (!isset($todos_los_atletas) || !is_array($todos_los_atletas)) {
     $todos_los_atletas = [];
 }
+
+// Datos de paginación (vienen del controlador)
+$pagina_actual = $paginacion['pagina_actual'] ?? 1;
+$total_paginas = $paginacion['total_paginas'] ?? 1;
+$total_registros = $paginacion['total_registros'] ?? 0;
+$registros_por_pagina = $paginacion['registros_por_pagina'] ?? 10;
+$offset = $paginacion['offset'] ?? 0;
 ?>
 <div class="container py-5">
     <header class="mb-5">
@@ -93,6 +100,7 @@ if (!isset($todos_los_atletas) || !is_array($todos_los_atletas)) {
     <div class="form-rest"></div>
 
     <!-- ===== LISTA DE ATLETAS ===== -->
+    <div id="atletas-content">
     <div class="athlete-list">
         <?php if (empty($todos_los_atletas)): ?>
             <div class="alert alert-info text-center">
@@ -134,7 +142,14 @@ if (!isset($todos_los_atletas) || !is_array($todos_los_atletas)) {
             <div class="athlete-capsule d-flex align-items-center justify-content-between flex-wrap gap-3 
                         <?php echo !$esActivo ? 'border border-danger bg-light' : ''; ?>">
                 <div class="d-flex align-items-center gap-4">
-                    <div class="avatar-box">👤</div>
+                    <?php $foto = $atleta->getFoto(); ?>
+                    <div class="avatar-box">
+                        <?php if (!empty($foto)): ?>
+                            <img src="./Public/uploads/<?php echo htmlspecialchars($foto); ?>" alt="Foto" class="avatar-img">
+                        <?php else: ?>
+                            👤
+                        <?php endif; ?>
+                    </div>
                     <div>
                         <h3 class="athlete-name">
                             <?php echo htmlspecialchars($nombre_completo); ?>
@@ -197,11 +212,110 @@ if (!isset($todos_los_atletas) || !is_array($todos_los_atletas)) {
 
             <?php endforeach; ?>
         <?php endif; ?>
+
+    <!-- ===== PAGINADOR ===== -->
+    <?php if ($total_paginas > 1): ?>
+    <nav aria-label="Paginación de atletas" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- Anterior -->
+            <li class="page-item <?php echo ($pagina_actual <= 1) ? 'disabled' : ''; ?>">
+                <a class="page-link ajax-page" data-type="atletas" data-page="<?php echo $pagina_actual - 1; ?>" data-buscar="<?php echo urlencode($_GET['buscar'] ?? ''); ?>" data-categoria="<?php echo $_GET['categoria'] ?? 0; ?>" data-estado="<?php echo $_GET['estado'] ?? 'activos'; ?>" tabindex="-1">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            
+            <?php
+            $rango = 2;
+            $inicio = max(1, $pagina_actual - $rango);
+            $fin = min($total_paginas, $pagina_actual + $rango);
+            
+            if ($inicio > 1): ?>
+                <li class="page-item">
+                    <a class="page-link ajax-page" data-type="atletas" data-page="1" data-buscar="<?php echo urlencode($_GET['buscar'] ?? ''); ?>" data-categoria="<?php echo $_GET['categoria'] ?? 0; ?>" data-estado="<?php echo $_GET['estado'] ?? 'activos'; ?>">1</a>
+                </li>
+                <?php if ($inicio > 2): ?>
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                <?php endif; ?>
+            <?php endif; ?>
+            
+            <?php for ($i = $inicio; $i <= $fin; $i++): ?>
+                <li class="page-item <?php echo ($i == $pagina_actual) ? 'active' : ''; ?>">
+                    <a class="page-link ajax-page" data-type="atletas" data-page="<?php echo $i; ?>" data-buscar="<?php echo urlencode($_GET['buscar'] ?? ''); ?>" data-categoria="<?php echo $_GET['categoria'] ?? 0; ?>" data-estado="<?php echo $_GET['estado'] ?? 'activos'; ?>">
+                        <?php echo $i; ?>
+                    </a>
+                </li>
+            <?php endfor; ?>
+            
+            <?php if ($fin < $total_paginas): ?>
+                <?php if ($fin < $total_paginas - 1): ?>
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                <?php endif; ?>
+                <li class="page-item">
+                    <a class="page-link ajax-page" data-type="atletas" data-page="<?php echo $total_paginas; ?>" data-buscar="<?php echo urlencode($_GET['buscar'] ?? ''); ?>" data-categoria="<?php echo $_GET['categoria'] ?? 0; ?>" data-estado="<?php echo $_GET['estado'] ?? 'activos'; ?>"><?php echo $total_paginas; ?></a>
+                </li>
+            <?php endif; ?>
+            
+            <!-- Siguiente -->
+            <li class="page-item <?php echo ($pagina_actual >= $total_paginas) ? 'disabled' : ''; ?>">
+                <a class="page-link ajax-page" data-type="atletas" data-page="<?php echo $pagina_actual + 1; ?>" data-buscar="<?php echo urlencode($_GET['buscar'] ?? ''); ?>" data-categoria="<?php echo $_GET['categoria'] ?? 0; ?>" data-estado="<?php echo $_GET['estado'] ?? 'activos'; ?>">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="text-center text small mt-2">
+        Mostrando <?php echo $offset + 1; ?> - <?php echo min($offset + $registros_por_pagina, $total_registros); ?> de <?php echo $total_registros; ?> atletas
+    </div>
+    <?php endif; ?>
     </div>
 </div>
 
-<a href="index.php?View=configuracion_cuotas" class="btn btn-outline-primary">
-    <i class="bi bi-gear me-1"></i> Configurar cuotas
-</a>
+    <div class="d-flex justify-content-center mt-3 mb-2">
+        <a href="index.php?View=configuracion_cuotas" class="btn btn-action-green">
+            <i class="bi bi-gear me-1"></i> Configurar cuotas
+        </a>
+    </div>
+
+</div>
 
 <script src="./Public/Js/Consulta_atletas.js"></script>
+<script>
+function ajaxPaginate(el) {
+    var type = el.getAttribute('data-type');
+    var page = parseInt(el.getAttribute('data-page'));
+    if (page < 1 || el.closest('.disabled')) return;
+    var container = document.getElementById(type + '-content');
+    if (!container) return;
+    var url = 'Controller/AjaxPaginacion.php?type=' + type + '&page=' + page;
+    if (type === 'atletas') {
+        url += '&buscar=' + (el.getAttribute('data-buscar') || '');
+        url += '&categoria=' + (el.getAttribute('data-categoria') || '0');
+        url += '&estado=' + (el.getAttribute('data-estado') || 'activos');
+    }
+    container.style.opacity = '0.5';
+    container.style.transition = 'opacity 0.2s';
+    fetch(url)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                container.innerHTML = data.html;
+                container.style.opacity = '1';
+                container.querySelectorAll('.ajax-page').forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        ajaxPaginate(this);
+                    });
+                });
+            }
+        })
+        .catch(function() { container.style.opacity = '1'; });
+}
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.ajax-page').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            ajaxPaginate(this);
+        });
+    });
+});
+</script>

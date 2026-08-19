@@ -16,7 +16,7 @@ class RepositoryCuotaMensual implements ICuotaMensualRepository
 
     public function create(CuotaMensual $cuota): bool
     {
-        $sql = "INSERT INTO cuota_mensual (Atleta_id, mes, año, monto_establecido, estatus_cuota) 
+        $sql = "INSERT INTO cuota_mensual (Atleta_id, mes, anio, monto_establecido, estatus_cuota) 
                 VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         $result = $stmt->execute([
@@ -38,7 +38,7 @@ class RepositoryCuotaMensual implements ICuotaMensualRepository
         $sql = "UPDATE cuota_mensual SET 
                     Atleta_id = ?,
                     mes = ?,
-                    año = ?,
+                    anio = ?,
                     monto_establecido = ?,
                     estatus_cuota = ?
                 WHERE cuota_id = ?";
@@ -71,7 +71,7 @@ class RepositoryCuotaMensual implements ICuotaMensualRepository
 
     public function findByAtleta(string $atletaId): array
     {
-        $sql = "SELECT * FROM cuota_mensual WHERE Atleta_id = ? ORDER BY año DESC, mes DESC";
+        $sql = "SELECT * FROM cuota_mensual WHERE Atleta_id = ? ORDER BY anio DESC, mes DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$atletaId]);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -80,7 +80,7 @@ class RepositoryCuotaMensual implements ICuotaMensualRepository
 
     public function findByAtletaAndYear(string $atletaId, int $anio): array
     {
-        $sql = "SELECT * FROM cuota_mensual WHERE Atleta_id = ? AND año = ? ORDER BY mes DESC";
+        $sql = "SELECT * FROM cuota_mensual WHERE Atleta_id = ? AND anio = ? ORDER BY mes DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$atletaId, $anio]);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -100,7 +100,7 @@ class RepositoryCuotaMensual implements ICuotaMensualRepository
             (int) $row['cuota_id'],
             $row['Atleta_id'],
             (int) $row['mes'],
-            (int) $row['año'],
+            (int) $row['anio'],
             (float) $row['monto_establecido'],
             $row['estatus_cuota'],
             $row['fecha_creacion'] ?? null,

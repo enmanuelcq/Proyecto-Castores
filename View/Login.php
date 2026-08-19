@@ -9,6 +9,7 @@
         <p class="text-start subtitle-welcome">Ingrese sus credenciales para acceder</p>
 
         <form action="./Controller/Login_controller.php" method="POST" class="FormularioAjax" id="loginForm">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             
             <div class="mb-3 text-start">
                 <label for="username" class="form-label">Nombre de usuario</label>

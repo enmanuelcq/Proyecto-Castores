@@ -67,7 +67,7 @@ class RepositoryCategoria implements ICategoriaRepository
     // ──────────── FIND ALL ────────────
     public function findAll(): array
     {
-        $sql = "SELECT * FROM categoria ORDER BY sub_categoria ASC";
+        $sql = "SELECT * FROM categoria ORDER BY categoria_id ASC";
         $stmt = $this->db->query($sql);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return $this->mapRowsToCategorias($rows);

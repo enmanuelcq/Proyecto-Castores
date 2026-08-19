@@ -1,424 +1,273 @@
-:root {
-    --gradient-base: linear-gradient(180deg, #0D4866 0%, #0D4866 43.27%, #436C3F 100%);
-    --azul: #0D4866;
-    --verde-principal: #1b4d22;
-    --verde-boton: #315e37;
-    --rojo-eliminar: #8a1c1c;
-    --blanco-capsula: rgba(239, 239, 239, 0.95);
-    --texto-oscuro: #000000;
-}
-
-body {
-    background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
-        url('../img/14.png');
-    background-color: transparent;
-    background-blend-mode: multiply;
-    background-size: cover;
-    background-repeat: no-repeat;
-    color: #ffffff;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    min-height: 100vh;
-}
+/* ==========================================
+   Consulta de Atletas
+   ========================================== */
 
 .header-title {
     font-weight: 700;
     font-size: 2rem;
+    color: var(--text-primary);
 }
 
-/* --- FILAS DE ATLETAS (CÁPSULAS) --- */
+.header-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* --- Athlete Capsule Rows --- */
 .athlete-capsule {
-    background-color: var(--blanco-capsula);
-    color: var(--texto-oscuro);
-    border-radius: 50px;
-    padding: 15px 40px;
-    margin-bottom: 18px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
+    background: linear-gradient(135deg, #eef3ef 0%, #f4f8f5 100%);
+    border: 1.5px solid #b8dcc4;
+    border-left: 5px solid var(--primary);
+    border-radius: var(--radius-lg);
+    padding: 14px 24px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .athlete-capsule:hover {
-    transform: scale(1.01);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    border-left-color: var(--primary-dark);
 }
+
 .avatar-box {
     width: 50px;
     height: 50px;
-    background-color: #8bb1e0;
+    background: var(--primary);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.5rem;
-}
-.athlete-name {
-    font-weight: 700;
-    font-size: 1.2rem;
-    margin: 0;
-}
-.athlete-meta {
+    font-size: 1.25rem;
     font-weight: 600;
-    font-size: 1rem;
-    color: #333;
+    flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(13, 122, 63, 0.35);
+    overflow: hidden;
 }
 
-/* --- BOTONES DE ACCIÓN --- */
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.athlete-name {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.athlete-meta {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+/* --- Action Buttons --- */
 .btn-action-green {
-    background-color: var(--verde-boton) !important;
+    background: var(--primary) !important;
     color: white !important;
-    border-radius: 20px;
-    font-weight: 600;
-    padding: 5px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 22px;
     border: none;
 }
+
 .btn-action-red {
-    background-color: var(--rojo-eliminar) !important;
+    background: var(--danger) !important;
     color: white !important;
-    border-radius: 20px;
-    font-weight: 600;
-    padding: 5px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 22px;
     border: none;
 }
-.btn-action-green:hover, .btn-action-red:hover, .btn-secondary:hover {
+
+.btn-action-green:hover,
+.btn-action-red:hover {
     opacity: 0.9;
 }
 
-.btn-secondary{
-    background-color: #6c757d !important;
+.btn-secondary {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 22px;
+}
+
+.btn-pendiente {
+    background: var(--warning) !important;
     color: white !important;
-    border-radius: 20px;
-    font-weight: 600;
-    padding: 5px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 22px;
     border: none;
 }
 
-.btn-pendiente{
-    background-color: #dfc117 !important;
-    color: white !important;
-    border-radius: 20px;
-    font-weight: 600;
-    padding: 5px 20px;
-    border: none;
-}
-
-/* --- ESTILOS DE LOS MODALES --- */
-
-.inner-white-card {
-    background: rgba(255, 255, 255,0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 25px;
-    display: flex;
+.btn-outline-primary {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
     align-items: center;
-    gap: 25px;
-    flex-wrap: wrap;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
 }
 
+.btn-outline-primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
 
-/* Matriz de Solvencia */
+/* --- Inner Card (Modal sections) --- */
+.inner-white-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* --- Month Card (Solvency Matrix) --- */
 .month-card {
-    background-color: #b2c7b5;
-    border-radius: 15px;
+    background: linear-gradient(135deg, #eef3ef 0%, #f4f8f5 100%);
+    border: 1.5px solid #b8dcc4;
+    border-radius: var(--radius-md);
     padding: 10px;
     text-align: center;
-    color: black;
-    font-weight: 700;
-    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
 }
+
 .month-card.pendiente {
-    background-color: #d1b2b2;
+    background: #fddcdc;
+    border-color: #fca5a5;
 }
+
 .status-badge {
-    background-color: #2e5933;
+    background: var(--primary);
     color: white;
-    border-radius: 10px;
-    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
     padding: 2px 8px;
     display: inline-block;
-    margin-top: 5px;
+    margin-top: 4px;
+    font-weight: 600;
 }
+
 .status-badge.pendiente {
-    background-color: #701c1c;
+    background: var(--danger);
 }
 
-/* ============================================
-   MODAL ATLETA - ESTILOS COMPLETOS
-   ============================================ */
-
-/* --- CONTENEDOR PRINCIPAL --- */
+/* --- Modal --- */
 .custom-modal-content {
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    border: none;
+    border: 1px solid var(--border-color);
 }
 
-/* --- HEADER --- */
 .modal-header {
-    background: var(--verde-oscuro);
-    padding: 20px 30px;
+    background: var(--primary);
+    padding: 18px 24px;
 }
 
 .modal-header .modal-title {
-    color:#ffffff;
+    color: white;
     font-size: 1.3rem;
-    letter-spacing: 0.5px;
+    font-weight: 800;
 }
 
 .modal-header .btn-close {
-    color: #ffffff;
+    filter: brightness(0) invert(1);
     opacity: 0.8;
-    transition: opacity 0.3s ease;
 }
 
 .modal-header .btn-close:hover {
     opacity: 1;
 }
 
-/* --- BODY --- */
 .modal-body {
-    background: linear-gradient(to bottom, #0d4866a9, #436c3fa9),url('../img/21.jpeg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    padding: 25px 30px;
+    background: var(--bg-primary);
+    padding: 24px;
 }
 
-/* --- HEADER DEL ATLETA --- */
-
-.avatar-circle {
-    width: 70px;
-    height: 70px;
-    background: rgba(7, 114, 82, 0.226);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 35px;
-    flex-shrink: 0;
-}
-
-
-/* --- TARJETAS --- */
-.hover-card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    border-radius: 12px !important;
-    overflow: hidden;
-}
-
-.hover-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-}
-
-.hover-card .card-header {
-    padding: 15px 20px;
-    background: #ffffff !important;
-    border-bottom: 2px solid #f0f2f5;
-}
-
-.hover-card .card-header h5 {
-    font-size: 1rem;
-}
-
-.hover-card .card-body {
-    padding: 15px 20px;
-}
-
-/* --- TARJETA DE SEGURO --- */
-.seguro-card {
-    border-left: 4px solid #0d6efd !important;
-}
-
-.sin-seguro-card {
-    border-left: 4px solid #ffc107 !important;
-    background: #fff8e1;
-}
-
-/* --- ÍTEMS DE INFORMACIÓN --- */
-.info-item {
-    padding: 6px 0;
-}
-
-.info-item .text-muted {
-    font-size: 0.85rem;
-}
-
-.info-item .fw-bold {
-    font-size: 0.95rem;
-}
-
-.info-item.border-bottom {
-    border-color: #f0f2f5 !important;
-}
-
-/* --- COLORES POR SECCIÓN --- */
-.text-purple {
-    color: #6f42c1 !important;
-}
-
-.text-primary {
-    color: #0d6efd !important;
-}
-
-.text-success {
-    color: #198754 !important;
-}
-
-.text-warning {
-    color: #ffc107 !important;
-}
-
-.text-danger {
-    color: #dc3545 !important;
-}
-
-.text-info {
-    color: #0dcaf0 !important;
-}
-
-.text-secondary {
-    color: #6c757d !important;
-}
-
-/* --- BADGES --- */
-.badge.bg-light {
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: #333 !important;
-    font-weight: 500;
-    border-radius: 20px;
-}
-
-/* --- DORSAL --- */
-.info-item .fs-4 {
-    font-size: 1.5rem !important;
-    color: #0d6efd;
-}
-
-/* --- FOOTER --- */
 .modal-footer {
-    background: var(--verde-oscuro);
-    padding: 15px 30px;
-    border-top: 1px solid #e9ecef;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    padding: 14px 24px;
 }
 
 .modal-footer .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary);
     border: none;
-    border-radius: 50px;
-    padding: 10px 40px;
+    border-radius: var(--radius-md);
+    padding: 8px 28px;
     font-weight: 600;
-    transition: transform 0.2s ease;
 }
 
 .modal-footer .btn-primary:hover {
-    transform: scale(1.02);
+    background: var(--primary-dark);
 }
 
-/* --- RESPONSIVE --- */
-@media (max-width: 992px) {
-    .modal-body {
-        padding: 20px;
-    }
-    
-    .athlete-header-card .card-body {
-        flex-direction: column;
-        align-items: flex-start !important;
-        gap: 15px;
-    }
-    
-    .athlete-header-card .d-flex.gap-2 {
-        width: 100%;
-    }
-    
-    .avatar-circle {
-        width: 55px;
-        height: 55px;
-        font-size: 28px;
-    }
-}
-
-@media (max-width: 768px) {
-    .modal-header .modal-title {
-        font-size: 1rem;
-    }
-    
-    .modal-header {
-        padding: 15px 20px;
-    }
-    
-    .modal-body {
-        padding: 15px;
-    }
-    
-    .info-item {
-        padding: 4px 0;
-    }
-    
-    .info-item .fw-bold {
-        font-size: 0.85rem;
-    }
-    
-    .hover-card .card-header {
-        padding: 12px 15px;
-    }
-    
-    .hover-card .card-body {
-        padding: 12px 15px;
-    }
-}
-
-@media (max-width: 576px) {
-    .custom-modal-content {
-        border-radius: 10px;
-    }
-    
-    .avatar-circle {
-        width: 45px;
-        height: 45px;
-        font-size: 22px;
-    }
-    
-    .athlete-header-card h4 {
-        font-size: 1.1rem;
-    }
-    
-    .athlete-header-card .badge {
-        font-size: 0.75rem;
-        padding: 5px 12px !important;
-    }
-    
-    .modal-footer .btn-primary {
-        padding: 8px 25px;
-        font-size: 0.9rem;
-        width: 100%;
-    }
-}
-
-
-/* ===== HEADER DEL ATLETA ===== */
+/* --- Athlete Header Modal --- */
 .atleta-header-modal {
     display: flex;
     align-items: center;
-    gap: 20px;
-    background: rgba(43, 71, 73, 0.582);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 15px 20px;
+    gap: 16px;
+    background: linear-gradient(135deg, #eef3ef 0%, #e8f5ec 100%);
+    border: 1.5px solid #b8dcc4;
+    border-left: 5px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 14px 20px;
     flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
 .atleta-avatar-modal {
-    width: 55px;
-    height: 55px;
-    min-width: 55px;
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ffc107, #ff9800);
+    background: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    color: #212529;
+    color: white;
+    box-shadow: 0 3px 12px rgba(13, 122, 63, 0.35);
+    overflow: hidden;
+    border: 3px solid var(--primary-dark);
+}
+
+.avatar-img-modal {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* --- Foto grande del atleta en modal --- */
+.foto-grande-atleta {
+    max-width: 280px;
+    max-height: 320px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    border: 3px solid var(--primary);
+    box-shadow: 0 6px 20px rgba(13, 122, 63, 0.25);
 }
 
 .atleta-info-modal {
@@ -426,14 +275,15 @@ body {
 }
 
 .atleta-info-modal h4 {
-    color: #000000;
+    color: var(--text-primary);
     font-weight: 700;
+    font-size: 1.15rem;
     margin: 0;
 }
 
 .atleta-badges {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
     margin-top: 4px;
 }
@@ -442,208 +292,187 @@ body {
     margin-left: auto;
 }
 
-/* ===== TABLA ===== */
-.table-dashboard {
-    color: #000000;
-    border-collapse: separate;
-    border-spacing: 0 4px;
+/* --- Hover Cards (Modal sections) --- */
+.hover-card {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md) !important;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.table-dashboard thead th {
-    background: rgba(46, 60, 61, 0.582);
-    padding: 8px 12px;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: rgb(255, 255, 255);
-    border: none;
+.hover-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.hover-card .card-header {
+    padding: 12px 18px;
+    background: var(--bg-secondary) !important;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.hover-card .card-header h5 {
+    font-size: 1rem;
     font-weight: 600;
-
-    
+    color: var(--text-primary);
 }
 
-.table-responsive{
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    flex-wrap: wrap;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+.hover-card .card-body {
+    padding: 14px 18px;
 }
 
-.table-dashboard tbody td {
-    
-    
-    background: rgba(255, 255, 255, 0);
-    padding: 8px 12px;
-    border-radius: none;
-    vertical-align: top;
+.seguro-card {
+    border-left: 3px solid var(--info) !important;
 }
 
-/* ===== INFO ITEMS ===== */
+.sin-seguro-card {
+    border-left: 4px solid var(--warning) !important;
+    background: #fef0c8;
+}
+
 .info-item {
-    margin-bottom: 4px;
+    padding: 4px 0;
+    margin-bottom: 2px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.info-item .text-muted {
+    font-size: 0.88rem;
+}
+
+.info-item .fw-bold {
+    font-size: 1rem;
+    color: var(--text-primary);
 }
 
 .info-item .label {
-    font-size: 1rem;
-    color: rgb(0, 0, 0);
+    font-size: 0.92rem;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.3px;
     min-width: 70px;
+    font-weight: 500;
 }
 
 .info-item .value {
-    font-size: 0.85rem;
-    color: #000000;
+    font-size: 0.92rem;
+    color: var(--text-primary);
     font-weight: 500;
+    word-break: break-word;
 }
 
-/* ===== SECTION CARD ===== */
-.form-section-card {
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    flex-wrap: wrap;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
-    
-}
-
-.section-card-title {
-    font-size: 0.85rem;
+.label-title {
     font-weight: 600;
-    color: #000000;
-    margin-bottom: 10px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 0;
+    line-height: 1.2;
 }
 
-.section-card-title i {
-    font-size: 1rem;
+.info-item .fs-4 {
+    font-size: 1.5rem !important;
+    color: var(--primary);
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-    .atleta-header-modal {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .atleta-actions-modal {
-        margin-left: 0;
-    }
-    
-    .table-dashboard thead {
-        display: none;
-    }
-    
-    .table-dashboard tbody td {
-        display: block;
-        padding: 10px 0;
-    }
-    
-    .table-dashboard tbody td:not(:last-child) {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .info-item .label-title {
-        min-width: 80px;
-    }
+/* --- Table --- */
+.table-dashboard {
+    color: var(--text-primary);
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    table-layout: fixed;
+    width: 100%;
 }
 
-/* ===== SCROLLBAR ===== */
-.modal-body::-webkit-scrollbar {
-    width: 6px;
-}
-
-.modal-body::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 10px;
-}
-
-.modal-body::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-.modal-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 193, 7, 0.3);
-}
-
-.label-title{
-    font-family: 'Times New Roman';
-    font-style: bold;
+.table-dashboard thead th {
+    background: var(--primary);
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+    border: none;
     font-weight: 600;
-    font-size: 1rem;
-    color: #000000;
+    text-align: left;
 }
 
-/* --- FORM SECTION CARD (mismo estilo que expediente) --- */
-.form-section-card {
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(5px);
-    border-radius: 14px;
+.table-responsive {
+    background: var(--bg-card);
+    border: 1.5px solid #b8dcc4;
+    border-radius: var(--radius-lg);
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-sm);
+}
+
+.table-dashboard tbody td {
+    background: transparent;
+    padding: 10px 12px;
+    vertical-align: top;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.table-dashboard tbody tr:hover td {
+    background: var(--bg-secondary);
+}
+
+/* --- Section Card --- */
+.form-section-card {
+    background: var(--bg-card);
+    border: 1.5px solid #b8dcc4;
+    border-left: 5px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
 }
 
 .section-card-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #000000;
-    margin-bottom: 15px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 14px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .section-card-title i {
-    font-size: 1.1rem;
+    color: var(--primary);
+    font-size: 1rem;
 }
 
-/* --- LABELS --- */
+/* --- Labels & Inputs --- */
 .custom-form-label {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: rgb(0, 0, 0);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
     margin-bottom: 4px;
     display: block;
 }
 
-/* --- INPUTS --- */
 .custom-input {
-    background: rgba(255, 255, 255, 0.26)!important;
-    border: 1px solid rgba(255, 255, 255, 0.06)!important;
-    color: #000000 !important;
-    border-radius: 10px !important;
-    padding: 8px 14px !important;
-    font-size: 0.9rem !important;
-    transition: all 0.3s ease !important;
+    background: var(--bg-input) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: var(--radius-sm) !important;
+    padding: 10px 16px !important;
+    font-size: 0.95rem !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
 }
 
 .custom-input::placeholder {
-    color: rgba(255, 255, 255, 0.25) !important;
+    color: var(--text-muted) !important;
 }
 
 .custom-input:focus {
-    background: rgba(255, 255, 255, 0.644) !important;
-    border-color: #ffc107 !important;
-    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.15) !important;
-    color: #000000 !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(26, 122, 76, 0.12) !important;
+    background: var(--bg-card) !important;
 }
 
 .custom-input:disabled {
@@ -651,62 +480,126 @@ body {
     cursor: not-allowed;
 }
 
-/* --- SELECTS --- */
 .form-select.custom-input {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: #000000 !important;
-    border-radius: 10px !important;
-    padding: 8px 14px !important;
-    font-size: 0.9rem !important;
     cursor: pointer;
 }
 
 .form-select.custom-input option {
-    background: #fefeff8c !important;
-    color: #000000 !important;
+    background: var(--bg-card);
+    color: var(--text-primary);
 }
 
-.form-select.custom-input:focus {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: #ffc107 !important;
-    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.15) !important;
+/* --- Pagination --- */
+.pagination .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: var(--radius-sm) !important;
+    background: var(--bg-card);
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
 }
 
+.pagination .page-item .page-link:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
 
-/* --- RESPONSIVE --- */
+.pagination .page-item.active .page-link {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.pagination .page-link i {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.paginador-wrapper {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.paginador-info {
+    text-align: center;
+    margin-top: 0.75rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.paginador-info strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+    .athlete-header-card .card-body {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+    }
+
+    .avatar-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.4rem;
+    }
+}
+
 @media (max-width: 768px) {
+    .atleta-header-modal {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .atleta-actions-modal {
+        margin-left: 0;
+    }
+
+    .table-dashboard thead {
+        display: none;
+    }
+
+    .table-dashboard tbody td {
+        display: block;
+        padding: 8px 0;
+    }
+
+    .table-dashboard tbody td:not(:last-child) {
+        border-bottom: 1px solid var(--border-color);
+    }
+
     .form-section-card {
-        padding: 15px;
-    }
-    
-    .section-card-title {
-        font-size: 0.85rem;
-    }
-    
-    .custom-input,
-    .form-select.custom-input {
-        font-size: 0.85rem !important;
-        padding: 6px 12px !important;
-    }
-    
-    .custom-form-label {
-        font-size: 0.75rem;
+        padding: 14px;
     }
 }
 
 @media (max-width: 576px) {
     .btn-action-green,
     .btn-secondary {
-        padding: 8px 20px !important;
-        font-size: 0.85rem !important;
+        padding: 8px 16px !important;
+        font-size: 0.8rem !important;
         width: 100%;
     }
-    
-    .text-center.my-4 {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+
+    .pagination .page-item .page-link {
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
     }
 }
-

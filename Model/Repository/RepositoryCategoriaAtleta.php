@@ -17,7 +17,7 @@ class RepositoryCategoriaAtleta implements ICategoriaAtletaRepository
     // ──────────── CREATE ────────────
     public function create(CategoriaAtleta $relacion): bool
     {
-        $sql = "INSERT INTO categoria_atleta (año, Atleta_id, categoria_id) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO categoria_atleta (anio, Atleta_id, categoria_id) VALUES (?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $relacion->getAnio(),
@@ -29,7 +29,7 @@ class RepositoryCategoriaAtleta implements ICategoriaAtletaRepository
     // ──────────── UPDATE ────────────
     public function update(CategoriaAtleta $relacion): bool
     {
-        $sql = "UPDATE categoria_atleta SET `año` = ?, Atleta_id = ?, categoria_id = ? WHERE año_id = ?";
+        $sql = "UPDATE categoria_atleta SET anio = ?, Atleta_id = ?, categoria_id = ? WHERE anio_id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $relacion->getAnio(),
@@ -42,7 +42,7 @@ class RepositoryCategoriaAtleta implements ICategoriaAtletaRepository
     // ──────────── DELETE ────────────
     public function delete(int $id): bool
     {
-        $sql = "DELETE FROM categoria_atleta WHERE año_id = ?";
+        $sql = "DELETE FROM categoria_atleta WHERE anio_id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$id]);
     }
@@ -57,7 +57,7 @@ class RepositoryCategoriaAtleta implements ICategoriaAtletaRepository
     // ──────────── FIND BY ID ────────────
     public function findById(int $id): ?CategoriaAtleta
     {
-        $sql = "SELECT * FROM categoria_atleta WHERE año_id = ? LIMIT 1";
+        $sql = "SELECT * FROM categoria_atleta WHERE anio_id = ? LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -98,8 +98,8 @@ class RepositoryCategoriaAtleta implements ICategoriaAtletaRepository
     private function mapRowToCategoriaAtleta(array $row): CategoriaAtleta
     {
         return new CategoriaAtleta(
-            (int) $row['año_id'],
-            $row['año'],
+            (int) $row['anio_id'],
+            $row['anio'],
             $row['Atleta_id'],
             (int) $row['categoria_id']
         );

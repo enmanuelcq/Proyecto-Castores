@@ -32,14 +32,6 @@ if ($nuevaTasa !== null && $nuevaTasa > 0) {
     // Redirigir con mensaje de éxito
     $mensaje = "Tasa actualizada: " . number_format($nuevaTasa, 2) . " Bs/USD (anterior: " . number_format($tasaAnterior, 2) . ")";
     
-    // Si cambió la tasa, actualizar cuotas automáticamente
-    if ($tasaAnterior != $nuevaTasa) {
-        // Incluir el controlador de actualización de cuotas
-        include 'ActualizarMontosCuotasController.php';
-        // Nota: este script ya redirige con su propio mensaje
-        exit;
-    }
-    
     // Si no cambió, solo mostrar mensaje
     header('Location: ../index.php?View=configuracion_cuotas&success=1&mensaje=' . urlencode($mensaje));
     exit;

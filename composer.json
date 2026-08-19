@@ -1,0 +1,20 @@
+{
+    "name": "castores/deportivo-app",
+    "description": "Sistema de gestión - Deportivo Los Castores",
+    "type": "project",
+    "autoload": {
+        "classmap": [
+            "Config/",
+            "Model/Entities/",
+            "Model/Repository/",
+            "Model/Interfaces/",
+            "Model/Service/"
+        ],
+        "files": [
+            "Config/main.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

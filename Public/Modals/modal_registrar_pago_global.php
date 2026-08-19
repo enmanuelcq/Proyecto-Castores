@@ -10,6 +10,7 @@
             </div>
             <div class="modal-body">
                 <form action="Controller/RegistrarPagoController.php" method="POST" id="formRegistrarPago<?php echo $atleta_id; ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="atleta_id" value="<?php echo $atleta_id; ?>">
                     <input type="hidden" name="tipo_pago_global" value="1">
                     

@@ -36,9 +36,10 @@
                     </div>
                 </div>
 
-                <form id="formAsistencia<?php echo $e['id']; ?>" method="POST">
+                <form id="formAsistencia<?php echo $e['id']; ?>" method="POST" action="./Controller/RegistrarAsistencia_controller.php" class="FormularioAjax">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="entrenamiento_id" value="<?php echo $e['id']; ?>">
-                    <input type="hidden" name="entrenador_cedula" value="26804373">
+                    <input type="hidden" name="entrenador_cedula" value="<?php echo $_SESSION['usuario']['usuario_cedula'] ?? ''; ?>">
                     
                     <div class="table-responsive">
                         <table class="table table-dashboard">

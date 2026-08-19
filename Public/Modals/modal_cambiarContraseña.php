@@ -12,7 +12,8 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="formCambiarContrasena" method="POST">
+                <form id="formCambiarContrasena" method="POST" action="./Controller/CambiarContrasena_controller.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="alert alert-info" style="background: rgba(13,202,240,0.08); border: 1px solid rgba(13,202,240,0.12); border-radius: 10px;">
                         <i class="bi bi-info-circle-fill me-2 text-info"></i>
                         <small class="text-white-50">
