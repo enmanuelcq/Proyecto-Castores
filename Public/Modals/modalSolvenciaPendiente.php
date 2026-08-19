@@ -16,7 +16,7 @@
                         <i class="bi bi-clock-history"></i>
                     </div>
                     <h4 class="mt-3">Pago Pendiente</h4>
-                    <p class="text-muted" id="pendienteInfo_<?php echo $atleta_id; ?>">
+                    <p class="text" id="pendienteInfo_<?php echo $atleta_id; ?>">
                         Mes: <strong id="pendienteMes_<?php echo $atleta_id; ?>">Cargando...</strong> | 
                         Monto: <strong class="text-danger" id="pendienteMonto_<?php echo $atleta_id; ?>">Bs ...</strong>
                     </p>
@@ -38,7 +38,7 @@
                         <hr>
                         <div class="row">
                             <div class="col-12">
-                                <small class="text-muted">Estado Actual</small>
+                                <small class="text">Estado Actual</small>
                                 <p><span class="badge bg-warning text-dark fs-6">Pendiente</span></p>
                             </div>
                         </div>
@@ -46,7 +46,7 @@
                 </div>
 
                 <!-- ===== FORMULARIO ===== -->
-                <div class="card border-warning">
+                <div class="card">
                     <div class="card-header bg-warning bg-opacity-10">
                         <h6 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Registrar Pago</h6>
                     </div>

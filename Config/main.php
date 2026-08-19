@@ -55,9 +55,7 @@ function validar_fecha_real($fecha, $formato = null) {
         return $hoy->diff($fn)->y;
     }
 
-    function generarIdAtleta() {
-        return 'atl_' . uniqid();
-    }
+    
 
     /**
      * Convierte un número de mes (1-12) a nombre en español
@@ -172,3 +170,39 @@ function validar_fecha_real($fecha, $formato = null) {
         $tabla.='</nav>';
         return $tabla;
     }
+
+// ============================================================
+//  FUNCIÓN AUXILIAR
+// ============================================================
+if (!function_exists('time_elapsed')) {
+    function time_elapsed($datetime) {
+        $timestamp = strtotime($datetime);
+        $diff = time() - $timestamp;
+        
+        if ($diff < 60) return 'Hace ' . $diff . ' segundos';
+        if ($diff < 3600) return 'Hace ' . floor($diff / 60) . ' minutos';
+        if ($diff < 86400) return 'Hace ' . floor($diff / 3600) . ' horas';
+        if ($diff < 2592000) return 'Hace ' . floor($diff / 86400) . ' días';
+        if ($diff < 31536000) return 'Hace ' . floor($diff / 2592000) . ' meses';
+        return 'Hace ' . floor($diff / 31536000) . ' años';
+    }
+}
+
+function obtenerEstadoPartido($partido) {
+    $estado = $partido['estado'] ?? 'Pendiente';
+    
+    // Si ya está finalizado, mostrar Finalizado
+    if ($estado === 'Finalizado') {
+        return 'Finalizado';
+    }
+    
+    // Si la fecha es pasada y no está finalizado, mostrar "Por Cargar"
+    $fechaPartido = new DateTime($partido['fecha_partido']);
+    $hoy = new DateTime();
+    if ($fechaPartido < $hoy && $estado !== 'Finalizado') {
+        return 'Por Cargar';
+    }
+    
+    // Si es futuro o está en curso
+    return $estado;
+}

@@ -1,115 +1,186 @@
-<!-- modalVerPartidoFinalizado.php -->
-<div class="modal fade" id="modalVerPartidoFinalizado<?php echo $id; ?>" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Modal Ver Partido Finalizado -->
+<div class="modal fade" id="modalVerPartidoFinalizado<?php echo $partido['partido_id']; ?>" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header text-white">
-                <h5 class="modal-title text-white">
-                    <i class="bi bi-trophy me-2"></i>Detalle del Partido
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">🏁 Partido Finalizado</h5>
+                
             </div>
             <div class="modal-body">
-                <!-- Encabezado con resultado -->
+                
+                <!-- === Resumen del partido === -->
                 <div class="text-center mb-4">
-                    <div class="display-1 <?php 
-                        echo ($status == 'Ganado') ? 'text-success' : 
-                             (($status == 'Perdido') ? 'text-danger' : 'text-warning'); 
-                    ?>">
-                        <?php echo ($status == 'Ganado') ? '🏆' : (($status == 'Perdido') ? '😞' : '🤝'); ?>
+                    <div class="display-1 text-success">
+                        <i class="bi bi-trophy"></i>
                     </div>
-                    <h4>Partido <?php echo $status; ?></h4>
-                    <p class="text-muted">Resultado final del encuentro</p>
+                   <h4 style="color: black;">Partido Finalizado</h4>
                 </div>
-
-                <!-- Marcador -->
-                <div class="card mb-3 border-0 shadow-sm">
+                
+                <div class="card">
                     <div class="card-body">
+                        <!-- Marcador -->
                         <div class="row text-center align-items-center">
                             <div class="col-5">
-                                <h5 class="fw-bold">Los Castores</h5>
-                                <span class="display-4 fw-bold text-success">
-                                    <?php echo $partido['goles_a_favor'] ?: '0'; ?>
-                                </span>
+                                <h6>Los Castores</h6>
+                                <span class="display-4 fw-bold text-success"><?php echo $partido['goles_favor'] ?? 0; ?></span>
                             </div>
                             <div class="col-2">
-                                <span class="display-6 text-muted">VS</span>
+                                <span class="h4 text-muted">VS</span>
                             </div>
                             <div class="col-5">
-                                <h5 class="fw-bold"><?php echo $partido['rival']; ?></h5>
-                                <span class="display-4 fw-bold text-danger">
-                                    <?php echo $partido['goles_contra'] ?: '0'; ?>
-                                </span>
+                                <h6><?php echo htmlspecialchars($partido['equipo_rival'] ?? 'Rival'); ?></h6>
+                                <span class="display-4 fw-bold text-danger"><?php echo $partido['goles_contra'] ?? 0; ?></span>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <hr>
+                        
+                        <!-- Información general -->
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Fecha</small>
+                                <?php 
+                                $fecha_obj = new DateTime($partido['fecha_partido']);
+                                $fecha_mostrar = $fecha_obj ? $fecha_obj->format('d/m/Y') : '--/--/----';
+                                ?>
+                                <p class="fw-bold"><?php echo $fecha_mostrar; ?></p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Categoría</small>
+                                <p class="fw-bold"><?php echo htmlspecialchars($partido['categoria_nombre'] ?? 'Sin categoría'); ?></p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Tipo</small>
+                                <p class="fw-bold"><?php echo htmlspecialchars($partido['tipo_partido'] ?? 'Amistoso'); ?></p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Competencia</small>
+                                <p class="fw-bold"><?php echo htmlspecialchars($partido['nombre_competencia'] ?? 'N/A'); ?></p>
+                            </div>
+                        </div>
 
-                <!-- Información detallada -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="row g-3">
+                        <!-- ===================================================== -->
+                        <!-- SECCIÓN: DATOS DEL PARTIDO (CONDICIONAL POR ROL)       -->
+                        <!-- ===================================================== -->
+                        
+                        <!-- ===== 1. GOLEADORES (visible para todos) ===== -->
+                        <hr>
+                        <div class="row">
                             <div class="col-md-6">
-                                <div class="info-item">
-                                    <small class="text-muted d-block">📅 Fecha</small>
-                                    <p class="fw-bold mb-0"><?php echo $partido['fecha']; ?></p>
-                                </div>
+                                <h6 class="fw-bold text-success"><i class="bi bi-trophy-fill me-1"></i> Goleadores</h6>
+                                <?php if (!empty($goleadores)): ?>
+                                    <ul class="list-group list-group-flush">
+                                        <?php foreach ($goleadores as $gol): ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span>
+                                                    <?php echo htmlspecialchars($gol['1er_nombre'] . ' ' . $gol['1er_apellido']); ?>
+                                                    <small class="text-muted">(min <?php echo $gol['tiempo'] ? date('i', strtotime($gol['tiempo'])) : '?'; ?>)</small>
+                                                </span>
+                                                <span class="badge bg-success rounded-pill"><?php echo $gol['cant_goles']; ?> ⚽</span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <p class="text-muted">No hubo goles registrados.</p>
+                                <?php endif; ?>
                             </div>
+                            
+                            <!-- ===== 2. TARJETAS (visible para todos) ===== -->
                             <div class="col-md-6">
-                                <div class="info-item">
-                                    <small class="text-muted d-block">⏰ Hora</small>
-                                    <p class="fw-bold mb-0"><?php echo $partido['hora']; ?></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <small class="text-muted d-block">🏷️ Categoría</small>
-                                    <p class="fw-bold mb-0"><?php echo $partido['categoria']; ?></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <small class="text-muted d-block">⏱️ Duración</small>
-                                    <p class="fw-bold mb-0"><?php echo $partido['duracion'] ?: 'N/A'; ?></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <small class="text-muted d-block">🏟️ Estadio</small>
-                                    <p class="fw-bold mb-0"><?php echo $partido['estadio']; ?></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <small class="text-muted d-block">📋 Tipo</small>
-                                    <p class="fw-bold mb-0"><?php echo $partido['tipo']; ?></p>
-                                </div>
+                                <h6 class="fw-bold text-danger"><i class="bi bi-card-list me-1"></i> Tarjetas</h6>
+                                <?php if (!empty($tarjetas)): ?>
+                                    <ul class="list-group list-group-flush">
+                                        <?php foreach ($tarjetas as $tarjeta): ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span>
+                                                    <?php echo htmlspecialchars($tarjeta['1er_nombre'] . ' ' . $tarjeta['1er_apellido']); ?>
+                                                    <small class="text-muted">(<?php echo htmlspecialchars($tarjeta['tarjeta']); ?>)</small>
+                                                </span>
+                                                <span class="badge bg-<?php 
+                                                    echo match(strtolower($tarjeta['tarjeta'])) {
+                                                        'amarilla' => 'warning text-dark',
+                                                        'roja' => 'danger',
+                                                        'doble amarilla' => 'warning text-dark',
+                                                        default => 'secondary'
+                                                    };
+                                                ?> rounded-pill">
+                                                    <?php echo htmlspecialchars($tarjeta['tarjeta']); ?>
+                                                </span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <p class="text-muted">No hubo tarjetas registradas.</p>
+                                <?php endif; ?>
                             </div>
                         </div>
+
+                        <!-- ========================================================== -->
+                        <!-- SECCIONES EXCLUSIVAS PARA ENTRENADOR                        -->
+                        <!-- ========================================================== -->
+                        <?php if ($rol_usuario == 3): // Solo entrenador ?>
+                        
+                        <!-- ===== 3. CAMBIOS ===== -->
+                        <hr>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6 class="fw-bold text-info"><i class="bi bi-arrow-left-right me-1"></i> Cambios</h6>
+                                <?php if (!empty($cambios)): ?>
+                                    <ul class="list-group list-group-flush">
+                                        <?php foreach ($cambios as $cambio): ?>
+                                            <li class="list-group-item">
+                                                <span>
+                                                    <strong>Entra:</strong> <?php echo htmlspecialchars($cambio['entra_nombre'] . ' ' . $cambio['entra_apellido']); ?>
+                                                    <span class="mx-2">→</span>
+                                                    <strong>Sale:</strong> <?php echo htmlspecialchars($cambio['sale_nombre'] . ' ' . $cambio['sale_apellido']); ?>
+                                                    <small class="text-muted">(min <?php echo $cambio['minuto']; ?>)</small>
+                                                </span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <p class="text-muted">No hubo cambios registrados.</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- ===== 4. INCIDENCIAS ===== -->
+                        <hr>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6 class="fw-bold text-warning"><i class="bi bi-exclamation-triangle me-1"></i> Incidencias</h6>
+                                <?php if (!empty($incidencias)): ?>
+                                    <ul class="list-group list-group-flush">
+                                        <?php foreach ($incidencias as $incidencia): ?>
+                                            <li class="list-group-item">
+                                                <span>
+                                                    <?php echo htmlspecialchars($incidencia['1er_nombre'] . ' ' . $incidencia['1er_apellido']); ?>
+                                                    <span class="mx-2">-</span>
+                                                    <?php echo htmlspecialchars($incidencia['descripcion']); ?>
+                                                </span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <p class="text-muted">No hubo incidencias registradas.</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <?php endif; // Fin de la condición de entrenador ?>
+                        <!-- ========================================================== -->
+
                     </div>
                 </div>
 
                 <!-- Estado -->
-                <div class="alert <?php 
-                    echo ($status == 'Ganado') ? 'alert-success' : 
-                         (($status == 'Perdido') ? 'alert-danger' : 'alert-warning'); 
-                ?> mt-3">
-                    <i class="bi bi-info-circle me-2"></i>
-                    <strong>Estado:</strong> 
-                    <span class="badge <?php 
-                        echo ($status == 'Ganado') ? 'bg-success' : 
-                             (($status == 'Perdido') ? 'bg-danger' : 'bg-warning text-dark'); 
-                    ?>">
-                        <?php echo $status; ?>
-                    </span>
+                <div class="alert alert-success mt-3">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <strong>Estado:</strong> <span class="badge bg-success">Finalizado</span>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-2"></i>Cerrar
-                </button>
-                <button type="button" class="btn btn-primary" onclick="window.print()">
-                    <i class="bi bi-printer me-2"></i>Imprimir
-                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="window.print()">Imprimir</button>
             </div>
         </div>
     </div>

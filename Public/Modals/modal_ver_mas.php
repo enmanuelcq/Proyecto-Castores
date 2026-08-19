@@ -25,7 +25,7 @@
                         </div>
                     </div>
                     <div class="atleta-actions-modal">
-                        <span class="text-white small">
+                        <span class="text-black small">
                             <i class="bi bi-calendar3 me-1"></i>
                             <?php echo date('d/m/Y', strtotime($atleta->getFechaNacimiento())); ?>
                         </span>

@@ -14,10 +14,10 @@ $ultimaActualizacion = $repoConfig->getValor('ultima_actualizacion_tasa');
     <!-- ===== TÍTULO ===== -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold text-dark m-0">⚙️ Configuración de Cuotas</h2>
+            <h2 class="fw-bold  m-0">⚙️ Configuración de Cuotas</h2>
             <p class="text-muted m-0">Gestiona el monto mensual y la tasa de cambio</p>
         </div>
-        <span class="badge bg-primary bg-opacity-10 text-primary p-2 px-3 rounded-pill">
+        <span class="text-white-50 small">
             <i class="bi bi-clock me-1"></i>
             Última act: <?php echo $ultimaActualizacion ? date('d/m/Y H:i', strtotime($ultimaActualizacion)) : 'Nunca'; ?>
         </span>
@@ -43,7 +43,9 @@ $ultimaActualizacion = $repoConfig->getValor('ultima_actualizacion_tasa');
         </div>
     </div>
     <?php endif; ?>
-
+       <a href="index.php?View=Consulta_atletas" class="btn btn-outline-primary">
+    <i class="bi bi-gear me-1"></i> Volver
+</a>
     <!-- ===== CARD PRINCIPAL ===== -->
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4 p-lg-5">
@@ -122,15 +124,15 @@ $ultimaActualizacion = $repoConfig->getValor('ultima_actualizacion_tasa');
     </div>
 
     <!-- ===== FOOTER INFORMATIVO ===== -->
-    <div class="mt-4 p-3 bg-light rounded-3 border">
-        <div class="d-flex flex-wrap align-items-center gap-3">
+    <div class="mt-4 p-3 rounded-3 " >
+        <div class="d-flex flex-wrap align-items-center gap-3" >
             <div class="d-flex align-items-center">
                 <span class="badge bg-success me-2">●</span>
-                <small class="text-muted">Tasa actualizada automáticamente todos los días</small>
+                <small class="text-white">Tasa actualizada automáticamente todos los días</small>
             </div>
             <div class="d-flex align-items-center">
                 <span class="badge bg-info me-2">●</span>
-                <small class="text-muted">Las cuotas pendientes se actualizan con la nueva tasa</small>
+                <small class="text-white">Las cuotas pendientes se actualizan con la nueva tasa</small>
             </div>
         </div>
     </div>

@@ -7,7 +7,6 @@
     --blanco-capsula: rgba(239, 239, 239, 0.95);
     --texto-oscuro: #000000;
 }
-
 body {
     background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
         url('../img/14.png');
@@ -177,7 +176,7 @@ body {
 
 /* --- BODY --- */
 .modal-body {
-    background: linear-gradient(to bottom, #0d4866a9, #436c3fa9),url('../img/21.jpeg');
+    background-color: #36664558;
     background-size: cover;
     background-repeat: no-repeat;
     padding: 25px 30px;
@@ -224,6 +223,14 @@ body {
     padding: 15px 20px;
 }
 
+.card{
+    background-color: var(--blanco-capsula);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    align-items: center;
+    gap: 1px;
+    padding: 0px 20px;
+    border-radius: 100px; 
+}
 /* --- TARJETA DE SEGURO --- */
 .seguro-card {
     border-left: 4px solid #0d6efd !important;
@@ -400,7 +407,7 @@ body {
     display: flex;
     align-items: center;
     gap: 20px;
-    background: rgba(43, 71, 73, 0.582);
+    background: rgba(255, 255, 255, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
     padding: 15px 20px;
@@ -593,7 +600,7 @@ body {
 /* --- FORM SECTION CARD (mismo estilo que expediente) --- */
 .form-section-card {
     background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgb(255, 255, 255);
     backdrop-filter: blur(5px);
     border-radius: 14px;
     padding: 20px;
@@ -626,7 +633,7 @@ body {
 
 /* --- INPUTS --- */
 .custom-input {
-    background: rgba(255, 255, 255, 0.26)!important;
+    background: rgb(255, 255, 255)!important;
     border: 1px solid rgba(255, 255, 255, 0.06)!important;
     color: #000000 !important;
     border-radius: 10px !important;
@@ -653,7 +660,7 @@ body {
 
 /* --- SELECTS --- */
 .form-select.custom-input {
-    background: rgba(255, 255, 255, 0.06) !important;
+    background: rgb(255, 255, 255) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     color: #000000 !important;
     border-radius: 10px !important;
@@ -710,3 +717,139 @@ body {
     }
 }
 
+.btn-outline-primary{
+    background-color: var(--verde-principal);
+    color: #fff;
+    border-color: var(--verde-principal);
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    margin:0 auto 15px auto;
+    width: fit-content;
+}
+
+.btn-outline-primary:hover{
+    background: #25662d;
+    border-color: #25662d;
+}
+
+/* ============================================================
+   PAGINADOR PERSONALIZADO (sobrescribe Bootstrap)
+   ============================================================ */
+
+/* Contenedor del paginador */
+.paginador-wrapper {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Lista de páginas */
+.pagination {
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.pagination .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 10px !important;
+    background: #ffffff99;
+    border: 1px solid #ffffff99;
+    color: #1a2a3a;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,1);
+}
+
+.pagination .page-item .page-link:hover {
+    background: #a9ffff3b;
+    border-color: #a9ffff3b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--verde-principal) !important;
+    border-color: var(--verde-principal) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px var(--verde) !important;
+}
+
+.pagination .page-item.active .page-link:hover {
+    transform: translateY(0);
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.4;
+    pointer-events: none;
+    background: #f8fafc;
+}
+
+/* Iconos de navegación */
+.pagination .page-link i {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+/* Información de resultados */
+.paginador-info {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.paginador-info strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .pagination .page-item .page-link {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 8px;
+        font-size: 0.8rem;
+        border-radius: 8px !important;
+    }
+
+    .pagination .page-link i {
+        font-size: 0.9rem;
+    }
+}
+
+.text-center{
+    margin-bottom: 20px;
+}
+
+/* Cambiar color de los textos de la leyenda en el modal de solvencia */
+.custom-modal-content .text-white-50 {
+    color: #000000 !important;  
+}
+
+/* Cambiar color de los textos del modal de desactivación */
+/* Pregunta principal */
+[id^="modalDesactivar"] .modal-body > p {
+    color: #000000 !important;  /* Cambia por el color que quieras */
+}
+
+/* Datos de Cédula y Categoría */
+[id^="modalDesactivar"] .modal-body .row p {
+    color: #000000 !important;
+}
+
+/* Opcional: si quieres que las etiquetas (Cédula:, Categoría:) sean más oscuras */
+[id^="modalDesactivar"] .modal-body .row p strong {
+    color: #333333 !important;
+}

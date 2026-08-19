@@ -2,7 +2,7 @@
 <div class="modal fade" id="modalSolvenciaPagado<?php echo $atleta_id; ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
+            <div class="modal-header  text-white">
                 <h5 class="modal-title">
                     <i class="bi bi-check-circle-fill me-2"></i>Pago Confirmado
                 </h5>

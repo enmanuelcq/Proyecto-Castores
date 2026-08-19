@@ -2,7 +2,7 @@
 <div class="modal fade" id="modalRegistrarPago<?php echo $atleta_id; ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
+            <div class="modal-header text-white">
                 <h5 class="modal-title">
                     <i class="bi bi-plus-circle me-2"></i>Registrar Pago 
                 </h5>
@@ -58,7 +58,7 @@
                     <div class="mb-3">
                         <label class="form-label">Monto</label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">Bs</span>
                             <input type="number" class="form-control" name="monto" step="0.01" required>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                         <label class="form-label">Referencia</label>
                         <input type="text" class="form-control" name="referencia" id="referenciaInput<?php echo $atleta_id; ?>" 
                             placeholder="N° de transferencia, cheque, etc.">
-                        <small class="text-muted" id="referenciaAyuda<?php echo $atleta_id; ?>">
+                        <small class="text" id="referenciaAyuda<?php echo $atleta_id; ?>">
                             La referencia es obligatoria para pagos no en efectivo
                         </small>
                         <div class="invalid-feedback" id="referenciaError<?php echo $atleta_id; ?>" style="display:none;">

@@ -5,6 +5,13 @@ require_once $root . '/Controller/ConsultarAtleta_controller.php';
 if (!isset($todos_los_atletas) || !is_array($todos_los_atletas)) {
     $todos_los_atletas = [];
 }
+
+// Datos de paginación (vienen del controlador)
+$pagina_actual = $paginacion['pagina_actual'] ?? 1;
+$total_paginas = $paginacion['total_paginas'] ?? 1;
+$total_registros = $paginacion['total_registros'] ?? 0;
+$registros_por_pagina = $paginacion['registros_por_pagina'] ?? 10;
+$offset = $paginacion['offset'] ?? 0;
 ?>
 <div class="container py-5">
     <header class="mb-5">
@@ -166,7 +173,7 @@ if (!isset($todos_los_atletas) || !is_array($todos_los_atletas)) {
                             </button>
                         <?php else: ?>
                             <!-- Atleta Inactivo: Botón para abrir modal de reactivación -->
-                            <button class="btn btn-action-success" data-bs-toggle="modal" data-bs-target="#modalReactivar<?php echo $atleta_id; ?>">
+                            <button class="btn btn-action-green" data-bs-toggle="modal" data-bs-target="#modalReactivar<?php echo $atleta_id; ?>">
                                 <i class="bi bi-arrow-clockwise me-1"></i>Reactivar
                             </button>
                         <?php endif; ?>
@@ -182,7 +189,6 @@ if (!isset($todos_los_atletas) || !is_array($todos_los_atletas)) {
                     <?php endif; ?>
                 </div>
             </div>
-
             <!-- ===== MODALES ===== -->
             <?php include './Public/Modals/modal_ver_mas.php'; ?>
             <?php include './Public/Modals/modal_solvencia.php'; ?>
@@ -198,10 +204,72 @@ if (!isset($todos_los_atletas) || !is_array($todos_los_atletas)) {
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
+        <a href="index.php?View=configuracion_cuotas" class="btn btn-outline-primary">
+        <i class="bi bi-gear me-1"></i> Configurar cuotas
+        </a>
 </div>
 
-<a href="index.php?View=configuracion_cuotas" class="btn btn-outline-primary">
-    <i class="bi bi-gear me-1"></i> Configurar cuotas
-</a>
+<!-- ===== PAGINADOR ===== -->
+    <?php if ($total_paginas > 1): ?>
+    <nav aria-label="Paginación de atletas" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- Anterior -->
+            <li class="page-item <?php echo ($pagina_actual <= 1) ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?View=Consulta_atletas&pagina=<?php echo $pagina_actual - 1; ?>&buscar=<?php echo urlencode($_GET['buscar'] ?? ''); ?>&categoria=<?php echo $_GET['categoria'] ?? 0; ?>&estado=<?php echo $_GET['estado'] ?? 'activos'; ?>" tabindex="-1">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            
+            <?php
+            // Mostrar un rango de páginas alrededor de la página actual
+            $rango = 2;
+            $inicio = max(1, $pagina_actual - $rango);
+            $fin = min($total_paginas, $pagina_actual + $rango);
+            
+            // Mostrar primera página si no está en el rango
+            if ($inicio > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?View=Consulta_atletas&pagina=1&buscar=<?php echo urlencode($_GET['buscar'] ?? ''); ?>&categoria=<?php echo $_GET['categoria'] ?? 0; ?>&estado=<?php echo $_GET['estado'] ?? 'activos'; ?>">1</a>
+                </li>
+                <?php if ($inicio > 2): ?>
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                <?php endif; ?>
+            <?php endif; ?>
+            
+            <?php for ($i = $inicio; $i <= $fin; $i++): ?>
+                <li class="page-item <?php echo ($i == $pagina_actual) ? 'active' : ''; ?>">
+                    <a class="page-link" href="?View=Consulta_atletas&pagina=<?php echo $i; ?>&buscar=<?php echo urlencode($_GET['buscar'] ?? ''); ?>&categoria=<?php echo $_GET['categoria'] ?? 0; ?>&estado=<?php echo $_GET['estado'] ?? 'activos'; ?>">
+                        <?php echo $i; ?>
+                    </a>
+                </li>
+            <?php endfor; ?>
+            
+            <!-- Mostrar última página si no está en el rango -->
+            <?php if ($fin < $total_paginas): ?>
+                <?php if ($fin < $total_paginas - 1): ?>
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                <?php endif; ?>
+                <li class="page-item">
+                    <a class="page-link" href="?View=Consulta_atletas&pagina=<?php echo $total_paginas; ?>&buscar=<?php echo urlencode($_GET['buscar'] ?? ''); ?>&categoria=<?php echo $_GET['categoria'] ?? 0; ?>&estado=<?php echo $_GET['estado'] ?? 'activos'; ?>"><?php echo $total_paginas; ?></a>
+                </li>
+            <?php endif; ?>
+            
+            <!-- Siguiente -->
+            <li class="page-item <?php echo ($pagina_actual >= $total_paginas) ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?View=Consulta_atletas&pagina=<?php echo $pagina_actual + 1; ?>&buscar=<?php echo urlencode($_GET['buscar'] ?? ''); ?>&categoria=<?php echo $_GET['categoria'] ?? 0; ?>&estado=<?php echo $_GET['estado'] ?? 'activos'; ?>">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Información adicional -->
+    <div class="text-center text small mt-2">
+        Mostrando <?php echo $offset + 1; ?> - <?php echo min($offset + $registros_por_pagina, $total_registros); ?> de <?php echo $total_registros; ?> atletas
+    </div>
+    <?php endif; ?>
+
+</div>
+
 
 <script src="./Public/Js/Consulta_atletas.js"></script>

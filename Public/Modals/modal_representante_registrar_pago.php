@@ -9,7 +9,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content custom-modal-content">
             <!-- ===== HEADER ===== -->
-            <div class="modal-header border-0">
+            <div class="modal-header">
                 <h5 class="modal-title fw-bold text-uppercase">
                     <i class="bi bi-plus-circle-fill me-2 text-success"></i>
                     Registrar Pago

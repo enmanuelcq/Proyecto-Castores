@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="atleta-actions-modal">
-                        <span class="text-white small">
+                        <span class="text-black small">
                             <i class="bi bi-clock-history me-1"></i>
                             <?php 
                             if (!empty($solvencia)) {

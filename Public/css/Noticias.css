@@ -4,13 +4,18 @@
     --blanco-puro: #ffffff;
     --texto-oscuro: #000000;         
     --verde-vivido: #0bd872;        
+    --verde-principal: #1b4d22;
     --gris-card: rgba(239, 239, 239, 0.95);
+    --blanco-capsula: rgba(239, 239, 239, 0.95);
 }
 
 body {
     background-image: linear-gradient(to bottom, #0d4866a9, #436c3fa9), 
         url('../img/7.jpeg');
     background-color: transparent;
+    background-blend-mode: multiply;
+    background-size: cover;
+    background-repeat: no-repeat;
     color: var(--blanco-puro);
     font-family: 'Segoe UI', system-ui, sans-serif;
     min-height: 100vh;
@@ -27,15 +32,17 @@ body {
 
 /* --- TORNEOS TARJETAS --- */
 .torneo-list-card {
-    background-color: rgba(255, 255, 255, 0.26);
+    background-color: var(--blanco-capsula);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 18px;
     transition: background-color 0.2s;
-    backdrop-filter: blur(5px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.466);
+    color: #000000;
 }
 .torneo-list-card:hover {
-    background-color: #a9ffff3b;
+    background-color: #053b3bb0;
+    color: #ffffff;
+    backdrop-filter: blur(5px);
 }
 
 .badge-fecha-box {
@@ -82,20 +89,25 @@ body {
 /* --- ESTILOS DE LOS MODALES --- */
 /* body */
 .modal-body {
-    background: linear-gradient(to bottom, #0d4866a9, #436c3fa9),url('../img/21.jpeg');
+   background-color: #36664558;
     background-size: cover;
     background-repeat: no-repeat;
     padding: 25px 30px;
+}
+
+.modal-content{
+    overflow: hidden !important;
 }
 .modal-footer {
     background: var(--verde-oscuro);
     border-top: none;
     padding: 15px 30px;
+    border-bottom-left-radius: inherit !important;
+    border-top-right-radius: inherit !important;
 }
 /* --- HEADER --- */
 .modal-header {
     background: var(--verde-oscuro);
-
 }
 
 .form-text{
@@ -112,7 +124,6 @@ body {
     opacity: 0.8;
     transition: opacity 0.3s ease;
 }
-
 .modal-header .btn-close:hover {
     opacity: 1;
 }
@@ -269,9 +280,9 @@ body {
 
 /* Tarjeta horizontal */
 .noticia-horizontal-card {
-    background: rgba(255, 255, 255, 0.26);
+    background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgb(255, 255, 255);
     border-radius: 16px;
     transition: all 0.3s ease;
     backdrop-filter: blur(5px);
@@ -392,4 +403,135 @@ body {
 .noticia-card-secundaria:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateX(5px);
+}
+
+/* ===== NOTICIA DESTACADA ===== */
+.noticia-destacada-card {
+    background: #f8f9fa;
+    border-left: 6px solid #dc3545;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.noticia-destacada-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1) !important;
+}
+
+/* ===== TARJETA DE NOTICIA NORMAL ===== */
+.noticia-card {
+    background-color: rgb(255, 255, 255);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color:#000000;
+}
+
+.noticia-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+}
+
+.card-body{
+    background: var(--blanco-capsula);
+    align-items: center;
+}
+.btn-outline{
+    background-color: var(--verde-principal);
+    color: #fff;
+ }
+
+.btn-outline:hover{
+    background-color: #2e7d32;
+}
+.card{
+    background-color: #00000000;
+}
+/* Contenedor del paginador */
+.paginador-wrapper {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Lista de páginas */
+.pagination {
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.pagination .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 10px !important;
+    background: #ffffff99;
+    border: 1px solid #ffffff99;
+    color: #1a2a3a;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,1);
+}
+
+.pagination .page-item .page-link:hover {
+    background: #a9ffff3b;
+    border-color: #a9ffff3b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--verde-principal) !important;
+    border-color: var(--verde-principal) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px var(--verde) !important;
+}
+
+.pagination .page-item.active .page-link:hover {
+    transform: translateY(0);
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.4;
+    pointer-events: none;
+    background: #f8fafc;
+}
+
+/* Iconos de navegación */
+.pagination .page-link i {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+/* Información de resultados */
+.paginador-info {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.paginador-info strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .pagination .page-item .page-link {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 8px;
+        font-size: 0.8rem;
+        border-radius: 8px !important;
+    }
+
+    .pagination .page-link i {
+        font-size: 0.9rem;
+    }
+}
+
+.text-center{
+    margin-bottom: 20px;
 }
