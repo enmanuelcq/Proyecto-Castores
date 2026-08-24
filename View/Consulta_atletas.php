@@ -300,6 +300,7 @@ function ajaxPaginate(el) {
             if (data.ok) {
                 container.innerHTML = data.html;
                 container.style.opacity = '1';
+                if (typeof reinitModales === 'function') reinitModales(container);
                 container.querySelectorAll('.ajax-page').forEach(function(link) {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();

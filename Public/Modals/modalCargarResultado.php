@@ -280,7 +280,17 @@
 
 <!-- ===== SCRIPTS ===== -->
 <script>
-function generarGoleadores(partidoId) {
+if (!window.convocadosPorPartido) window.convocadosPorPartido = {};
+(function() {
+    var pid = '<?php echo $partido["partido_id"]; ?>';
+    var opts = '<option value="">Seleccionar atleta...</option>';
+    <?php foreach ($convocados as $atleta): ?>
+    opts += '<option value="<?php echo $atleta->getAtletaId(); ?>"><?php echo $atleta->getPrimerNombre() . ' ' . $atleta->getPrimerApellido(); ?></option>';
+    <?php endforeach; ?>
+    window.convocadosPorPartido[pid] = opts;
+})();
+if (!window.generarGoleadores) {
+window.generarGoleadores = function(partidoId) {
     var container = document.getElementById('goleadoresContainer_' + partidoId);
     var input = document.getElementById('golesFavor_' + partidoId);
     var total = parseInt(input.value) || 0;
@@ -293,10 +303,7 @@ function generarGoleadores(partidoId) {
         return;
     }
     
-    var atletasOptions = '';
-    <?php foreach ($convocados as $atleta): ?>
-        atletasOptions += '<option value="<?php echo $atleta->getAtletaId(); ?>"><?php echo $atleta->getPrimerNombre() . ' ' . $atleta->getPrimerApellido(); ?></option>';
-    <?php endforeach; ?>
+    var atletasOptions = window.convocadosPorPartido[partidoId] || '';
     
     for (var i = 1; i <= total; i++) {
         var row = document.createElement('div');
@@ -304,7 +311,6 @@ function generarGoleadores(partidoId) {
         row.innerHTML = `
             <div class="col-lg-5 col-md-12">
                 <select class="form-select form-select-sm" name="goleador_id[]" required>
-                    <option value="">Seleccionar atleta...</option>
                     ${atletasOptions}
                 </select>
             </div>
@@ -314,7 +320,7 @@ function generarGoleadores(partidoId) {
             </div>
             <div class="col-lg-3 col-md-6">
                 <input type="text" class="form-control form-control-sm" name="gol_desc[]" 
-                       placeholder="Observación">
+                       placeholder="Observacion">
             </div>
             <div class="col-lg-1 col-md-2 d-flex align-items-center">
                 <button type="button" class="btn btn-cargar-remove" onclick="eliminarFila(this, 'goleador-row')">
@@ -327,6 +333,7 @@ function generarGoleadores(partidoId) {
     
     document.getElementById('golesMax_' + partidoId).textContent = total;
     document.getElementById('golesRegistrados_' + partidoId).textContent = total;
+};
 }
 
 function agregarFila(containerId, rowClass) {

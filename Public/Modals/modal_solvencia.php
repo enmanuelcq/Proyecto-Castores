@@ -16,9 +16,12 @@
                 <!-- ===== CABECERA DEL ATLETA ===== -->
                 <div class="atleta-header-modal mb-4">
                     <div class="atleta-avatar-modal">
-                        <?php 
-                        echo strtoupper(substr($atleta->getPrimerNombre() ?? 'A', 0, 1) . substr($atleta->getPrimerApellido() ?? 'A', 0, 1));
-                        ?>
+                        <?php $fotoSol = $atleta->getFoto(); ?>
+                        <?php if (!empty($fotoSol)): ?>
+                            <img src="./Public/uploads/<?php echo htmlspecialchars($fotoSol); ?>" alt="Foto" class="avatar-img-modal">
+                        <?php else: ?>
+                            <?php echo strtoupper(substr($atleta->getPrimerNombre() ?? 'A', 0, 1) . substr($atleta->getPrimerApellido() ?? 'A', 0, 1)); ?>
+                        <?php endif; ?>
                     </div>
                     <div class="atleta-info-modal">
                         <h4><?php echo htmlspecialchars($nombre_completo); ?></h4>

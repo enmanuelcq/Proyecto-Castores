@@ -207,7 +207,7 @@ const CastoresForm = (() => {
     // Inicializar un formulario
     function init(formSelector) {
         const form = document.querySelector(formSelector);
-        if (!form) return;
+        if (!form || form.dataset.ajaxBound) return;
 
         // Bind eventos blur e input a todos los campos validables
         const inputs = form.querySelectorAll('input, select, textarea');

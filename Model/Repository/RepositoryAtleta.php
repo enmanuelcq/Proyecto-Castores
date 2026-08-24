@@ -29,9 +29,11 @@ class RepositoryAtleta implements IAtletaRepository
                     pie_dominante,
                     direccion,
                     foto,
+                    documento_cedula,
+                    documento_partida,
                     Atleta_status,
                     Uniforme_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
@@ -46,6 +48,8 @@ class RepositoryAtleta implements IAtletaRepository
             $atleta->getPieDominante(),
             $atleta->getDireccion(),
             $atleta->getFoto(),
+            $atleta->getDocumentoCedula(),
+            $atleta->getDocumentoPartida(),
             (int) $atleta->getAtletaStatus(),   // bool → 0/1
             $atleta->getUniformeId()
         ]);
@@ -65,6 +69,8 @@ class RepositoryAtleta implements IAtletaRepository
                     pie_dominante = ?,
                     direccion = ?,
                     foto = ?,
+                    documento_cedula = ?,
+                    documento_partida = ?,
                     Atleta_status = ?,
                     Uniforme_id = ?
                 WHERE Atleta_id = ?";
@@ -81,6 +87,8 @@ class RepositoryAtleta implements IAtletaRepository
             $atleta->getPieDominante(),
             $atleta->getDireccion(),
             $atleta->getFoto(),
+            $atleta->getDocumentoCedula(),
+            $atleta->getDocumentoPartida(),
             (int) $atleta->getAtletaStatus(),
             $atleta->getUniformeId(),
             $atleta->getAtletaId()
@@ -303,7 +311,9 @@ class RepositoryAtleta implements IAtletaRepository
             $row['cedula'],
             $row['pie_dominante'],
             $row['direccion'],
-            $row['foto'],
+            $row['foto'] ?? '',
+            $row['documento_cedula'] ?? '',
+            $row['documento_partida'] ?? '',
             (bool) $row['Atleta_status'],
             (int) $row['Uniforme_id']
         );

@@ -88,9 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
         formRest.innerHTML = '';
     }
 
+    function highlightStepFields(step) {
+        var panel = document.querySelector('[data-panel="' + step + '"]');
+        if (!panel) return;
+        var fields = panel.querySelectorAll('input[id], select[id]');
+        fields.forEach(function(input) {
+            touched.add(input.id);
+            validateField(input);
+        });
+        var stepEl = document.querySelector('.wizard-step[data-step="' + step + '"]');
+        var hasError = panel.querySelector('.is-invalid');
+        if (stepEl) stepEl.classList.toggle('has-error', !!hasError);
+    }
+
     btnNext.addEventListener('click', () => {
+        highlightStepFields(currentStep);
         if (validateStep(currentStep)) {
             goToStep(currentStep + 1);
+        } else {
+            var firstInvalid = document.querySelector('[data-panel="' + currentStep + '"] .is-invalid');
+            if (firstInvalid) firstInvalid.focus();
         }
     });
 
@@ -202,8 +219,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================
-    // PER-FIELD BLUR VALIDATION
+    // REAL-TIME PER-FIELD VALIDATION
     // ============================================
+    const touched = new Set();
+
     const fieldRules = [
         { id: 'primer_nombre', regex: regex.nombreAtleta, msg: 'Solo letras, 3-40 caracteres', required: true },
         { id: 'segundo_nombre', regex: regex.nombreAtleta, msg: 'Solo letras, 3-40 caracteres', required: false },
@@ -211,10 +230,16 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'segundo_apellido', regex: regex.nombreAtleta, msg: 'Solo letras, 3-40 caracteres', required: false },
         { id: 'atleta_cedula', regex: regex.cedulaAtleta, msg: 'Formato: V12345678', required: false },
         { id: 'atleta_direccion', regex: regex.direccion, msg: 'Solo letras, números, 3-100 caracteres', required: true },
+        { id: 'atleta_sexo', regex: null, msg: '', required: true },
+        { id: 'pie_dominante', regex: null, msg: '', required: true },
+        { id: 'atleta_fecha', regex: null, msg: '', required: true, customValidate: function(v) { if (!v) return false; var f = new Date(v); return f >= new Date('2000-01-01') && f <= new Date('2026-12-31'); }, customMsg: 'Fecha inválida (2000-2026)' },
+        { id: 'categoria_atleta', regex: null, msg: '', required: true },
+        { id: 'categoria_anio', regex: null, msg: '', required: true },
         { id: 'talla_franela', regex: regex.talla, msg: 'Solo letras y números', required: true },
         { id: 'numero_franela', regex: regex.numeroFranela, msg: 'Entre 1 y 99', required: false },
         { id: 'talla_short', regex: regex.talla, msg: 'Solo letras y números', required: true },
         { id: 'talla_zapatos', regex: regex.tallaZapatos, msg: 'Solo números (ej. 39, 41.5)', required: true },
+        { id: 'tipo_sangre', regex: null, msg: '', required: true },
         { id: 'alergias', regex: regex.alergia, msg: 'Solo letras, espacios, comas y guiones', required: false },
         { id: 'padecimiento_cronico', regex: regex.alergia, msg: 'Solo letras, espacios, comas y guiones', required: false },
         { id: 'medicamento_restriccion', regex: regex.alergia, msg: 'Solo letras, espacios, comas y guiones', required: false },
@@ -231,16 +256,49 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'horario_hobbie', regex: regex.horario, msg: 'Formato no válido', required: false }
     ];
 
-    athleteForm.addEventListener('focusout', function(e) {
-        const input = e.target;
-        if (!input.id) return;
+    function validateField(input) {
         const rule = fieldRules.find(r => r.id === input.id);
         if (!rule) return;
         const val = input.value.trim();
-
         if (!val) {
             if (rule.required) {
                 setFieldInvalid(input, 'Este campo es obligatorio');
+            } else {
+                clearFieldState(input);
+            }
+            return;
+        }
+        if (rule.customValidate && !rule.customValidate(val)) {
+            setFieldInvalid(input, rule.customMsg);
+            return;
+        }
+        if (rule.regex && !rule.regex.test(val)) {
+            setFieldInvalid(input, rule.msg);
+        } else if (!rule.regex) {
+            setFieldValid(input);
+        } else {
+            setFieldValid(input);
+        }
+    }
+
+    const repRules = {
+        'cedula_representante[]': { regex: regex.cedulaRep, msg: 'Formato: V12345678', required: true },
+        'correo_representante[]': { regex: regex.correo, msg: 'Correo no válido', required: true },
+        'nombres_representante[]': { regex: regex.nombre, msg: 'Solo letras y espacios', required: true },
+        'apellidos_representante[]': { regex: regex.nombre, msg: 'Solo letras y espacios', required: true },
+        'telefono_representante[]': { regex: regex.telefono, msg: 'Formato: +58 412-1234567', required: true },
+        'ocupacion_representante[]': { regex: regex.texto, msg: 'Solo letras y espacios', required: false },
+        'parentesco[]': { regex: null, msg: '', required: false }
+    };
+
+    function validateRepField(input) {
+        const name = input.getAttribute('name');
+        const rule = repRules[name];
+        if (!rule || !rule.regex) return;
+        const val = input.value.trim();
+        if (!val) {
+            if (rule.required) {
+                setFieldInvalid(input, 'Obligatorio');
             } else {
                 clearFieldState(input);
             }
@@ -251,39 +309,59 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             setFieldValid(input);
         }
+    }
+
+    function onFieldInteract(e) {
+        const input = e.target;
+        if (!input.id || !input.tagName) return;
+        const rule = fieldRules.find(r => r.id === input.id);
+        if (!rule) return;
+        touched.add(input.id);
+        validateField(input);
+    }
+
+    function onRepFieldInteract(e) {
+        const input = e.target;
+        const name = input.getAttribute('name');
+        if (!name || !repRules[name]) return;
+        const key = 'rep_' + name + '_' + (input.closest('.representante-block')?.dataset.index || '0');
+        touched.add(key);
+        validateRepField(input);
+    }
+
+    athleteForm.addEventListener('input', onFieldInteract);
+    athleteForm.addEventListener('change', function(e) {
+        const input = e.target;
+        if (input.id) {
+            touched.add(input.id);
+            validateField(input);
+        }
+    });
+    athleteForm.addEventListener('focusout', function(e) {
+        const input = e.target;
+        if (input.id) {
+            touched.add(input.id);
+            validateField(input);
+        }
     });
 
-    // Representante fields (delegated)
+    athleteForm.addEventListener('input', onRepFieldInteract);
+    athleteForm.addEventListener('change', function(e) {
+        const input = e.target;
+        const name = input.getAttribute('name');
+        if (name && repRules[name]) {
+            const key = 'rep_' + name + '_' + (input.closest('.representante-block')?.dataset.index || '0');
+            touched.add(key);
+            validateRepField(input);
+        }
+    });
     athleteForm.addEventListener('focusout', function(e) {
         const input = e.target;
         const name = input.getAttribute('name');
-        if (!name) return;
-
-        if (name === 'cedula_representante[]') {
-            const val = input.value.trim();
-            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
-            if (!regex.cedulaRep.test(val)) { setFieldInvalid(input, 'Formato: V12345678'); return; }
-            setFieldValid(input);
-        } else if (name === 'correo_representante[]') {
-            const val = input.value.trim();
-            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
-            if (!regex.correo.test(val)) { setFieldInvalid(input, 'Correo no válido'); return; }
-            setFieldValid(input);
-        } else if (name === 'nombres_representante[]') {
-            const val = input.value.trim();
-            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
-            if (!regex.nombre.test(val)) { setFieldInvalid(input, 'Solo letras y espacios'); return; }
-            setFieldValid(input);
-        } else if (name === 'apellidos_representante[]') {
-            const val = input.value.trim();
-            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
-            if (!regex.nombre.test(val)) { setFieldInvalid(input, 'Solo letras y espacios'); return; }
-            setFieldValid(input);
-        } else if (name === 'telefono_representante[]') {
-            const val = input.value.trim();
-            if (!val) { setFieldInvalid(input, 'Obligatorio'); return; }
-            if (!regex.telefono.test(val)) { setFieldInvalid(input, 'Formato: +58 412-1234567'); return; }
-            setFieldValid(input);
+        if (name && repRules[name]) {
+            const key = 'rep_' + name + '_' + (input.closest('.representante-block')?.dataset.index || '0');
+            touched.add(key);
+            validateRepField(input);
         }
     });
 
@@ -355,8 +433,8 @@ document.addEventListener('DOMContentLoaded', () => {
         photoInput.addEventListener('change', function() {
             const file = this.files[0];
             if (!file) return;
-            if (file.size > 2 * 1024 * 1024) {
-                mostrarAlerta('La imagen no puede superar 2MB');
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarAlerta('La imagen no puede superar 5MB');
                 this.value = '';
                 return;
             }
@@ -374,6 +452,40 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         });
     }
+
+    // ============================================
+    // DOCUMENT UPLOAD PREVIEW (CÉDULA & PARTIDA)
+    // ============================================
+    function setupDocUpload(areaId, inputId, placeholderId, previewId) {
+        const area = document.getElementById(areaId);
+        const input = document.getElementById(inputId);
+        const placeholder = document.getElementById(placeholderId);
+        const preview = document.getElementById(previewId);
+        if (!area || !input) return;
+
+        area.addEventListener('click', () => input.click());
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarAlerta('El archivo no puede superar 5MB');
+                this.value = '';
+                return;
+            }
+            if (file.type !== 'application/pdf') {
+                mostrarAlerta('Solo se permiten archivos PDF');
+                this.value = '';
+                return;
+            }
+            if (placeholder) placeholder.classList.add('d-none');
+            if (preview) {
+                preview.classList.remove('d-none');
+                preview.querySelector('.doc-name').textContent = file.name;
+            }
+        });
+    }
+    setupDocUpload('cedulaUploadArea', 'documento_cedula', 'cedulaPlaceholder', 'cedulaPreview');
+    setupDocUpload('partidaUploadArea', 'documento_partida', 'partidaPlaceholder', 'partidaPreview');
 
     // ============================================
     // FECHA VALIDATION
