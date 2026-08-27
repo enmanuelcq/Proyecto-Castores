@@ -13,10 +13,12 @@ class Atleta{
     private string $pie_dominante;
     private string $direccion;
     private string $foto;
+    private string $documento_cedula;
+    private string $documento_partida;
     private bool $atleta_estatus;
     private int $Uniforme_id;
 
-    public function __construct(string $Atleta_id, string $primer_nombre = "", string $segundo_nombre = "", string $primer_apellido = "", string $segundo_apellido = "", string $fecha_nacimiento = "", string $sexo = "", string $cedula = "", string $pie_dominante = "", string $direccion = "", string $foto = "", bool $atleta_estatus, int $Uniforme_id = 0) {
+    public function __construct(string $Atleta_id, string $primer_nombre = "", string $segundo_nombre = "", string $primer_apellido = "", string $segundo_apellido = "", string $fecha_nacimiento = "", string $sexo = "", string $cedula = "", string $pie_dominante = "", string $direccion = "", string $foto = "", string $documento_cedula = "", string $documento_partida = "", bool $atleta_estatus = true, int $Uniforme_id = 0) {
 
         $this->Atleta_id = $Atleta_id;
         $this->primer_nombre = $primer_nombre;
@@ -29,6 +31,8 @@ class Atleta{
         $this->Uniforme_id = $Uniforme_id;
         $this->cedula = $cedula;
         $this->foto = $foto;
+        $this->documento_cedula = $documento_cedula;
+        $this->documento_partida = $documento_partida;
         $this->direccion = $direccion;
         $this->pie_dominante = $pie_dominante;
     }
@@ -135,5 +139,21 @@ class Atleta{
 
     public function setPieDominante(string $pie_dominante): void{
         $this->pie_dominante = $pie_dominante;
+    }
+
+    public function getDocumentoCedula(): string{
+        return $this->documento_cedula;
+    }
+
+    public function setDocumentoCedula(string $documento_cedula): void{
+        $this->documento_cedula = $documento_cedula;
+    }
+
+    public function getDocumentoPartida(): string{
+        return $this->documento_partida;
+    }
+
+    public function setDocumentoPartida(string $documento_partida): void{
+        $this->documento_partida = $documento_partida;
     }
 }

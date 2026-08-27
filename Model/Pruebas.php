@@ -238,6 +238,7 @@ function formatearValor($valor, $tipo) {
 function obtenerFechaPrueba($prueba) {
     if(isset($prueba['fecha'])) return $prueba['fecha'];
     if(isset($prueba['pruebaf_fecha'])) return $prueba['pruebaf_fecha'];
+    if(isset($prueba['pruebaS_fecha'])) return $prueba['pruebaS_fecha'];
     if(isset($prueba['pruebav_fecha'])) return $prueba['pruebav_fecha'];
     return null;
 }

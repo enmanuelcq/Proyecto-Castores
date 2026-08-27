@@ -56,15 +56,16 @@ if (!empty($_FILES['foto_atleta']['name'])) {
     $fotoType = $_FILES['foto_atleta']['type'];
 
     if ($fotoError === UPLOAD_ERR_OK) {
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $maxSize = 2 * 1024 * 1024; // 2MB
+        $ext = strtolower(pathinfo($_FILES['foto_atleta']['name'], PATHINFO_EXTENSION));
+        $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
 
-        if (!in_array($fotoType, $allowedTypes)) {
-            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> Solo se permiten imágenes JPG, PNG o GIF.</div>';
+        if (!in_array($ext, $allowedExts)) {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> Solo se permiten imágenes JPG, PNG, GIF o WebP.</div>';
             exit;
         }
         if ($fotoSize > $maxSize) {
-            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> La imagen no puede superar 2MB.</div>';
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> La imagen no puede superar 5MB.</div>';
             exit;
         }
 
@@ -81,6 +82,66 @@ if (!empty($_FILES['foto_atleta']['name'])) {
             exit;
         }
         $fotoRuta = 'fotos_atletas/' . $fotoNombre;
+    }
+}
+
+// ============================================
+// 1c. MANEJAR DOCUMENTOS (CÉDULA Y PARTIDA)
+// ============================================
+$cedulaDocRuta = '';
+error_log("REGISTRAR ATLETA - FILES: " . print_r($_FILES, true));
+if (!empty($_FILES['documento_cedula']['name'])) {
+    $docTmp = $_FILES['documento_cedula']['tmp_name'];
+    $docError = $_FILES['documento_cedula']['error'];
+    $docSize = $_FILES['documento_cedula']['size'];
+    $docType = $_FILES['documento_cedula']['type'];
+
+    if ($docError === UPLOAD_ERR_OK) {
+        $docExt = strtolower(pathinfo($_FILES['documento_cedula']['name'], PATHINFO_EXTENSION));
+        if ($docExt !== 'pdf') {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> Solo se permiten archivos PDF para la cédula.</div>';
+            exit;
+        }
+        if ($docSize > 5 * 1024 * 1024) {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> El archivo de cédula no puede superar 5MB.</div>';
+            exit;
+        }
+        $cedulaNombre = 'cedula_' . uniqid() . '.pdf';
+        $uploadDocDir = dirname(__DIR__) . '/Public/uploads/documentos/';
+        if (!is_dir($uploadDocDir)) { mkdir($uploadDocDir, 0755, true); }
+        if (!move_uploaded_file($docTmp, $uploadDocDir . $cedulaNombre)) {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> No se pudo guardar el documento de cédula.</div>';
+            exit;
+        }
+        $cedulaDocRuta = 'documentos/' . $cedulaNombre;
+    }
+}
+
+$partidaDocRuta = '';
+if (!empty($_FILES['documento_partida']['name'])) {
+    $docTmp = $_FILES['documento_partida']['tmp_name'];
+    $docError = $_FILES['documento_partida']['error'];
+    $docSize = $_FILES['documento_partida']['size'];
+    $docType = $_FILES['documento_partida']['type'];
+
+    if ($docError === UPLOAD_ERR_OK) {
+        $docExt = strtolower(pathinfo($_FILES['documento_partida']['name'], PATHINFO_EXTENSION));
+        if ($docExt !== 'pdf') {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> Solo se permiten archivos PDF para la partida de nacimiento.</div>';
+            exit;
+        }
+        if ($docSize > 5 * 1024 * 1024) {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> El archivo de partida de nacimiento no puede superar 5MB.</div>';
+            exit;
+        }
+        $partidaNombre = 'partida_' . uniqid() . '.pdf';
+        $uploadDocDir = dirname(__DIR__) . '/Public/uploads/documentos/';
+        if (!is_dir($uploadDocDir)) { mkdir($uploadDocDir, 0755, true); }
+        if (!move_uploaded_file($docTmp, $uploadDocDir . $partidaNombre)) {
+            echo '<div class="alert alert-danger py-2 small" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error:</strong> No se pudo guardar el documento de partida de nacimiento.</div>';
+            exit;
+        }
+        $partidaDocRuta = 'documentos/' . $partidaNombre;
     }
 }
 
@@ -411,6 +472,8 @@ try {
         $datos['pie_dominante'],
         $datos['atleta_direccion'],
         $fotoRuta,
+        $cedulaDocRuta,
+        $partidaDocRuta,
         true, // status activo
         $uniformeId
     );

@@ -365,6 +365,65 @@
                     </div>
                 </div>
 
+                <!-- ===== DOCUMENTOS DEL ATLETA ===== -->
+                <?php
+                $docCedula = $atleta->getDocumentoCedula();
+                $docPartida = $atleta->getDocumentoPartida();
+                if (!empty($docCedula) || !empty($docPartida)):
+                ?>
+                <div class="row g-3 mt-1">
+                    <div class="col-12">
+                        <div class="card form-section-card">
+                            <h4 class="section-card-title"><i class="bi bi-file-earmark-medical me-2 text-danger"></i>Documentos</h4>
+                            <div class="row g-3">
+                                <?php if (!empty($docCedula)): ?>
+                                <div class="col-md-6 text-center">
+                                    <div class="p-3 rounded-3 border bg-light">
+                                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size: 2.5rem;"></i>
+                                        <p class="fw-bold mb-2 mt-2">Cédula de Identidad</p>
+                                        <a href="./Public/uploads/<?php echo htmlspecialchars($docCedula); ?>" target="_blank" class="btn btn-sm btn-action-green me-1">
+                                            <i class="bi bi-eye me-1"></i> Ver PDF
+                                        </a>
+                                        <a href="./Public/uploads/<?php echo htmlspecialchars($docCedula); ?>" download class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-download me-1"></i> Descargar
+                                        </a>
+                                    </div>
+                                </div>
+                                <?php else: ?>
+                                <div class="col-md-6 text-center">
+                                    <div class="p-3 rounded-3 border bg-light">
+                                        <i class="bi bi-file-earmark-x text-muted" style="font-size: 2.5rem;"></i>
+                                        <p class="text-muted mb-0 mt-2">Cédula no cargada</p>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                                <?php if (!empty($docPartida)): ?>
+                                <div class="col-md-6 text-center">
+                                    <div class="p-3 rounded-3 border bg-light">
+                                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size: 2.5rem;"></i>
+                                        <p class="fw-bold mb-2 mt-2">Partida de Nacimiento</p>
+                                        <a href="./Public/uploads/<?php echo htmlspecialchars($docPartida); ?>" target="_blank" class="btn btn-sm btn-action-green me-1">
+                                            <i class="bi bi-eye me-1"></i> Ver PDF
+                                        </a>
+                                        <a href="./Public/uploads/<?php echo htmlspecialchars($docPartida); ?>" download class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-download me-1"></i> Descargar
+                                        </a>
+                                    </div>
+                                </div>
+                                <?php else: ?>
+                                <div class="col-md-6 text-center">
+                                    <div class="p-3 rounded-3 border bg-light">
+                                        <i class="bi bi-file-earmark-x text-muted" style="font-size: 2.5rem;"></i>
+                                        <p class="text-muted mb-0 mt-2">Partida no cargada</p>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
             </div>
             <div class="modal-footer border-0">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

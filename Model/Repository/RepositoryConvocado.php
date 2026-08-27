@@ -71,6 +71,29 @@ class RepositoryConvocado
         return (int) $stmt->fetchColumn() > 0;
     }
 
+    public function findByAtleta(string $atletaId): array
+    {
+        $sql = "SELECT p.*, er.nombre_equipo AS equipo_rival, c.minutos_jugados,
+                       cat.sub_categoria AS categoria_nombre
+                FROM partido p
+                JOIN convocado c ON p.partido_id = c.partido_id
+                LEFT JOIN equipo_rival er ON p.equipo_id = er.equipo_id
+                LEFT JOIN categoria cat ON p.categoria_id = cat.categoria_id
+                WHERE c.Atleta_id = ?
+                ORDER BY p.fecha_partido DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$atletaId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function countByAtleta(string $atletaId): int
+    {
+        $sql = "SELECT COUNT(*) FROM convocado WHERE Atleta_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$atletaId]);
+        return (int) $stmt->fetchColumn();
+    }
+
     private function mapRows(array $rows): array
     {
         $atletas = [];
@@ -86,7 +109,9 @@ class RepositoryConvocado
                 $row['cedula'],
                 $row['pie_dominante'],
                 $row['direccion'],
-                $row['foto'],
+                $row['foto'] ?? '',
+                $row['documento_cedula'] ?? '',
+                $row['documento_partida'] ?? '',
                 (bool) $row['Atleta_status'],
                 (int) $row['Uniforme_id']
             );

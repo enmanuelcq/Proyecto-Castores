@@ -81,7 +81,7 @@
                                 <div class="convocado-row ya-convocado">
                                     <div class="convocado-avatar">
                                         <?php if ($atleta->getFoto()): ?>
-                                            <img src="<?php echo htmlspecialchars($atleta->getFoto()); ?>" alt="" class="convocado-avatar-img">
+                                            <img src="./Public/uploads/<?php echo htmlspecialchars($atleta->getFoto()); ?>" alt="" class="convocado-avatar-img">
                                         <?php else: ?>
                                             <div class="convocado-avatar-initials">
                                                 <?php echo mb_substr($atleta->getPrimerNombre(), 0, 1); ?><?php echo mb_substr($atleta->getPrimerApellido(), 0, 1); ?>

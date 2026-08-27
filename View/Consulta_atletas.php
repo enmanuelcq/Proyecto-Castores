@@ -191,7 +191,7 @@ $offset = $paginacion['offset'] ?? 0;
                         <button class="btn btn-action-green" data-bs-toggle="modal" data-bs-target="#modalVerMas<?php echo $atleta_id; ?>">
                             <i class="bi bi-eye me-1"></i>Ver más
                         </button>
-                        <a href="index.php?View=DashboardRendimiento&Atleta=<?php echo $atleta_id; ?>" class="btn btn-action-green">
+                        <a href="index.php?View=DashboardRendimiento&id=<?php echo $atleta_id; ?>" class="btn btn-action-green">
                             <i class="bi bi-graph-up me-1"></i>Rendimiento
                         </a>
                     <?php endif; ?>
@@ -300,6 +300,7 @@ function ajaxPaginate(el) {
             if (data.ok) {
                 container.innerHTML = data.html;
                 container.style.opacity = '1';
+                if (typeof reinitModales === 'function') reinitModales(container);
                 container.querySelectorAll('.ajax-page').forEach(function(link) {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();

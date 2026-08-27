@@ -1,96 +1,212 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Marcar formularios AJAX de esta página para evitar doble envío con ajax.js
-    // Solo FormularioAjax (registros/actualizaciones), NO FormularioAjax1 (desactivar/reactivar)
+    // Marcar formularios AJAX para evitar doble envío con ajax.js
     document.querySelectorAll('.FormularioAjax').forEach(function(form) {
         form.dataset.ajaxBound = 'true';
     });
 
     // ==============================================================
-    // 1. FUNCIONALIDAD PARA MOSTRAR/OCULTAR CONTRASEÑA (para todos)
+    // 1. PASSWORD TOGGLE
     // ==============================================================
     document.addEventListener('click', function(e) {
         const toggle = e.target.closest('.password-toggle-icon');
         if (!toggle) return;
-        
         const inputId = toggle.getAttribute('data-target');
         const passwordInput = document.getElementById(inputId);
         if (!passwordInput) return;
-        
         const isPassword = passwordInput.getAttribute('type') === 'password';
         passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-        
         toggle.classList.toggle('bi-eye');
         toggle.classList.toggle('bi-eye-slash');
     });
 
     // ==============================================================
-    // 2. FORMULARIO DE REGISTRO (existente)
+    // 2. FIELD VALIDATION HELPERS
+    // ==============================================================
+    function setFieldValid(input) {
+        const fb = input.parentElement.querySelector('.field-feedback');
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+        if (fb) { fb.innerHTML = ''; fb.className = 'field-feedback'; }
+    }
+
+    function setFieldInvalid(input, msg) {
+        const fb = input.parentElement.querySelector('.field-feedback');
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+        if (fb) { fb.innerHTML = '<i class="bi bi-exclamation-circle"></i> ' + msg; fb.className = 'field-feedback show error'; }
+    }
+
+    function clearFieldState(input) {
+        const fb = input.parentElement.querySelector('.field-feedback');
+        input.classList.remove('is-valid', 'is-invalid');
+        if (fb) { fb.innerHTML = ''; fb.className = 'field-feedback'; }
+    }
+
+    // ==============================================================
+    // 3. REGISTRATION FORM - REAL-TIME VALIDATION
     // ==============================================================
     const RegistroUsuarioForm = document.getElementById('RegistroUsuarioForm');
     const formRestRegistro = document.querySelector('.form-rest');
 
+    const regex = {
+        nombre: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}$/,
+        usuario: /^[a-zA-Z0-9.,]{4,30}$/,
+        clave: /^[a-zA-Z0-9$@#.]{7,99}$/,
+        email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        telefono: /^[\d\s\-]{7,15}$/,
+        cedula: /^[0-9]{5,10}$/
+    };
+
+    const regFieldRules = [
+        { id: 'nombre', regex: regex.nombre, msg: 'Solo letras, entre 3 y 40 caracteres', required: true },
+        { id: 'apellido', regex: regex.nombre, msg: 'Solo letras, entre 3 y 40 caracteres', required: true },
+        { id: 'cedula', regex: regex.cedula, msg: 'Solo números, entre 5 y 10 dígitos', required: true },
+        { id: 'telefono', regex: regex.telefono, msg: 'Formato: 0412-1234567', required: true },
+        { id: 'email', regex: regex.email, msg: 'Ingrese un correo válido', required: true },
+        { id: 'usuario', regex: regex.usuario, msg: 'Letras, números, puntos o comas, entre 4 y 30', required: true },
+        { id: 'clave_1', regex: regex.clave, msg: 'Mínimo 7 caracteres (letras, números, $@#.)', required: true },
+        { id: 'clave_2', regex: null, msg: '', required: true, customValidate: function(v) {
+            var c1 = document.getElementById('clave_1');
+            return c1 && v === c1.value.trim();
+        }, customMsg: 'Las contraseñas no coinciden' }
+    ];
+
+    const regTouched = new Set();
+
+    function validateRegField(input) {
+        const rule = regFieldRules.find(r => r.id === input.id);
+        if (!rule) return;
+        const val = input.value.trim();
+        if (!val) {
+            if (rule.required) {
+                setFieldInvalid(input, 'Este campo es obligatorio');
+            } else {
+                clearFieldState(input);
+            }
+            return;
+        }
+        if (rule.customValidate && !rule.customValidate(val)) {
+            setFieldInvalid(input, rule.customMsg);
+            return;
+        }
+        if (rule.regex && !rule.regex.test(val)) {
+            setFieldInvalid(input, rule.msg);
+        } else {
+            setFieldValid(input);
+        }
+    }
+
+    if (RegistroUsuarioForm) {
+        RegistroUsuarioForm.addEventListener('input', function(e) {
+            const input = e.target;
+            if (!input.id || !input.tagName) return;
+            regTouched.add(input.id);
+            validateRegField(input);
+        });
+
+        RegistroUsuarioForm.addEventListener('change', function(e) {
+            const input = e.target;
+            if (input.id) {
+                regTouched.add(input.id);
+                validateRegField(input);
+            }
+        });
+
+        RegistroUsuarioForm.addEventListener('focusout', function(e) {
+            const input = e.target;
+            if (input.id) {
+                regTouched.add(input.id);
+                validateRegField(input);
+            }
+        });
+    }
+
+    // ==============================================================
+    // 4. USERNAME UNIQUENESS CHECK (AJAX)
+    // ==============================================================
+    let usernameValid = true;
+
+    function checkUsername(input) {
+        const username = input.value.trim();
+        if (!username) return;
+        const excludeId = input.dataset.userId || '';
+        const fd = new FormData();
+        fd.append('usuario', username);
+        if (excludeId) fd.append('exclude_id', excludeId);
+
+        fetch('./Controller/VerificarUsuario.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                const fb = input.parentElement.querySelector('.field-feedback') ||
+                           input.closest('.password-wrapper')?.parentElement.querySelector('.field-feedback') ||
+                           input.parentElement.nextElementSibling;
+                if (data.existe) {
+                    setFieldInvalid(input, 'Este nombre de usuario ya está en uso');
+                    usernameValid = false;
+                } else if (input.classList.contains('is-invalid') && input.dataset.usernameInvalid === 'true') {
+                    setFieldValid(input);
+                    usernameValid = true;
+                } else {
+                    if (!input.classList.contains('is-invalid')) {
+                        setFieldValid(input);
+                    }
+                    usernameValid = true;
+                }
+                input.dataset.usernameInvalid = data.existe ? 'true' : 'false';
+            })
+            .catch(() => {});
+    }
+
+    document.addEventListener('focusout', function(e) {
+        if (e.target.classList.contains('usuario-input')) {
+            checkUsername(e.target);
+        }
+    }, true);
+
+    // ==============================================================
+    // 5. REGISTRATION FORM SUBMIT
+    // ==============================================================
     if (RegistroUsuarioForm && formRestRegistro) {
         RegistroUsuarioForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const usuario = document.getElementById('usuario').value.trim();
-            const clave_1 = document.getElementById('clave_1').value.trim();
-            const clave_2 = document.getElementById('clave_2').value.trim();
-            const nombre = document.getElementById('nombre').value.trim();
-            const apellido = document.getElementById('apellido').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const telefono = document.getElementById('telefono').value.trim();
-            const cedula = document.getElementById('cedula').value.trim();
-            const rol = document.querySelector('input[name="rol"]:checked')?.value || '';
-
             formRestRegistro.innerHTML = '';
 
-            // Validaciones
-            const usuarioRegex = /^[a-zA-Z0-9.,]{4,30}$/;
-            const claveRegex = /^[a-zA-Z0-9$@#.]{7,99}$/;
-            const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}$/;
-            const apellidoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}$/;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const telefonoRegex = /^[\d\s\-]{7,15}$/;
-            const cedulaRegex = /^[0-9]{5,10}$/;
+            // Validate all fields
+            for (const rule of regFieldRules) {
+                const input = document.getElementById(rule.id);
+                if (!input) continue;
+                regTouched.add(rule.id);
+                validateRegField(input);
+            }
 
-            if (!usuario || !clave_1 || !clave_2 || !nombre || !apellido || !email || !telefono || !cedula) {
-                mostrarAlertaLocal(formRestRegistro, 'Todos los campos son obligatorios');
+            // Check for any invalid
+            const firstInvalid = RegistroUsuarioForm.querySelector('.is-invalid');
+            if (firstInvalid) {
+                firstInvalid.focus();
                 return;
             }
-            if (!usuarioRegex.test(usuario)) {
-                mostrarAlertaLocal(formRestRegistro, 'El nombre de usuario no cumple con el formato requerido');
+
+            // Check username uniqueness
+            if (!usernameValid) {
+                mostrarAlertaLocal(formRestRegistro, 'El nombre de usuario ya está en uso');
                 return;
             }
-            if (!claveRegex.test(clave_1)) {
-                mostrarAlertaLocal(formRestRegistro, 'La contraseña no cumple con el formato requerido');
-                return;
+
+            // Check all required are filled
+            for (const rule of regFieldRules) {
+                if (rule.required) {
+                    const input = document.getElementById(rule.id);
+                    if (!input || !input.value.trim()) {
+                        mostrarAlertaLocal(formRestRegistro, 'Todos los campos son obligatorios');
+                        return;
+                    }
+                }
             }
-            if (clave_1 !== clave_2) {
-                mostrarAlertaLocal(formRestRegistro, 'Las contraseñas no coinciden');
-                return;
-            }
-            if (!nombreRegex.test(nombre)) {
-                mostrarAlertaLocal(formRestRegistro, 'El nombre no cumple con el formato requerido');
-                return;
-            }
-            if (!apellidoRegex.test(apellido)) {
-                mostrarAlertaLocal(formRestRegistro, 'El apellido no cumple con el formato requerido');
-                return;
-            }
-            if (!emailRegex.test(email)) {
-                mostrarAlertaLocal(formRestRegistro, 'El email no cumple con el formato requerido');
-                return;
-            }
-            if (!telefonoRegex.test(telefono)) {
-                mostrarAlertaLocal(formRestRegistro, 'El teléfono no cumple con el formato requerido');
-                return;
-            }
-            if (!cedulaRegex.test(cedula)) {
-                mostrarAlertaLocal(formRestRegistro, 'La cédula no cumple con el formato requerido');
-                return;
-            }
+
+            // Check rol
+            const rol = document.querySelector('input[name="rol"]:checked');
             if (!rol) {
                 mostrarAlertaLocal(formRestRegistro, 'Debe seleccionar un rol');
                 return;
@@ -118,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==============================================================
-    // 3. FORMULARIO DE ACTUALIZACIÓN (MODALES)
+    // 5. UPDATE MODAL FORMS
     // ==============================================================
     document.addEventListener('submit', function(e) {
         const form = e.target.closest('.actualizar-form');
@@ -127,10 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const modalContent = form.closest('.modal-content');
         const formRest = modalContent ? modalContent.querySelector('.form-rest') : form.querySelector('.form-rest');
-        if (!formRest) {
-            console.warn('No se encontró .form-rest para mostrar mensajes');
-            return;
-        }
+        if (!formRest) return;
 
         formRest.innerHTML = '';
 
@@ -142,41 +255,52 @@ document.addEventListener('DOMContentLoaded', () => {
         const clave2 = form.querySelector('[name="clave_2"]')?.value || '';
         const telefono = form.querySelector('[name="telefono"]')?.value.trim() || '';
         const cedula = form.querySelector('[name="cedula"]')?.value.trim() || '';
-        const rol = form.querySelector('[name="rol"]:checked')?.value || '';
-
-        const usuarioRegex = /^[a-zA-Z0-9.,]{4,30}$/;
-        const claveRegex = /^[a-zA-Z0-9$@#.]{7,99}$/;
-        const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}$/;
-        const apellidoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}$/;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const telefonoRegex = /^[\d\s\-]{7,15}$/;
-        const cedulaRegex = /^[0-9]{5,10}$/;
+        const rolEl = form.querySelector('[name="rol"]');
+        const rol = rolEl ? (rolEl.value || '') : '';
 
         if (!nombre || !apellido || !usuario || !email || !telefono || !cedula) {
             mostrarAlertaLocal(formRest, 'Todos los campos son obligatorios (excepto contraseña)');
             return;
         }
-        if (!usuarioRegex.test(usuario)) {
-            mostrarAlertaLocal(formRest, 'El nombre de usuario no cumple con el formato requerido');
-            return;
-        }
-        if (!nombreRegex.test(nombre)) {
+        if (!regex.nombre.test(nombre)) {
             mostrarAlertaLocal(formRest, 'El nombre no cumple con el formato requerido');
             return;
         }
-        if (!apellidoRegex.test(apellido)) {
+        if (!regex.nombre.test(apellido)) {
             mostrarAlertaLocal(formRest, 'El apellido no cumple con el formato requerido');
             return;
         }
-        if (!emailRegex.test(email)) {
+        if (!regex.usuario.test(usuario)) {
+            mostrarAlertaLocal(formRest, 'El nombre de usuario no cumple con el formato requerido');
+            return;
+        }
+        // Check username uniqueness via AJAX
+        const usuarioInput = form.querySelector('[name="usuario"]');
+        const excludeId = usuarioInput?.dataset.userId || '';
+        const ufd = new FormData();
+        ufd.append('usuario', usuario);
+        if (excludeId) ufd.append('exclude_id', excludeId);
+        let usernameDuplicado = false;
+        const uXhr = new XMLHttpRequest();
+        uXhr.open('POST', './Controller/VerificarUsuario.php', false);
+        uXhr.send(ufd);
+        try {
+            const uRes = JSON.parse(uXhr.responseText);
+            if (uRes.existe) usernameDuplicado = true;
+        } catch(e) {}
+        if (usernameDuplicado) {
+            mostrarAlertaLocal(formRest, 'Este nombre de usuario ya está en uso');
+            return;
+        }
+        if (!regex.email.test(email)) {
             mostrarAlertaLocal(formRest, 'El email no cumple con el formato requerido');
             return;
         }
-        if (!telefonoRegex.test(telefono)) {
+        if (!regex.telefono.test(telefono)) {
             mostrarAlertaLocal(formRest, 'El teléfono no cumple con el formato requerido');
             return;
         }
-        if (!cedulaRegex.test(cedula)) {
+        if (!regex.cedula.test(cedula)) {
             mostrarAlertaLocal(formRest, 'La cédula no cumple con el formato requerido');
             return;
         }
@@ -189,8 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 mostrarAlertaLocal(formRest, 'Las contraseñas no coinciden');
                 return;
             }
-            if (!claveRegex.test(clave1)) {
-                mostrarAlertaLocal(formRest, 'La contraseña debe tener entre 7 y 99 caracteres y solo permitir letras, números y $@#.');
+            if (!regex.clave.test(clave1)) {
+                mostrarAlertaLocal(formRest, 'La contraseña debe tener entre 7 y 99 caracteres');
                 return;
             }
         }
@@ -206,15 +330,13 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(html => {
             formRest.innerHTML = html;
-            // Si el mensaje es de éxito, podemos cerrar el modal después de un tiempo
             if (html.includes('alert-success')) {
                 setTimeout(() => {
                     const modal = form.closest('.modal');
                     if (modal) {
                         const modalInstance = bootstrap.Modal.getInstance(modal);
                         if (modalInstance) modalInstance.hide();
-                        // Recargar la página o la lista de usuarios (opcional)
-                        location.reload(); // o actualizar solo la lista
+                        location.reload();
                     }
                 }, 2000);
             }
@@ -226,12 +348,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==============================================================
-    // 5. FUNCIÓN AUXILIAR PARA MOSTRAR ALERTAS
+    // 6. ALERT HELPER
     // ==============================================================
     function mostrarAlertaLocal(contenedor, mensaje) {
         contenedor.innerHTML = `
             <div class="alert alert-danger py-2 small text-start" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> 
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 <strong>Error:</strong> ${mensaje}
             </div>
         `;

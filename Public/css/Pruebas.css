@@ -4,19 +4,51 @@
 
 .contenido { padding: 20px 0; }
 
+/* --- Top Header --- */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.top-header h4 {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin: 0;
+}
+
+.top-header h4 i {
+    color: var(--primary);
+}
+
+/* --- Back Button --- */
 .btn-volver {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 9px 20px;
+    padding: 8px 18px;
     border-radius: var(--radius-sm);
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
     text-decoration: none;
     transition: all 0.2s;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
+    white-space: nowrap;
+}
+
+.btn-volver:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.btn-volver i {
+    font-size: 1rem;
 }
 
 .btn-volver:hover { background: var(--primary); color: white; border-color: var(--primary); }
@@ -64,35 +96,75 @@
 .ultima-prueba .valor { font-weight: 700; font-size: 1.15rem; color: var(--text-primary); }
 
 .card-prueba {
-    background: linear-gradient(135deg, #eef3ef 0%, #f4f8f5 100%);
-    border: 1.5px solid #b8dcc4;
+    background: #ffffff;
+    border: 1.5px solid var(--border-color);
+    border-left: 4px solid var(--primary);
     border-radius: var(--radius-lg);
-    padding: 16px;
+    padding: 18px;
     transition: transform 0.2s, box-shadow 0.2s;
     height: 100%;
     box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
 }
 
-.card-prueba:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.card-prueba:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 
-.card-prueba .icono { width: 50px; height: 50px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 8px; background: var(--primary); color: white; box-shadow: 0 3px 8px rgba(13, 122, 63, 0.35); }
-.card-prueba .valor-principal { font-size: 1.6rem; font-weight: 900; color: var(--primary-dark); }
-.card-prueba .descripcion { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
-.card-prueba .total-badge { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
+.card-prueba .icono {
+    width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; margin-bottom: 10px;
+    background: var(--primary); color: white;
+    box-shadow: 0 3px 10px rgba(13, 122, 63, 0.3);
+}
+.card-prueba .nombre {
+    font-size: 0.92rem; font-weight: 700; color: #1a1a2e;
+    margin-bottom: 6px;
+}
+.card-prueba .fecha-ultima {
+    font-size: 0.82rem; font-weight: 500; color: #374151;
+    margin: 0 0 4px 0;
+    display: flex; align-items: center; gap: 5px;
+}
+.card-prueba .fecha-ultima i { color: #6b7280; }
+.card-prueba .total-badge {
+    font-size: 0.72rem; font-weight: 600; color: #4b5563;
+    margin-top: 6px; padding: 3px 10px;
+    background: #f3f4f6; border-radius: 20px;
+    display: inline-block;
+}
 
-.card-prueba .footer { display: flex; gap: 5px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); flex-wrap: wrap; }
+/* Per-type card accent colors */
+.card-prueba[data-tipo="balon_aereo"]  { border-left-color: #FF6B6B; }
+.card-prueba[data-tipo="conduccion"]   { border-left-color: #4ECDC4; }
+.card-prueba[data-tipo="definicion"]   { border-left-color: #FF9F43; }
+.card-prueba[data-tipo="fuerza"]       { border-left-color: #FECA57; }
+.card-prueba[data-tipo="pases"]        { border-left-color: #48DBFB; }
+.card-prueba[data-tipo="recepcion"]    { border-left-color: #FF9FF3; }
+.card-prueba[data-tipo="resistencia"]  { border-left-color: #54A0FF; }
+.card-prueba[data-tipo="salto"]        { border-left-color: #5F27CD; }
+.card-prueba[data-tipo="velocidad"]    { border-left-color: #1DD1A1; }
+
+.card-prueba[data-tipo="balon_aereo"]  .icono { background: linear-gradient(135deg, #FF6B6B, #ee5a5a); box-shadow: 0 3px 10px rgba(255,107,107,0.35); }
+.card-prueba[data-tipo="conduccion"]   .icono { background: linear-gradient(135deg, #4ECDC4, #3dbdb5); box-shadow: 0 3px 10px rgba(78,205,196,0.35); }
+.card-prueba[data-tipo="definicion"]   .icono { background: linear-gradient(135deg, #FF9F43, #ee8e32); box-shadow: 0 3px 10px rgba(255,159,67,0.35); }
+.card-prueba[data-tipo="fuerza"]       .icono { background: linear-gradient(135deg, #FECA57, #e0b34c); box-shadow: 0 3px 10px rgba(254,202,87,0.35); color: #1a1a2e; }
+.card-prueba[data-tipo="pases"]        .icono { background: linear-gradient(135deg, #48DBFB, #32c0e6); box-shadow: 0 3px 10px rgba(72,219,251,0.35); color: #1a1a2e; }
+.card-prueba[data-tipo="recepcion"]    .icono { background: linear-gradient(135deg, #FF9FF3, #e88ede); box-shadow: 0 3px 10px rgba(255,159,243,0.35); }
+.card-prueba[data-tipo="resistencia"]  .icono { background: linear-gradient(135deg, #54A0FF, #428fe8); box-shadow: 0 3px 10px rgba(84,160,255,0.35); }
+.card-prueba[data-tipo="salto"]        .icono { background: linear-gradient(135deg, #5F27CD, #4e1fb5); box-shadow: 0 3px 10px rgba(95,39,205,0.35); }
+.card-prueba[data-tipo="velocidad"]    .icono { background: linear-gradient(135deg, #1DD1A1, #15b88c); box-shadow: 0 3px 10px rgba(29,209,161,0.35); }
+
+.card-prueba .footer { display: flex; gap: 5px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e5e7eb; flex-wrap: wrap; }
 .card-prueba .footer .btn-sm { font-size: 0.78rem; padding: 5px 14px; border-radius: var(--radius-sm); flex: 1; }
 
 .btn-outline-success { color: var(--primary); border-color: var(--primary); }
 .btn-outline-success:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
 .btn-outline-secondary { color: var(--text-secondary); border-color: var(--border-color); }
 
-.text-purple { color: #7c3aed; }
-.bg-purple { background: #f3f0ff; }
-.text-orange { color: #ea580c; }
-.bg-orange { background: #fff7ed; }
-.text-cyan { color: #0891b2; }
-.bg-cyan { background: #ecfeff; }
+.text-purple { color: #5F27CD; }
+.text-orange { color: #FF9F43; }
+.text-cyan { color: #48DBFB; }
 
 /* --- Modal --- */
 .modal-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); }
@@ -141,7 +213,75 @@
 .modal-body::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 10px; }
 .modal-body::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
+/* --- Toast Notifications --- */
+.pruebas-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.pruebas-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    transform: translateX(120%);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
+    opacity: 0;
+    pointer-events: auto;
+    max-width: 380px;
+}
+
+.pruebas-toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.pruebas-toast.pr-toast-success {
+    background: linear-gradient(135deg, #0d7a3f 0%, #095c2e 100%);
+    border: 1px solid #0a6e38;
+}
+
+.pruebas-toast.pr-toast-error {
+    background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
+    border: 1px solid #c82333;
+}
+
+.pruebas-toast.pr-toast-warning {
+    background: linear-gradient(135deg, #e67700 0%, #cc5500 100%);
+    border: 1px solid #d96100;
+}
+
+.pruebas-toast-icon {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.pruebas-toast-msg {
+    line-height: 1.3;
+}
+
+/* Input limit pulse */
+.form-control.limit-flash {
+    animation: limitPulse 0.4s ease;
+}
+
+@keyframes limitPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); }
+    50%  { box-shadow: 0 0 0 5px rgba(220,38,38,0.25); }
+    100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+}
+
 @media (max-width: 768px) {
+    .top-header { flex-direction: column; align-items: flex-start; }
+    .top-header .btn-volver { width: 100%; justify-content: center; }
     .atleta-header { flex-direction: column; text-align: center; }
     .atleta-resumen { margin-left: 0; justify-content: center; }
     .ultima-prueba { flex-direction: column; text-align: center; }

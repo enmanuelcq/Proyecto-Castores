@@ -2,8 +2,20 @@
    Gestión de Usuarios
    ========================================== */
 
-.dashboard-header {
-    padding: 20px 0;
+/* --- Register Header --- */
+.register-header {
+    padding: 24px 0 8px 0;
+}
+
+.register-title {
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--text-primary);
+}
+
+.register-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
 }
 
 /* --- Nav Tabs --- */
@@ -31,6 +43,43 @@
     box-shadow: 0 3px 10px rgba(13, 122, 63, 0.35);
 }
 
+/* --- Form Section Cards --- */
+.form-section-card {
+    background: var(--bg-card);
+    border: 1.5px solid #b8dcc4;
+    border-left: 5px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.section-card-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-card-title i {
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+/* --- Form Labels --- */
+.custom-form-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    display: block;
+}
+
 /* --- Custom Input --- */
 .custom-input {
     background-color: var(--bg-input) !important;
@@ -45,6 +94,131 @@
 .custom-input:focus {
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 3px rgba(26, 122, 76, 0.12) !important;
+}
+
+.custom-input.is-valid {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 0.15rem rgba(25, 135, 84, 0.15) !important;
+}
+
+.custom-input.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.15) !important;
+}
+
+/* --- Field Feedback --- */
+.field-feedback {
+    display: none;
+    font-size: 0.78rem;
+    margin-top: 4px;
+    padding: 0;
+    line-height: 1.3;
+}
+
+.field-feedback.show {
+    display: block;
+}
+
+.field-feedback.error {
+    color: #dc3545;
+}
+
+.field-feedback.success {
+    color: #198754;
+}
+
+.field-feedback i {
+    margin-right: 3px;
+    font-size: 0.72rem;
+}
+
+/* --- Info Items (read-only views) --- */
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.info-item .label-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+}
+
+.info-item .value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* --- Buttons --- */
+.btn-action-green {
+    background: var(--primary) !important;
+    color: white !important;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 22px;
+    border: none;
+}
+
+.btn-action-green:hover {
+    opacity: 0.9;
+}
+
+.btn-action-red {
+    background: var(--danger) !important;
+    color: white !important;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 22px;
+    border: none;
+}
+
+.btn-action-red:hover {
+    opacity: 0.9;
+}
+
+.btn-custom-green {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 8px 20px;
+    font-size: 0.9rem;
+}
+
+.btn-custom-green:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+.btn-custom-red {
+    background-color: var(--danger) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 8px 20px;
+    font-size: 0.9rem;
+}
+
+.btn-custom-red:hover {
+    background-color: #b91c1c !important;
+}
+
+.btn-dark-green {
+    background-color: var(--primary-dark) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: bold;
+}
+
+.btn-dark-green:hover {
+    background-color: #0f4c24 !important;
 }
 
 /* --- Role Capsule --- */
@@ -85,44 +259,53 @@
     font-weight: 700;
 }
 
-/* --- Action Buttons --- */
-.btn-custom-green {
-    background-color: var(--primary) !important;
+/* --- Modals --- */
+.custom-modal-content {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    background: var(--primary) !important;
+    padding: 18px 24px;
+}
+
+.modal-header .modal-title {
     color: white !important;
-    border: none !important;
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+.modal-body {
+    background: var(--bg-primary);
+    padding: 24px;
+}
+
+.modal-footer {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    padding: 14px 24px;
+}
+
+.modal-footer .btn-action-green {
+    border-radius: var(--radius-md);
+    padding: 8px 28px;
     font-weight: 600;
-    border-radius: var(--radius-sm);
-    padding: 8px 20px;
-    font-size: 0.9rem;
 }
 
-.btn-custom-green:hover {
-    background-color: var(--primary-dark) !important;
-}
-
-.btn-custom-red {
-    background-color: var(--danger) !important;
-    color: white !important;
-    border: none !important;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
-    padding: 8px 20px;
-    font-size: 0.9rem;
-}
-
-.btn-custom-red:hover {
-    background-color: #b91c1c !important;
-}
-
-.btn-dark-green {
-    background-color: var(--primary-dark) !important;
-    color: white !important;
-    border: none !important;
-    font-weight: bold;
-}
-
-.btn-dark-green:hover {
-    background-color: #0f4c24 !important;
+/* --- Inner White Card (read-only views) --- */
+.inner-white-card {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    border: 1px solid var(--border-color);
 }
 
 /* --- Radio Inputs --- */
@@ -131,17 +314,27 @@
     border-color: var(--primary);
 }
 
-/* --- Modals --- */
-.custom-modal-content {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
+/* --- Password Toggle --- */
+.password-wrapper {
+    position: relative;
 }
 
-.inner-white-card {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border-radius: var(--radius-md);
-    padding: 22px;
-    border: 1px solid var(--border-color);
+.password-wrapper .custom-input {
+    padding-right: 42px;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    transition: color 0.2s;
+    z-index: 5;
+}
+
+.password-toggle-icon:hover {
+    color: var(--primary);
 }

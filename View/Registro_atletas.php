@@ -117,6 +117,34 @@
                         <img id="photoPreview" class="photo-preview d-none" alt="Preview">
                     </div>
                     <small class="text-muted">JPG o PNG, máx. 2MB</small>
+
+                    <label class="custom-form-label mt-3">Cédula del atleta (PDF):</label>
+                    <div class="photo-upload-area doc-upload-area" id="cedulaUploadArea">
+                        <input type="file" name="documento_cedula" id="documento_cedula" accept="application/pdf" class="d-none">
+                        <div class="photo-placeholder" id="cedulaPlaceholder">
+                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                            <span>Subir cédula</span>
+                        </div>
+                        <div class="doc-preview d-none" id="cedulaPreview">
+                            <i class="bi bi-file-earmark-check-fill"></i>
+                            <span class="doc-name"></span>
+                        </div>
+                    </div>
+                    <small class="text-muted">PDF, máx. 5MB</small>
+
+                    <label class="custom-form-label mt-3">Partida de nacimiento (PDF):</label>
+                    <div class="photo-upload-area doc-upload-area" id="partidaUploadArea">
+                        <input type="file" name="documento_partida" id="documento_partida" accept="application/pdf" class="d-none">
+                        <div class="photo-placeholder" id="partidaPlaceholder">
+                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                            <span>Subir partida</span>
+                        </div>
+                        <div class="doc-preview d-none" id="partidaPreview">
+                            <i class="bi bi-file-earmark-check-fill"></i>
+                            <span class="doc-name"></span>
+                        </div>
+                    </div>
+                    <small class="text-muted">PDF, máx. 5MB</small>
                 </div>
                 <div class="col-md-8">
                     <div class="row g-3">

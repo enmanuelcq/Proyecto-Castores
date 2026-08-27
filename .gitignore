@@ -1,0 +1,11 @@
+# Archivos subidos por usuarios
+Public/Uploads/
+
+# Archivos de configuración local
+Config/error_log/
+*.log
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
+desktop.ini

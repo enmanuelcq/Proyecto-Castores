@@ -24,7 +24,7 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-2"></i>Cerrar
                 </button>
-                <button type="button" class="btn btn-outline-light" onclick="imprimirTabla()">
+                <button type="button" class="btn btn-outline-secondary" onclick="imprimirTabla()">
                     <i class="bi bi-printer me-2"></i>Imprimir
                 </button>
                 <button type="button" class="btn btn-success" onclick="exportarExcel()">

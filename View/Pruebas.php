@@ -1,96 +1,122 @@
 <?php
 
 require_once './Model/Pruebas.php';
-require_once './Model/Atletas.php';
+require_once './Model/Repository/RepositoryAtleta.php';
+require_once './Model/Repository/RepositoryPrueba.php';
+require_once './Model/Repository/RepositoryCategoria.php';
 
-// Obtener la cédula del atleta desde la URL
-$cedula_atleta = isset($_GET['Atleta']) ? $_GET['Atleta'] : '';
+$atleta_id = isset($_GET['id']) ? trim($_GET['id']) : '';
 
-// Si no hay cédula, mostrar mensaje
-if(empty($cedula_atleta)) {
+if(empty($atleta_id)) {
     echo '<div class="alert alert-warning">Selecciona un atleta para ver sus pruebas</div>';
     exit();
 }
 
-// Buscar el atleta en el array global
-$atleta = null;
-foreach($todos_los_atletas as $a) {
-    if($a['atleta_cedula'] == $cedula_atleta) {
-        $atleta = $a;
-        break;
-    }
-}
+$repoAtleta = new RepositoryAtleta();
+$repoPrueba = new RepositoryPrueba();
 
-if(!$atleta) {
+$atletaEntity = $repoAtleta->findById($atleta_id);
+
+if(!$atletaEntity) {
     echo '<div class="alert alert-danger">Atleta no encontrado</div>';
     exit();
 }
 
-// Obtener todas las pruebas del atleta
-$pruebas_atleta = obtenerPruebasPorAtleta($cedula_atleta, $todas_las_pruebas);
+$atletaId = $atletaEntity->getAtletaId();
+$categoriaId = $repoAtleta->getCategoriaId($atletaId);
+$categoria_atleta = $repoAtleta->getCategoriaAtleta($atletaId) ?? 'Sin categoría';
 
-// Calcular total de pruebas
-$total_pruebas = 0;
-foreach($pruebas_atleta as $tipo => $pruebas) {
-    $total_pruebas += count($pruebas);
-}
+$atleta = [
+    'atleta_id' => $atletaId,
+    'atleta_cedula' => $atletaEntity->getCedula(),
+    'atleta_primer_nombre' => $atletaEntity->getPrimerNombre(),
+    'atleta_primer_apellido' => $atletaEntity->getPrimerApellido(),
+    'atleta_categoria' => $categoria_atleta,
+    'categoria_id' => $categoriaId,
+];
 
-// Encontrar la última prueba general
+$pruebas_atleta = $repoPrueba->findAllByAtleta($atletaId);
+$total_pruebas = $repoPrueba->countByAtleta($atletaId);
+
 $ultima_prueba_general = null;
-$fecha_ultima = '';
-$tipo_ultima = '';
+$fecha_ultima_global = '';
+$tipo_ultima_global = '';
+
 foreach($pruebas_atleta as $tipo => $pruebas) {
     if(!empty($pruebas)) {
-        usort($pruebas, function($a, $b) {
-            $fecha_a = isset($a['fecha']) ? $a['fecha'] : (isset($a['pruebaf_fecha']) ? $a['pruebaf_fecha'] : (isset($a['pruebav_fecha']) ? $a['pruebav_fecha'] : ''));
-            $fecha_b = isset($b['fecha']) ? $b['fecha'] : (isset($b['pruebaf_fecha']) ? $b['pruebaf_fecha'] : (isset($b['pruebav_fecha']) ? $b['pruebav_fecha'] : ''));
+        usort($pruebas, function($a, $b) use ($tipo) {
+            $fecha_a = obtenerFechaPrueba($a);
+            $fecha_b = obtenerFechaPrueba($b);
             return strtotime($fecha_b) - strtotime($fecha_a);
         });
         $ultima = $pruebas[0];
-        $fecha = isset($ultima['fecha']) ? $ultima['fecha'] : (isset($ultima['pruebaf_fecha']) ? $ultima['pruebaf_fecha'] : (isset($ultima['pruebav_fecha']) ? $ultima['pruebav_fecha'] : ''));
-        if(!$ultima_prueba_general || strtotime($fecha) > strtotime($fecha_ultima)) {
+        $fecha = obtenerFechaPrueba($ultima);
+        if(!$ultima_prueba_general || ($fecha && strtotime($fecha) > strtotime($fecha_ultima_global))) {
             $ultima_prueba_general = $ultima;
-            $fecha_ultima = $fecha;
-            $tipo_ultima = $tipo;
+            $fecha_ultima_global = $fecha;
+            $tipo_ultima_global = $tipo;
         }
     }
 }
 
-
-// ===== GENERAR DATOS PARA EL MODAL =====
-// Pre-cargar todos los datos de pruebas para cada tipo
 $datos_pruebas_modal = [];
+$categorias_pruebas = [];
 foreach($tipos_prueba as $clave => $tipo) {
-    $pruebas_tipo = isset($pruebas_atleta[$clave]) ? $pruebas_atleta[$clave] : [];
+    $pruebas_tipo = $pruebas_atleta[$clave] ?? [];
     if(!empty($pruebas_tipo)) {
         usort($pruebas_tipo, function($a, $b) {
-            $fecha_a = isset($a['fecha']) ? $a['fecha'] : (isset($a['pruebaf_fecha']) ? $a['pruebaf_fecha'] : (isset($a['pruebav_fecha']) ? $a['pruebav_fecha'] : ''));
-            $fecha_b = isset($b['fecha']) ? $b['fecha'] : (isset($b['pruebaf_fecha']) ? $b['pruebaf_fecha'] : (isset($b['pruebav_fecha']) ? $b['pruebav_fecha'] : ''));
+            $fecha_a = obtenerFechaPrueba($a);
+            $fecha_b = obtenerFechaPrueba($b);
             return strtotime($fecha_b) - strtotime($fecha_a);
         });
+        foreach($pruebas_tipo as $p) {
+            $catId = $p['categoria_id'] ?? null;
+            if($catId && !isset($categorias_pruebas[$catId])) {
+                $categorias_pruebas[$catId] = null;
+            }
+        }
     }
     $datos_pruebas_modal[$clave] = $pruebas_tipo;
 }
-$url_volver = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'index.php?View=DashboardRendimiento&Atleta=' . $cedula_atleta;
+
+$repoCategoria = new RepositoryCategoria();
+$categorias_nombres = [];
+foreach(array_keys($categorias_pruebas) as $catId) {
+    $cat = $repoCategoria->findById((int)$catId);
+    $categorias_nombres[$catId] = $cat ? $cat->getSubCategoria() : 'Categoría ' . $catId;
+}
+arsort($categorias_nombres);
+
+$url_volver = 'index.php?View=DashboardRendimiento&id=' . urlencode($atletaId);
 ?>
 
-
-        >
-
 <div class="container contenido">
+
+<?php if(isset($_GET['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo htmlspecialchars($_GET['error']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
+
+<?php if(isset($_GET['success'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i><?php echo htmlspecialchars($_GET['success']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
     
-        <div class="top-header">
-        <h4 class="text-white mb-3">
-            <i class="bi bi-trophy me-2"></i>
-            Partidos de <?php echo $atleta['atleta_primer_nombre'] . ' ' . $atleta['atleta_primer_apellido']; ?>
+    <div class="top-header">
+        <h4 style="color: var(--text-primary);">
+            <i class="bi bi-clipboard2-check me-2" style="color: var(--primary);"></i>
+            Pruebas de <?php echo $atleta['atleta_primer_nombre'] . ' ' . $atleta['atleta_primer_apellido']; ?>
         </h4>
         <a href="<?php echo $url_volver; ?>" class="btn-volver">
             <i class="bi bi-arrow-left"></i>
             Volver
         </a>
-        </div>
+    </div>
     
-    <!-- HEADER DEL ATLETA -->
     <div class="atleta-header">
         <div class="atleta-avatar">
             <?php 
@@ -100,7 +126,7 @@ $url_volver = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'inde
         <div class="atleta-info">
             <h5><?php echo $atleta['atleta_primer_nombre'] . ' ' . $atleta['atleta_primer_apellido']; ?></h5>
             <small>
-                <i class="bi bi-tag me-1"></i><?php echo $atleta['atleta_categoria'] ?? 'Sin categoría'; ?>
+                <i class="bi bi-tag me-1"></i><?php echo $atleta['atleta_categoria']; ?>
                 <span class="mx-2">|</span>
                 <i class="bi bi-person-badge me-1"></i><?php echo $atleta['atleta_cedula']; ?>
             </small>
@@ -134,22 +160,21 @@ $url_volver = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'inde
         </div>
     </div>
     
-    <!-- ÚLTIMA PRUEBA GENERAL -->
     <?php if($ultima_prueba_general): 
-        $nombre_tipo = isset($tipos_prueba[$tipo_ultima]) ? $tipos_prueba[$tipo_ultima]['nombre'] : $tipo_ultima;
+        $nombre_tipo = isset($tipos_prueba[$tipo_ultima_global]) ? $tipos_prueba[$tipo_ultima_global]['nombre'] : $tipo_ultima_global;
         $fecha = obtenerFechaPrueba($ultima_prueba_general);
-        $valor = obtenerValorPrincipal($ultima_prueba_general, $tipo_ultima);
+        $valor = obtenerValorPrincipal($ultima_prueba_general, $tipo_ultima_global);
     ?>
     <div class="ultima-prueba">
         <div class="info">
             <span class="fecha"><?php echo $fecha ? date('d/m/Y', strtotime($fecha)) : 'N/A'; ?></span>
             <span class="tipo"><?php echo $nombre_tipo; ?></span>
             <span class="valor">
-                <?php echo formatearValor($valor, $tipo_ultima); ?>
+                <?php echo formatearValor($valor, $tipo_ultima_global); ?>
             </span>
         </div>
         <div>
-            <span class="text-white" style="font-size:0.8rem;">
+            <span style="font-size:0.8rem;color: var(--text-muted);">
                 <i class="bi bi-clock me-1"></i>Última prueba realizada
             </span>
         </div>
@@ -161,60 +186,50 @@ $url_volver = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'inde
     </div>
     <?php endif; ?>
     
-    <!-- GRID DE PRUEBAS -->
     <div class="row g-3">
         <?php foreach($tipos_prueba as $clave => $tipo): 
-            $pruebas_tipo = isset($pruebas_atleta[$clave]) ? $pruebas_atleta[$clave] : [];
+            $pruebas_tipo = $pruebas_atleta[$clave] ?? [];
             $total = count($pruebas_tipo);
             
             $ultima = null;
             if(!empty($pruebas_tipo)) {
                 usort($pruebas_tipo, function($a, $b) {
-                    $fecha_a = isset($a['fecha']) ? $a['fecha'] : (isset($a['pruebaf_fecha']) ? $a['pruebaf_fecha'] : (isset($a['pruebav_fecha']) ? $a['pruebav_fecha'] : ''));
-                    $fecha_b = isset($b['fecha']) ? $b['fecha'] : (isset($b['pruebaf_fecha']) ? $b['pruebaf_fecha'] : (isset($b['pruebav_fecha']) ? $b['pruebav_fecha'] : ''));
+                    $fecha_a = obtenerFechaPrueba($a);
+                    $fecha_b = obtenerFechaPrueba($b);
                     return strtotime($fecha_b) - strtotime($fecha_a);
                 });
                 $ultima = $pruebas_tipo[0];
             }
             
-            $valor_principal = obtenerValorPrincipal($ultima, $clave);
-            $valor_formateado = formatearValor($valor_principal, $clave);
             $fecha_ultima = $ultima ? obtenerFechaPrueba($ultima) : null;
             
-            $color_class = 'text-' . $tipo['color'];
-            $bg_class = 'bg-' . $tipo['color'];
-            if($tipo['color'] == 'purple') { $color_class = 'text-purple'; $bg_class = 'bg-purple'; }
-            if($tipo['color'] == 'orange') { $color_class = 'text-orange'; $bg_class = 'bg-orange'; }
-            if($tipo['color'] == 'cyan') { $color_class = 'text-cyan'; $bg_class = 'bg-cyan'; }
         ?>
         <div class="col-lg-4 col-md-6">
-            <div class="card-prueba">
-                <div class="icono <?php echo $bg_class; ?> <?php echo $color_class; ?>">
+            <div class="card-prueba" data-tipo="<?php echo $clave; ?>">
+                <div class="icono">
                     <i class="<?php echo $tipo['icono']; ?>"></i>
                 </div>
                 <h6 class="nombre"><?php echo $tipo['nombre']; ?></h6>
                 
                 <?php if($ultima): ?>
-                    <span class="valor-principal"><?php echo $valor_formateado; ?></span>
-                    <p class="descripcion">
-                        <i class="bi bi-calendar3 me-1"></i>
+                    <p class="fecha-ultima">
+                        <i class="bi bi-calendar3"></i>
                         <?php echo $fecha_ultima ? date('d/m/Y', strtotime($fecha_ultima)) : 'N/A'; ?>
                     </p>
                 <?php else: ?>
-                    <span class="valor-principal" style="color: rgba(255, 255, 255, 0.74);">—</span>
-                    <p class="descripcion">Sin pruebas registradas</p>
+                    <p class="fecha-ultima" style="color: #9ca3af;">Sin pruebas registradas</p>
                 <?php endif; ?>
                 
                 <div class="total-badge">
-                    <?php echo $total; ?> prueba(s) realizada(s)
+                    <?php echo $total; ?> prueba(s)
                 </div>
                 
                 <div class="footer">
-                    <button class="btn btn-outline-light btn-sm" 
-                            onclick="abrirModalDetalle('<?php echo $clave; ?>', '<?php echo $cedula_atleta; ?>', '<?php echo addslashes($atleta['atleta_primer_nombre'] . ' ' . $atleta['atleta_primer_apellido']); ?>')">
+                    <button class="btn btn-outline-success btn-sm" 
+                            onclick="abrirModalDetalle('<?php echo $clave; ?>', '<?php echo $atletaId; ?>', '<?php echo addslashes($atleta['atleta_primer_nombre'] . ' ' . $atleta['atleta_primer_apellido']); ?>')">
                         <i class="bi bi-eye me-1"></i>Ver todas
                     </button>
-                    <button class="btn btn-outline-success btn-sm" onclick="abrirModalRegistro('<?php echo $clave; ?>', '<?php echo $cedula_atleta; ?>', '<?php echo addslashes($atleta['atleta_primer_nombre'] . ' ' . $atleta['atleta_primer_apellido']); ?>')">
+                    <button class="btn btn-outline-success btn-sm" onclick="abrirModalRegistro('<?php echo $clave; ?>', '<?php echo $atletaId; ?>', '<?php echo addslashes($atleta['atleta_primer_nombre'] . ' ' . $atleta['atleta_primer_apellido']); ?>', '<?php echo $atleta['categoria_id'] ?? ''; ?>')">
                     <i class="bi bi-plus-circle me-1"></i>Registrar
                 </button>
                 </div>
@@ -227,17 +242,18 @@ $url_volver = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'inde
 <?php include './Public/Modals/modal_detalle_pruebas.php'; ?>
 <?php include './Public/Modals/modalRegistrarPrueba.php'; ?>
 
-
-    
-</div>
-
 <script>
-    const datosPruebas = <?php 
-    $data = [];
-    foreach($datos_pruebas_modal as $tipo => $pruebas) {
-        $data[$tipo] = $pruebas;
-    }
-    echo json_encode($data);
-?>;
+    const datosPruebas = <?php echo json_encode($datos_pruebas_modal); ?>;
+    const categoriasMap = <?php echo json_encode($categorias_nombres); ?>;
+    const atletaIdGlobal = '<?php echo $atletaId; ?>';
+    const categoriaIdGlobal = '<?php echo $categoriaId ?? ''; ?>';
 </script>
-<script src= "./Public/Js/Pruebas.js"></script>
+<script src="./Public/Js/Pruebas.js?v=<?php echo time(); ?>"></script>
+<script>
+    setTimeout(function() {
+        document.querySelectorAll('.container .alert').forEach(function(el) {
+            var a = bootstrap.Alert.getOrCreateInstance(el);
+            a.close();
+        });
+    }, 5000);
+</script>
