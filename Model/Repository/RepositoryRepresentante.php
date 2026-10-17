@@ -71,9 +71,16 @@ class RepositoryRepresentante implements IRepresentanteRepository
     // ──────────── FIND BY CÉDULA ────────────
     public function findByCedula(string $cedula): ?Representante
     {
-        $sql = "SELECT * FROM representante WHERE cedula_representante = ? LIMIT 1";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$cedula]);
+        // Normalizar la cédula buscada: mayúsculas y sin guiones
+        $cedula_norm = strtoupper(str_replace('-', '', $cedula));
+        
+        // Buscar comparando solo dígitos (ignora prefijos y guiones)
+        $stmt = $this->db->prepare(
+            "SELECT * FROM representante 
+             WHERE UPPER(REPLACE(cedula_representante, '-', '')) = ? 
+             LIMIT 1"
+        );
+        $stmt->execute([$cedula_norm]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return $row ? $this->mapRowToRepresentante($row) : null;

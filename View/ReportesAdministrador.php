@@ -5,8 +5,7 @@
 // ============================================
 
 // 1. INCLUIR TODOS LOS MODELOS
-require_once './Model/Atletas.php';
-require_once './Model/Solvencia.php';
+require_once dirname(__DIR__) . '/Controller/EntrenamientosController.php';
 require_once './Model/Entrenamiento.php';
 require_once './Model/Asistencias.php';
 require_once './Model/Pruebas.php';

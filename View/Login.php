@@ -41,7 +41,7 @@
         <div class="form-rest"></div>
 
         <div class="register-footer">
-            ¿Eres Representante? <a href="#">Activa tu cuenta</a>
+            ¿Eres Representante? <a href="index.php?View=RegistroRepresentante">Registrarme ahora</a>
         </div>
 
     </div>

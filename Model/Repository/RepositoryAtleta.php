@@ -243,6 +243,20 @@ class RepositoryAtleta implements IAtletaRepository
         return $this->mapRowsToAtletas($rows);
     }
 
+    // ──────────── CONTAR ATLETAS DISTINTOS EN VARIAS CATEGORÍAS ────────────
+    public function contarAtletasDistintosPorCategorias(array $categoriaIds): int
+    {
+        if (empty($categoriaIds)) return 0;
+        $placeholders = implode(',', array_fill(0, count($categoriaIds), '?'));
+        $sql = "SELECT COUNT(DISTINCT ca.Atleta_id)
+                FROM categoria_atleta ca
+                JOIN atleta a ON ca.Atleta_id = a.Atleta_id
+                WHERE ca.categoria_id IN ($placeholders) AND a.Atleta_status = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(array_values($categoriaIds));
+        return (int) $stmt->fetchColumn();
+    }
+
     // ──────────── OBTENER CATEGORÍA_ID INT DE UN ATLETA ────────────
     public function getCategoriaId(string $atletaId): ?int
     {

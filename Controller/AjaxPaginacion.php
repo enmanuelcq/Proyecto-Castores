@@ -220,6 +220,7 @@ switch ($type) {
             <?php foreach ($todos_los_atletas as $item): 
                 $atleta = $item['atleta'];
                 $representante = $item['representante'] ?? null;
+                $representantes = $item['representantes'] ?? [];
                 $categoria = $item['categoria_nombre'] ?? 'Sin categoría';
                 $categoriaAnio = $item['categoria_anio'] ?? 'Primero';
                 $numeroFranela = $item['numero_franela'] ?? 'N/A';

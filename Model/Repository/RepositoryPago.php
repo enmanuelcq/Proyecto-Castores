@@ -60,6 +60,22 @@ class RepositoryPago implements IPagoRepository
         return $stmt->execute([$id]);
     }
 
+    public function updateEstatus(int $id, string $estatus): bool
+    {
+        $sql = "UPDATE pagos SET estatus_pago = ? WHERE pago_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$estatus, $id]);
+    }
+
+    public function findByEstatus(string $estatus): array
+    {
+        $sql = "SELECT * FROM pagos WHERE estatus_pago = ? ORDER BY fecha_pago DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$estatus]);
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->mapRowsToPagos($rows);
+    }
+
     public function findById(int $id): ?Pago
     {
         $sql = "SELECT * FROM pagos WHERE pago_id = ? LIMIT 1";

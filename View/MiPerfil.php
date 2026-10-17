@@ -29,6 +29,7 @@ if($usuario_rol == 'Representante') {
 // Si es entrenador, obtener estadísticas
 $estadisticas_entrenador = null;
 if($usuario_rol == 'Entrenador') {
+    require_once dirname(__DIR__) . '/Controller/EntrenamientosController.php';
     require_once './Model/Entrenamiento.php';
     require_once './Model/ReportesAdministrador.php';
     $estadisticas_entrenador = obtenerEstadisticasEntrenador($usuario_cedula, $todos_los_entrenamientos);

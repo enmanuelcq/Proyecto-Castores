@@ -124,6 +124,36 @@
                                         <span class="status-badge"><?php echo $estadoMostrar; ?></span>
                                         <small class="d-block">Pagar Bs <?php echo number_format($montoMostrar, 2); ?></small>
                                     </button>
+
+                                    <!-- Pagos cargados por el representante, pendientes de confirmación -->
+                                    <?php foreach (($mesData['pagos_pendientes'] ?? []) as $pp): ?>
+                                    <div class="mt-1 p-2 rounded" style="background: rgba(25,135,84,0.18); border: 1px dashed #198754;">
+                                        <small class="d-block text-white mb-1">
+                                            <i class="bi bi-hourglass-split me-1"></i>
+                                            <strong>Pago por confirmar:</strong> $<?php echo number_format($pp['monto'], 2); ?>
+                                            <?php if (!empty($pp['tipo_pago'])): ?> · <?php echo htmlspecialchars($pp['tipo_pago']); ?><?php endif; ?>
+                                        </small>
+                                        <?php if (!empty($pp['banco']) || !empty($pp['referencia'])): ?>
+                                        <small class="d-block text-white mb-1" style="opacity:0.85;">
+                                            <?php if (!empty($pp['banco'])): ?><i class="bi bi-bank me-1"></i><?php echo htmlspecialchars($pp['banco']); ?><?php endif; ?>
+                                            <?php if (!empty($pp['referencia'])): ?> · Ref: <?php echo htmlspecialchars($pp['referencia']); ?><?php endif; ?>
+                                        </small>
+                                        <?php endif; ?>
+                                        <?php if (!empty($pp['fecha'])): ?>
+                                        <small class="d-block text-white mb-2" style="opacity:0.85;">
+                                            <i class="bi bi-calendar3 me-1"></i><?php echo date('d/m/Y', strtotime($pp['fecha'])); ?>
+                                        </small>
+                                        <?php endif; ?>
+                                        <form method="POST" action="Controller/ConfirmarPago_controller.php"
+                                              onsubmit="return confirm('¿Confirmar este pago cargado por el representante?');">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                            <input type="hidden" name="pago_id" value="<?php echo $pp['pago_id']; ?>">
+                                            <button type="submit" class="btn btn-success btn-sm w-100">
+                                                <i class="bi bi-check-lg me-1"></i>Confirmar
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <?php endforeach; ?>
                                 <?php elseif ($estado === 'En Revisión'): ?>
                                     <!-- En Revisión -->
                                     <div class="month-card" style="background-color: #ffeeba;"><?php echo $mes; ?></div>

@@ -45,6 +45,49 @@ $offset = $paginacion['offset'] ?? 0;
     </div>
     <?php endif; ?>
 
+    <!-- ===== PAGOS CARGADOS POR REPRESENTANTES - PENDIENTES DE CONFIRMACIÓN ===== -->
+    <?php if(isset($_SESSION['usuario']) && ($_SESSION['usuario']['id_rol'] ?? 0) == 2 && !empty($pagos_por_confirmar)): ?>
+    <div class="card mb-4" style="border: 2px solid #ffc107;">
+        <div class="card-header bg-warning text-dark fw-bold">
+            <i class="bi bi-hourglass-split me-2"></i>
+            Pagos por Confirmar (<?php echo count($pagos_por_confirmar); ?>)
+            <small class="fw-normal" style="opacity:0.8;"> — cargados por los representantes</small>
+        </div>
+        <div class="card-body p-2">
+            <?php foreach ($pagos_por_confirmar as $pp): ?>
+            <div class="athlete-capsule d-flex align-items-center justify-content-between flex-wrap gap-3 py-2 mb-2"
+                 style="border-left: 4px solid #ffc107;">
+                <div class="d-flex align-items-start flex-grow-1">
+                    <i class="bi bi-cash-coin text-warning fs-4 me-3"></i>
+                    <div>
+                        <strong><?php echo htmlspecialchars($pp['atleta_nombre']); ?></strong>
+                        <span class="badge bg-primary ms-1"><?php echo htmlspecialchars($pp['nombre_mes'] . ' ' . $pp['anio']); ?></span>
+                        <div class="small">
+                            <strong class="text-success">$<?php echo number_format($pp['monto'], 2); ?></strong>
+                            <?php if (!empty($pp['tipo_pago'])): ?> · <?php echo htmlspecialchars($pp['tipo_pago']); ?><?php endif; ?>
+                            <?php if (!empty($pp['banco'])): ?> · <i class="bi bi-bank me-1"></i><?php echo htmlspecialchars($pp['banco']); ?><?php endif; ?>
+                            <?php if (!empty($pp['referencia'])): ?> · Ref: <?php echo htmlspecialchars($pp['referencia']); ?><?php endif; ?>
+                        </div>
+                        <div class="small text-muted">
+                            <?php echo !empty($pp['fecha']) ? date('d/m/Y', strtotime($pp['fecha'])) : ''; ?>
+                            <?php if (!empty($pp['concepto'])): ?> · <?php echo htmlspecialchars($pp['concepto']); ?><?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <form method="POST" action="Controller/ConfirmarPago_controller.php"
+                      onsubmit="return confirm('¿Confirmar el pago de <?php echo htmlspecialchars($pp['atleta_nombre']); ?> por <?php echo htmlspecialchars($pp['nombre_mes'] . ' ' . $pp['anio']); ?>?');">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                    <input type="hidden" name="pago_id" value="<?php echo $pp['pago_id']; ?>">
+                    <button type="submit" class="btn btn-action-green">
+                        <i class="bi bi-check-lg me-1"></i>Confirmar
+                    </button>
+                </form>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- ===== FILTROS Y BÚSQUEDA ===== -->
     <div class="card mb-4">
         <div class="card-body">
@@ -111,6 +154,7 @@ $offset = $paginacion['offset'] ?? 0;
             <?php foreach ($todos_los_atletas as $item): 
                 $atleta = $item['atleta'];               
                 $representante = $item['representante'] ?? null; 
+                $representantes = $item['representantes'] ?? []; 
                 $categoria = $item['categoria_nombre'] ?? 'Sin categoría';  
                 $categoriaAnio = $item['categoria_anio'] ?? 'Primero';
                 $numeroFranela = $item['numero_franela'] ?? 'N/A'; 
@@ -318,5 +362,14 @@ document.addEventListener('DOMContentLoaded', function() {
             ajaxPaginate(this);
         });
     });
+
+    // Reabrir automáticamente el modal de Solvencia tras confirmar un pago
+    var abrirSolvencia = new URLSearchParams(window.location.search).get('abrir_solvencia');
+    if (abrirSolvencia && typeof bootstrap !== 'undefined') {
+        var modalSolv = document.getElementById('modalSolvencia' + abrirSolvencia);
+        if (modalSolv) {
+            new bootstrap.Modal(modalSolv).show();
+        }
+    }
 });
 </script>

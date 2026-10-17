@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-08-2026 a las 03:26:01
+-- Tiempo de generación: 28-08-2026 a las 19:52:25
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -85,8 +85,6 @@ INSERT INTO `atleta_representante` (`AR_id`, `parentesco`, `fecha_inscripcion`, 
 (138, 'Representante legal', '2026-07-17', 'atl_6a59a404403', 'V-11111112'),
 (139, 'Representante legal', '2026-07-17', 'atl_6a59a5fe7a5', 'V10053625'),
 (140, 'Representante legal', '2026-07-21', 'atl_6a5ed7b875c', 'v-22222222'),
-(141, 'Representante legal', '2026-08-19', 'atl_6a8600a67d2', 'V21111212'),
-(142, 'Padre', '2026-08-19', 'atl_6a8600a67d2', 'V3322222'),
 (143, 'Representante legal', '2026-08-19', 'atl_6a8600a77ee', 'V21111212'),
 (144, 'Padre', '2026-08-19', 'atl_6a8600a77ee', 'V3322222'),
 (145, 'Representante legal', '2026-08-20', 'atl_6a865fde048', 'V3366557'),
@@ -127,7 +125,7 @@ CREATE TABLE `campo` (
 
 INSERT INTO `campo` (`campo_id`, `nombre_campo`, `direccion_campo`, `mapa_campo`) VALUES
 (1, 'Polideportivo AVP', '', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3924.6405820928508!2d-67.0101995!3d10.3705959!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c2a8caf84406987%3A0x6236f9a6bd44d2b5!2sPOLIDEPORTIVO%20AVP!5e0!3m2!1ses!2sve!4v1787171886760!5m2!1ses!2sve\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\"'),
-(2, 'Campo Liceo San Jos??', '', 'https://www.google.com/maps/place/Liceo+San+Jos??/@10.3518375,-67.0342911,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgICk4czFgQE!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWl85cc6DkDtLJb8Sgf8Vl11snHoaEKgiExMk6T-wAAL-Wy0l65YxGtQlgcNfwpjO8sUR4e1wADr2KeBjYkCnc_diRn5Ibc08_ZmH7dslrBi8CVDRLvCaq2o8FwyVSIlsH9ROO8taw%3Dw152-h86-k-no!7i4160!8i2340!4m11!1m2!2m1!1sliceo+san+jose+campo!3m7!1s0x8c2a8cefd646e149:0x97950a25c46e9e8!8m2!3d10.3518375!4d-67.0342911!10e5!15sChRsaWNlbyBzYW4ga');
+(2, 'Campo Liceo San Jos├®', '', 'https://www.google.com/maps/place/Liceo+San+Jos??/@10.3518375,-67.0342911,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgICk4czFgQE!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWl85cc6DkDtLJb8Sgf8Vl11snHoaEKgiExMk6T-wAAL-Wy0l65YxGtQlgcNfwpjO8sUR4e1wADr2KeBjYkCnc_diRn5Ibc08_ZmH7dslrBi8CVDRLvCaq2o8FwyVSIlsH9ROO8taw%3Dw152-h86-k-no!7i4160!8i2340!4m11!1m2!2m1!1sliceo+san+jose+campo!3m7!1s0x8c2a8cefd646e149:0x97950a25c46e9e8!8m2!3d10.3518375!4d-67.0342911!10e5!15sChRsaWNlbyBzYW4ga');
 
 -- --------------------------------------------------------
 
@@ -185,7 +183,6 @@ INSERT INTO `categoria_atleta` (`anio_id`, `anio`, `Atleta_id`, `categoria_id`) 
 (83, 'Segundo', 'atl_6a59a404403', 4),
 (84, 'Segundo', 'atl_6a59a5fe7a5', 9),
 (85, 'Primero', 'atl_6a5ed7b875c', 2),
-(86, 'Primero', 'atl_6a8600a67d2', 5),
 (87, 'Primero', 'atl_6a8600a77ee', 5),
 (88, 'Segundo', 'atl_6a865fde048', 7),
 (89, 'Primero', 'atl_6a8667c4287', 3);
@@ -201,6 +198,17 @@ CREATE TABLE `categoria_entrenamiento` (
   `categoria_id` int(11) NOT NULL,
   `entrenamiento_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `categoria_entrenamiento`
+--
+
+INSERT INTO `categoria_entrenamiento` (`convocatoria_id`, `categoria_id`, `entrenamiento_id`) VALUES
+(1, 7, 4),
+(2, 9, 4),
+(3, 7, 5),
+(4, 9, 5),
+(5, 9, 6);
 
 -- --------------------------------------------------------
 
@@ -219,9 +227,9 @@ CREATE TABLE `colegio` (
 --
 
 INSERT INTO `colegio` (`colegio_id`, `nombre_colegio`, `direccion_colegio`) VALUES
-(1, 'Colegio San Jos??', 'Panamericana'),
+(1, 'Colegio San Jos├®', 'Panamericana'),
 (2, 'martin tovar y tovar', 'Madre Isabel'),
-(7, 'Santa mar??a', 'Panamericana'),
+(7, 'Santa Mar├¡a', 'Panamericana'),
 (9, 'Carlos Gauna', 'Panamericana'),
 (10, 'Colegio San José', 'Panamericana'),
 (11, 'Santa maría', 'Panamericana');
@@ -245,9 +253,9 @@ CREATE TABLE `configuracion` (
 --
 
 INSERT INTO `configuracion` (`id`, `clave`, `valor`, `descripcion`, `fecha_actualizacion`) VALUES
-(1, 'monto_mensual_usd', '50.00', 'Monto de la mensualidad en d??lares', '2026-07-21 21:35:40'),
-(2, 'tasa_dolar_bcv', '777.4161', 'Tasa de cambio del d??lar BCV obtenida por API', '2026-08-20 19:33:29'),
-(3, 'ultima_actualizacion_tasa', '2026-08-21 01:33:29', 'Fecha de la ??ltima actualizaci??n de la tasa', '2026-08-20 19:33:29'),
+(1, 'monto_mensual_usd', '50.00', 'Monto de la mensualidad en d├│lares', '2026-08-28 12:48:11'),
+(2, 'tasa_dolar_bcv', '791.6667', 'Tasa de cambio del d├│lar BCV obtenida por API', '2026-08-28 12:51:01'),
+(3, 'ultima_actualizacion_tasa', '2026-08-28 18:51:01', 'Fecha de la ├║ltima actualizaci├│n de la tasa', '2026-08-28 12:51:01'),
 (10, 'ultima_actualizacion_cuotas', '2026-07-22 03:35:40', NULL, '2026-07-21 21:35:40');
 
 -- --------------------------------------------------------
@@ -339,11 +347,6 @@ INSERT INTO `cuota_mensual` (`cuota_id`, `Atleta_id`, `mes`, `anio`, `monto_esta
 (34, 'atl_6a5ed7b875c', 10, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
 (35, 'atl_6a5ed7b875c', 11, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
 (36, 'atl_6a5ed7b875c', 12, 2026, 36861.61, 'Pendiente', '2026-07-21 12:38:57', '2026-07-21 21:35:40'),
-(37, 'atl_6a8600a67d2', 8, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
-(38, 'atl_6a8600a67d2', 9, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
-(39, 'atl_6a8600a67d2', 10, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
-(40, 'atl_6a8600a67d2', 11, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
-(41, 'atl_6a8600a67d2', 12, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:46', '2026-08-19 15:14:46'),
 (42, 'atl_6a8600a77ee', 8, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:47', '2026-08-19 15:14:47'),
 (43, 'atl_6a8600a77ee', 9, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:47', '2026-08-19 15:14:47'),
 (44, 'atl_6a8600a77ee', 10, 2026, 38627.21, 'Pendiente', '2026-08-19 15:14:47', '2026-08-19 15:14:47'),
@@ -363,16 +366,30 @@ INSERT INTO `cuota_mensual` (`cuota_id`, `Atleta_id`, `mes`, `anio`, `monto_esta
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `desempe??o_entrenamiento`
+-- Estructura de tabla para la tabla `desempenio_entrenamiento`
 --
 
-CREATE TABLE `desempe??o_entrenamiento` (
+CREATE TABLE `desempenio_entrenamiento` (
   `desempenio_id` int(11) NOT NULL,
   `asistencia` tinyint(1) NOT NULL,
-  `desempenio` varchar(500) NOT NULL,
+  `desempenio` varchar(500) NOT NULL DEFAULT '',
+  `observacion` varchar(500) DEFAULT NULL,
   `Atleta_id` varchar(15) NOT NULL,
   `entrenamiento_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `desempenio_entrenamiento`
+--
+
+INSERT INTO `desempenio_entrenamiento` (`desempenio_id`, `asistencia`, `desempenio`, `observacion`, `Atleta_id`, `entrenamiento_id`) VALUES
+(6, 1, '', '', 'atl_6a59935c88b', 1),
+(7, 0, '', '', 'atl_6a599a02aaa', 1),
+(8, 1, '', '', 'atl_6a59996790a', 2),
+(9, 1, '', '', 'atl_6a865fde048', 2),
+(10, 1, '', '', 'atl_6a59a5fe7a5', 3),
+(11, 1, '', '', 'atl_6a59935c88b', 3),
+(12, 0, '', '', 'atl_6a59a5fe7a5', 1);
 
 -- --------------------------------------------------------
 
@@ -383,11 +400,55 @@ CREATE TABLE `desempe??o_entrenamiento` (
 CREATE TABLE `entrenamiento` (
   `entrenamiento_id` int(11) NOT NULL,
   `fecha_entrenamiento` datetime NOT NULL,
+  `hora_inicio` time NOT NULL DEFAULT '08:00:00',
+  `hora_fin` time NOT NULL DEFAULT '10:00:00',
   `objetivo_entrenamiento` varchar(500) NOT NULL,
   `tiempo_estimado` time NOT NULL,
   `tipo_entrenamiento` varchar(100) NOT NULL,
+  `categoria` varchar(50) NOT NULL DEFAULT 'Sub-14',
+  `lugar` varchar(200) NOT NULL DEFAULT '',
+  `estado` varchar(50) NOT NULL DEFAULT 'Programado',
+  `total_atletas` int(11) NOT NULL DEFAULT 0,
+  `descripcion` varchar(500) DEFAULT NULL,
   `usuario_cedula` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `entrenamiento`
+--
+
+INSERT INTO `entrenamiento` (`entrenamiento_id`, `fecha_entrenamiento`, `hora_inicio`, `hora_fin`, `objetivo_entrenamiento`, `tiempo_estimado`, `tipo_entrenamiento`, `categoria`, `lugar`, `estado`, `total_atletas`, `descripcion`, `usuario_cedula`) VALUES
+(1, '2026-08-28 16:30:00', '16:30:00', '18:00:00', 'fssfsd', '02:00:00', 'Físico', 'Sub-12', 'Cancha Principal', 'Programado', 20, 'fssfsd', ''),
+(2, '2026-08-28 08:00:00', '08:00:00', '10:00:00', 'cdcfddsfds', '02:00:00', 'Técnico', 'Sub-10', 'Cancha Principal', 'Programado', 6, 'cdcfddsfds', ''),
+(3, '2026-08-28 08:00:00', '08:00:00', '10:00:00', 'hgfgh', '02:00:00', 'Mixto', 'Sub-12', 'Cancha Principal', 'Programado', 8, 'hgfgh', ''),
+(4, '2026-08-28 08:00:00', '08:00:00', '10:00:00', 'hjhjhhjh', '02:00:00', 'Táctico', 'Sub-10', 'Cancha Principal', 'Programado', 4, 'hjhjhhjh', '1718199'),
+(5, '2026-08-28 08:00:00', '08:00:00', '10:00:00', 'ojjihihihihi', '02:00:00', 'Físico', 'Sub-10', 'Cancha Principal', 'Programado', 3, 'ojjihihihihi', '1718199'),
+(6, '2026-08-28 08:00:00', '08:00:00', '10:00:00', 'ihihihiihih', '02:00:00', 'Físico', 'Sub-12', 'Cancha Principal', 'Programado', 1, 'ihihihiihih', '1718199');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `entrenamiento_recurso`
+--
+
+CREATE TABLE `entrenamiento_recurso` (
+  `recurso_id` int(11) NOT NULL,
+  `entrenamiento_id` int(11) NOT NULL,
+  `tipo_recurso` varchar(20) NOT NULL,
+  `url` varchar(500) DEFAULT NULL,
+  `archivo` varchar(500) DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `entrenamiento_recurso`
+--
+
+INSERT INTO `entrenamiento_recurso` (`recurso_id`, `entrenamiento_id`, `tipo_recurso`, `url`, `archivo`, `descripcion`) VALUES
+(1, 4, 'imagen', NULL, 'Public/Uploads/entrenamientos/ent_6a91c7d4cb200.png', ''),
+(2, 5, 'enlace', 'https://img.plantuml.biz/plantuml/png/TLDBRXin3DqRy1suTD0Fa7wyi54qZfi21Tgui85i2qP3smmqubJIj8tlq8DaaLKEKA1piLAQcNYowAmeyb5yxmrr5YBwM9TsF8eSBS47nft74g4W-6Zh6u4Ni9PhYR2q67ZB1WlngVgLwO0XHKknuYcCH-DHlYu5iq-E3QFb0ogQZM5nw5aIliIAP3OUBMiil5xtxHJUmQBKihKoIBzAwKDj1wdNcbhBpH3rHbDNv0iQvDvgxjoYCqFWL9ENjFCopmHPZwSv_BbdLJxv-uU10fJaLA00xsgqW31zVm8SOB9fxayI6c3sHNwG1vzjGR08bGHLspmuO1LeuLgKZqQUpBuTfrsVIPkqQ99ToOVKc4pKZ4k5G2w8x-2yJOmkUhYbvhwGnEzgiMn-hvJWnNgzMYkvk2VNqmFzr7hZIMNelu2aak5PLfgAJYA1vzq-jcU03MiIzdZRaH7Oeh', NULL, ''),
+(3, 6, 'imagen', NULL, 'Public/Uploads/entrenamientos/ent_6a91ca2f8f150.png', ''),
+(4, 6, 'imagen', NULL, 'Public/Uploads/entrenamientos/ent_6a91ca2f8f7b0.png', '');
 
 -- --------------------------------------------------------
 
@@ -406,8 +467,8 @@ CREATE TABLE `equipo_rival` (
 
 INSERT INTO `equipo_rival` (`equipo_id`, `nombre_equipo`) VALUES
 (1, 'Caracas FC'),
-(2, 'Club Atl??tico Colinas de Miranda'),
-(3, 'San Jos??');
+(2, 'Club Atl├®tico Colinas de Miranda'),
+(3, 'San Jos├®');
 
 -- --------------------------------------------------------
 
@@ -461,7 +522,6 @@ INSERT INTO `grado` (`grado_id`, `grado`, `Atleta_id`, `colegio_id`) VALUES
 (83, '5to grado', 'atl_6a59a404403', 10),
 (84, '4to grado', 'atl_6a59a5fe7a5', 1),
 (85, '1er año', 'atl_6a5ed7b875c', 11),
-(86, '6to grado', 'atl_6a8600a67d2', 10),
 (87, '6to grado', 'atl_6a8600a77ee', 10),
 (88, '4to grado', 'atl_6a865fde048', 10),
 (89, '3ro grado', 'atl_6a8667c4287', 9);
@@ -485,30 +545,30 @@ INSERT INTO `hobbies` (`hobbie_id`, `nombre_hobbie`) VALUES
 (1, 'Cantar'),
 (2, 'tenis'),
 (3, 'Pintura'),
-(13, 'F??tbol'),
+(13, 'F├║tbol'),
 (14, 'Baloncesto'),
 (15, 'Voleibol'),
-(16, 'Nataci??n'),
+(16, 'Nataci├│n'),
 (17, 'Atletismo'),
 (18, 'Ciclismo'),
 (19, 'Patinaje'),
 (20, 'Escalada'),
-(21, 'Gimnasia art??stica'),
+(21, 'Gimnasia art├¡stica'),
 (22, 'Taekwondo'),
 (23, 'Karate'),
 (24, 'Judo'),
 (25, 'Boxeo'),
 (26, 'Esgrima'),
 (27, 'Tenis'),
-(28, 'P??del'),
-(29, 'B??dminton'),
+(28, 'P├ídel'),
+(29, 'B├ídminton'),
 (30, 'Ping pong'),
 (31, 'Ajedrez'),
 (32, 'Damas'),
 (33, 'Puzzle'),
 (34, 'Lego'),
-(35, 'Rob??tica'),
-(36, 'Programaci??n'),
+(35, 'Rob├│tica'),
+(36, 'Programaci├│n'),
 (37, 'Videojuegos'),
 (38, 'Dibujo'),
 (39, 'Pintura'),
@@ -519,19 +579,19 @@ INSERT INTO `hobbies` (`hobbie_id`, `nombre_hobbie`) VALUES
 (44, 'Teatro'),
 (45, 'Baile'),
 (46, 'Canto'),
-(47, 'M??sica'),
+(47, 'M├║sica'),
 (48, 'Piano'),
 (49, 'Guitarra'),
-(50, 'Viol??n'),
-(51, 'Bater??a'),
+(50, 'Viol├¡n'),
+(51, 'Bater├¡a'),
 (52, 'Cocina'),
-(53, 'Reposter??a'),
-(54, 'Jardiner??a'),
+(53, 'Reposter├¡a'),
+(54, 'Jardiner├¡a'),
 (55, 'Acampada'),
 (56, 'Senderismo'),
-(57, 'Observaci??n de aves'),
-(58, 'Astronom??a'),
-(59, 'Fotograf??a'),
+(57, 'Observaci├│n de aves'),
+(58, 'Astronom├¡a'),
+(59, 'Fotograf├¡a'),
 (60, 'Cine'),
 (61, 'Lectura'),
 (62, 'Escritura creativa'),
@@ -557,7 +617,6 @@ CREATE TABLE `hobbie_atleta` (
 
 INSERT INTO `hobbie_atleta` (`hobbie_atleta_id`, `horario_hobbie`, `Atleta_id`, `hobbie_id`) VALUES
 (3, 'domingo 4:00pm', 'atl_6a59a5fe7a5', 63),
-(172, 'domingo 4:00pm', 'atl_6a8600a67d2', 3),
 (173, 'domingo 4:00pm', 'atl_6a8600a77ee', 3),
 (177, 'Sábados 10am-12pm', 'atl_6a8667c4287', 63),
 (178, 'Martes 4:00pm', 'atl_6a59935c88b', 76),
@@ -609,7 +668,7 @@ CREATE TABLE `noticias` (
 --
 
 INSERT INTO `noticias` (`noticia_id`, `titulo`, `contenido`, `imagen`, `fecha_publicacion`, `usuario_creador`, `estado`, `es_destacada`) VALUES
-(6, 'Bienvenido a la Academia de F??tbol \"Deportivo Castores\"', 'La Escuela de F??tbol EFAR Deportivo Los Castores (ahora Castores Performance Club) es una de las instituciones formativas m??s tradicionales de los Altos Mirandinos. Fundada en 2012, opera en el Polideportivo Los Castores en San Antonio de los Altos, entrenando a m??s de 220 atletas desde la categor??a Sub-5 hasta Sub-17.', 'Public/Uploads/noticias/1784774481_6a617f51cde74.png', '2026-07-23 04:41:00', 'sec_6a5700c52c8c9', 1, 1);
+(6, 'Bienvenido a la Academia de F├║tbol \"Deportivo Castores\"', 'La Escuela de F├║tbol EFAR Deportivo Los Castores (ahora Castores Performance Club) es una de las instituciones formativas m├ís tradicionales de los Altos Mirandinos. Fundada en 2012, opera en el Polideportivo Los Castores en San Antonio de los Altos, entrenando a m├ís de 220 atletas desde la categor├¡a Sub-5 hasta Sub-17.', 'Public/Uploads/noticias/1784774481_6a617f51cde74.png', '2026-07-23 04:41:00', 'sec_6a5700c52c8c9', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1090,7 +1149,6 @@ INSERT INTO `salud` (`salud_id`, `tipo_sangre`, `alergias`, `padecimiento`, `med
 (138, 'O+', 'Ninguna', 'Asma leve', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a59a404403'),
 (139, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a59a5fe7a5'),
 (140, 'O-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a5ed7b875c'),
-(141, 'O+', 'Ninguna', 'Asma leve', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a8600a67d2'),
 (142, 'O+', 'Ninguna', 'Asma leve', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a8600a77ee'),
 (143, 'A-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a865fde048'),
 (144, 'A-', 'Ninguna', 'Ninguno', 'Ninguno', 'Ninguna', 'no_posee', NULL, NULL, NULL, NULL, NULL, NULL, 'atl_6a8667c4287');
@@ -1132,7 +1190,7 @@ CREATE TABLE `tipo_pago` (
 
 INSERT INTO `tipo_pago` (`tipo_pago_id`, `tipo_pago`) VALUES
 (1, 'Efectivo'),
-(2, 'Pago M??vil'),
+(2, 'Pago M├│vil'),
 (3, 'Transferencia');
 
 -- --------------------------------------------------------
@@ -1225,7 +1283,9 @@ ALTER TABLE `atleta`
 ALTER TABLE `atleta_representante`
   ADD PRIMARY KEY (`AR_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
-  ADD KEY `cedula_representante` (`cedula_representante`);
+  ADD KEY `cedula_representante` (`cedula_representante`),
+  ADD KEY `idx_ar_atleta` (`Atleta_id`),
+  ADD KEY `idx_ar_cedula` (`cedula_representante`);
 
 --
 -- Indices de la tabla `cambios`
@@ -1261,6 +1321,7 @@ ALTER TABLE `categoria_atleta`
 --
 ALTER TABLE `categoria_entrenamiento`
   ADD PRIMARY KEY (`convocatoria_id`),
+  ADD UNIQUE KEY `uq_entrenamiento_categoria` (`entrenamiento_id`,`categoria_id`),
   ADD KEY `categoria_id` (`categoria_id`),
   ADD KEY `entrenamiento_id` (`entrenamiento_id`);
 
@@ -1283,19 +1344,22 @@ ALTER TABLE `configuracion`
 ALTER TABLE `convocado`
   ADD PRIMARY KEY (`convocado_id`),
   ADD UNIQUE KEY `uk_convocado` (`partido_id`,`Atleta_id`),
-  ADD KEY `fk_conv_atleta` (`Atleta_id`);
+  ADD KEY `fk_conv_atleta` (`Atleta_id`),
+  ADD KEY `idx_conv_partido` (`partido_id`),
+  ADD KEY `idx_conv_atleta` (`Atleta_id`);
 
 --
 -- Indices de la tabla `cuota_mensual`
 --
 ALTER TABLE `cuota_mensual`
   ADD PRIMARY KEY (`cuota_id`),
-  ADD KEY `Atleta_id` (`Atleta_id`);
+  ADD KEY `Atleta_id` (`Atleta_id`),
+  ADD KEY `idx_cm_atleta` (`Atleta_id`);
 
 --
--- Indices de la tabla `desempe??o_entrenamiento`
+-- Indices de la tabla `desempenio_entrenamiento`
 --
-ALTER TABLE `desempe??o_entrenamiento`
+ALTER TABLE `desempenio_entrenamiento`
   ADD PRIMARY KEY (`desempenio_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
   ADD KEY `entrenamiento_id` (`entrenamiento_id`);
@@ -1309,6 +1373,13 @@ ALTER TABLE `entrenamiento`
   ADD KEY `usuario_cedula_2` (`usuario_cedula`);
 
 --
+-- Indices de la tabla `entrenamiento_recurso`
+--
+ALTER TABLE `entrenamiento_recurso`
+  ADD PRIMARY KEY (`recurso_id`),
+  ADD KEY `entrenamiento_id` (`entrenamiento_id`);
+
+--
 -- Indices de la tabla `equipo_rival`
 --
 ALTER TABLE `equipo_rival`
@@ -1320,7 +1391,9 @@ ALTER TABLE `equipo_rival`
 ALTER TABLE `goles`
   ADD PRIMARY KEY (`gol_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
-  ADD KEY `partido_id` (`partido_id`);
+  ADD KEY `partido_id` (`partido_id`),
+  ADD KEY `idx_gol_atleta` (`Atleta_id`),
+  ADD KEY `idx_gol_partido` (`partido_id`);
 
 --
 -- Indices de la tabla `grado`
@@ -1328,7 +1401,9 @@ ALTER TABLE `goles`
 ALTER TABLE `grado`
   ADD PRIMARY KEY (`grado_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
-  ADD KEY `colegio_id` (`colegio_id`);
+  ADD KEY `colegio_id` (`colegio_id`),
+  ADD KEY `idx_gr_atleta` (`Atleta_id`),
+  ADD KEY `idx_gr_colegio` (`colegio_id`);
 
 --
 -- Indices de la tabla `hobbies`
@@ -1399,7 +1474,9 @@ ALTER TABLE `partido_tarjetas`
   ADD PRIMARY KEY (`p_t_id`),
   ADD KEY `Atleta_id` (`Atleta_id`),
   ADD KEY `partido_id` (`partido_id`),
-  ADD KEY `tarjeta_id` (`tarjeta_id`);
+  ADD KEY `tarjeta_id` (`tarjeta_id`),
+  ADD KEY `idx_pt_atleta` (`Atleta_id`),
+  ADD KEY `idx_pt_partido` (`partido_id`);
 
 --
 -- Indices de la tabla `prueba_balon_aereo`
@@ -1557,6 +1634,12 @@ ALTER TABLE `categoria_atleta`
   MODIFY `anio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
+-- AUTO_INCREMENT de la tabla `categoria_entrenamiento`
+--
+ALTER TABLE `categoria_entrenamiento`
+  MODIFY `convocatoria_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT de la tabla `colegio`
 --
 ALTER TABLE `colegio`
@@ -1566,7 +1649,7 @@ ALTER TABLE `colegio`
 -- AUTO_INCREMENT de la tabla `configuracion`
 --
 ALTER TABLE `configuracion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de la tabla `convocado`
@@ -1579,6 +1662,24 @@ ALTER TABLE `convocado`
 --
 ALTER TABLE `cuota_mensual`
   MODIFY `cuota_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+
+--
+-- AUTO_INCREMENT de la tabla `desempenio_entrenamiento`
+--
+ALTER TABLE `desempenio_entrenamiento`
+  MODIFY `desempenio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT de la tabla `entrenamiento`
+--
+ALTER TABLE `entrenamiento`
+  MODIFY `entrenamiento_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `entrenamiento_recurso`
+--
+ALTER TABLE `entrenamiento_recurso`
+  MODIFY `recurso_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `equipo_rival`
@@ -1717,13 +1818,6 @@ ALTER TABLE `atleta`
   ADD CONSTRAINT `atleta_ibfk_1` FOREIGN KEY (`Uniforme_id`) REFERENCES `uniforme` (`Uniforme_id`);
 
 --
--- Filtros para la tabla `atleta_representante`
---
-ALTER TABLE `atleta_representante`
-  ADD CONSTRAINT `atleta_representante_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `atleta_representante_ibfk_2` FOREIGN KEY (`cedula_representante`) REFERENCES `representante` (`cedula_representante`);
-
---
 -- Filtros para la tabla `cambios`
 --
 ALTER TABLE `cambios`
@@ -1732,183 +1826,10 @@ ALTER TABLE `cambios`
   ADD CONSTRAINT `cambios_ibfk_3` FOREIGN KEY (`Atleta_sale_id`) REFERENCES `atleta` (`Atleta_id`);
 
 --
--- Filtros para la tabla `categoria_atleta`
+-- Filtros para la tabla `entrenamiento_recurso`
 --
-ALTER TABLE `categoria_atleta`
-  ADD CONSTRAINT `categoria_atleta_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `categoria_atleta_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `categoria_entrenamiento`
---
-ALTER TABLE `categoria_entrenamiento`
-  ADD CONSTRAINT `categoria_entrenamiento_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`),
-  ADD CONSTRAINT `categoria_entrenamiento_ibfk_2` FOREIGN KEY (`entrenamiento_id`) REFERENCES `entrenamiento` (`entrenamiento_id`);
-
---
--- Filtros para la tabla `convocado`
---
-ALTER TABLE `convocado`
-  ADD CONSTRAINT `fk_conv_atleta` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_conv_partido` FOREIGN KEY (`partido_id`) REFERENCES `partido` (`partido_id`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `cuota_mensual`
---
-ALTER TABLE `cuota_mensual`
-  ADD CONSTRAINT `cuota_mensual_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`);
-
---
--- Filtros para la tabla `desempe??o_entrenamiento`
---
-ALTER TABLE `desempe??o_entrenamiento`
-  ADD CONSTRAINT `desempe??o_entrenamiento_ibfk_1` FOREIGN KEY (`entrenamiento_id`) REFERENCES `entrenamiento` (`entrenamiento_id`),
-  ADD CONSTRAINT `desempe??o_entrenamiento_ibfk_2` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`);
-
---
--- Filtros para la tabla `goles`
---
-ALTER TABLE `goles`
-  ADD CONSTRAINT `goles_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `goles_ibfk_2` FOREIGN KEY (`partido_id`) REFERENCES `partido` (`partido_id`);
-
---
--- Filtros para la tabla `grado`
---
-ALTER TABLE `grado`
-  ADD CONSTRAINT `grado_ibfk_1` FOREIGN KEY (`colegio_id`) REFERENCES `colegio` (`colegio_id`),
-  ADD CONSTRAINT `grado_ibfk_2` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`);
-
---
--- Filtros para la tabla `hobbie_atleta`
---
-ALTER TABLE `hobbie_atleta`
-  ADD CONSTRAINT `hobbie_atleta_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `hobbie_atleta_ibfk_2` FOREIGN KEY (`hobbie_id`) REFERENCES `hobbies` (`hobbie_id`);
-
---
--- Filtros para la tabla `incidencia`
---
-ALTER TABLE `incidencia`
-  ADD CONSTRAINT `incidencia_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `incidencia_ibfk_2` FOREIGN KEY (`partido_id`) REFERENCES `partido` (`partido_id`);
-
---
--- Filtros para la tabla `noticias`
---
-ALTER TABLE `noticias`
-  ADD CONSTRAINT `noticias_ibfk_1` FOREIGN KEY (`usuario_creador`) REFERENCES `usuario` (`usuario_id`);
-
---
--- Filtros para la tabla `operacion`
---
-ALTER TABLE `operacion`
-  ADD CONSTRAINT `operacion_ibfk_1` FOREIGN KEY (`pago_id`) REFERENCES `pagos` (`pago_id`),
-  ADD CONSTRAINT `operacion_ibfk_2` FOREIGN KEY (`tipo_pago_id`) REFERENCES `tipo_pago` (`tipo_pago_id`);
-
---
--- Filtros para la tabla `pagos`
---
-ALTER TABLE `pagos`
-  ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`cedula_representante`) REFERENCES `representante` (`cedula_representante`);
-
---
--- Filtros para la tabla `pago_cuota`
---
-ALTER TABLE `pago_cuota`
-  ADD CONSTRAINT `fk_pc_cuota` FOREIGN KEY (`cuota_id`) REFERENCES `cuota_mensual_old` (`cuota_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_pc_pago` FOREIGN KEY (`pago_id`) REFERENCES `pagos` (`pago_id`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `partido`
---
-ALTER TABLE `partido`
-  ADD CONSTRAINT `partido_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`),
-  ADD CONSTRAINT `partido_ibfk_2` FOREIGN KEY (`campo_id`) REFERENCES `campo` (`campo_id`),
-  ADD CONSTRAINT `partido_ibfk_3` FOREIGN KEY (`equipo_id`) REFERENCES `equipo_rival` (`equipo_id`);
-
---
--- Filtros para la tabla `partido_tarjetas`
---
-ALTER TABLE `partido_tarjetas`
-  ADD CONSTRAINT `partido_tarjetas_ibfk_1` FOREIGN KEY (`tarjeta_id`) REFERENCES `tarjetas` (`tarjeta_id`),
-  ADD CONSTRAINT `partido_tarjetas_ibfk_2` FOREIGN KEY (`partido_id`) REFERENCES `partido` (`partido_id`),
-  ADD CONSTRAINT `partido_tarjetas_ibfk_3` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`);
-
---
--- Filtros para la tabla `prueba_balon_aereo`
---
-ALTER TABLE `prueba_balon_aereo`
-  ADD CONSTRAINT `prueba_balon_aereo_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_balon_aereo_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `prueba_conduccion`
---
-ALTER TABLE `prueba_conduccion`
-  ADD CONSTRAINT `prueba_conduccion_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_conduccion_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `prueba_definicion`
---
-ALTER TABLE `prueba_definicion`
-  ADD CONSTRAINT `prueba_definicion_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_definicion_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `prueba_fuerza`
---
-ALTER TABLE `prueba_fuerza`
-  ADD CONSTRAINT `prueba_fuerza_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_fuerza_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `prueba_pases`
---
-ALTER TABLE `prueba_pases`
-  ADD CONSTRAINT `prueba_pases_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_pases_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `prueba_recepcion_balon`
---
-ALTER TABLE `prueba_recepcion_balon`
-  ADD CONSTRAINT `prueba_recepcion_balon_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_recepcion_balon_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `prueba_resistencia`
---
-ALTER TABLE `prueba_resistencia`
-  ADD CONSTRAINT `prueba_resistencia_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_resistencia_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `prueba_salto`
---
-ALTER TABLE `prueba_salto`
-  ADD CONSTRAINT `prueba_salto_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_salto_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `prueba_velocidad`
---
-ALTER TABLE `prueba_velocidad`
-  ADD CONSTRAINT `prueba_velocidad_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`),
-  ADD CONSTRAINT `prueba_velocidad_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`);
-
---
--- Filtros para la tabla `salud`
---
-ALTER TABLE `salud`
-  ADD CONSTRAINT `salud_ibfk_1` FOREIGN KEY (`Atleta_id`) REFERENCES `atleta` (`Atleta_id`);
-
---
--- Filtros para la tabla `usuario`
---
-ALTER TABLE `usuario`
-  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `rol` (`rol_id`);
+ALTER TABLE `entrenamiento_recurso`
+  ADD CONSTRAINT `fk_recurso_entrenamiento` FOREIGN KEY (`entrenamiento_id`) REFERENCES `entrenamiento` (`entrenamiento_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

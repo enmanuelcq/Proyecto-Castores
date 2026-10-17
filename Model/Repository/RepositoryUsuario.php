@@ -133,6 +133,21 @@ class RepositoryUsuario implements IUsuarioRepository
         return $row ? $this->mapRowToUsuario($row) : null;
     }
 
+    // ─────────────────────── FIND ALL BY ROL ───────────────────────
+    public function findAllByRol(int $id_rol): array
+    {
+        $sql = "SELECT * FROM usuario WHERE rol_id = ? AND usuario_status = 1 ORDER BY usuario_nombre, usuario_apellido";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id_rol]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $usuarios = [];
+        foreach ($rows as $row) {
+            $usuarios[] = $this->mapRowToUsuario($row);
+        }
+        return $usuarios;
+    }
+
     // ─────────────────────── FIND BY STATUS ───────────────────────
     public function findByStatus(bool $status): ?Usuario
     {

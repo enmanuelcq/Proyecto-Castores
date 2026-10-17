@@ -236,6 +236,26 @@ foreach ($atletasPaginados as $atleta) {
                 $estadoCuota = 'Pendiente';
             }
             $cuotaId = $cuota->getId();
+
+            // Pagos cargados por el representante pendientes de confirmación
+            $pagosPendientes = [];
+            $pagoCuotasRel = $repoPagoCuota->findByCuota($cuota->getId());
+            foreach ($pagoCuotasRel as $pc) {
+                $pagoTmp = $repoPago->findById($pc->getPagoId());
+                if ($pagoTmp && $pagoTmp->getEstatusPago() === 'Pendiente') {
+                    $opTmp = $repoOperacion->findByPago($pagoTmp->getId());
+                    $opData = $opTmp[0] ?? null;
+                    $tipoPagoObj = $opData ? $repoTipoPago->findById($opData->getTipoPagoId()) : null;
+                    $pagosPendientes[] = [
+                        'pago_id'    => $pagoTmp->getId(),
+                        'monto'      => $pc->getMontoAbonado(),
+                        'fecha'      => $pagoTmp->getFechaPago(),
+                        'banco'      => $opData->getBanco() ?? '',
+                        'referencia' => $opData->getReferencia() ?? '',
+                        'tipo_pago'  => $tipoPagoObj ? $tipoPagoObj->getTipoPago() : '',
+                    ];
+                }
+            }
         }
 
         $mesesSolvencia[] = [
@@ -251,6 +271,7 @@ foreach ($atletasPaginados as $atleta) {
             'es_futuro' => $esFuturo,
             'fecha_pago' => $fechaPago,
             'banco' => $banco,
+            'pagos_pendientes' => $pagosPendientes ?? [],
         ];
     }
 
@@ -272,7 +293,43 @@ foreach ($atletasPaginados as $atleta) {
 }
 
 // ============================================================
-// 9. PASAR DATOS A LA VISTA
+// 9. PAGOS CARGADOS POR REPRESENTANTES - PENDIENTES DE CONFIRMAR
+// ============================================================
+$pagos_por_confirmar = [];
+$nombresMeses = [1=>'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+foreach ($repoPago->findByEstatus('Pendiente') as $pagoPend) {
+    $pagoCuotasRel = $repoPagoCuota->findByPago($pagoPend->getId());
+    foreach ($pagoCuotasRel as $pc) {
+        $cuotaPend = $repoCuota->findById($pc->getCuotaId());
+        $atletaPend = $cuotaPend ? $repoAtleta->findById($cuotaPend->getAtletaId()) : null;
+        $opsPend = $repoOperacion->findByPago($pagoPend->getId());
+        $opPend = $opsPend[0] ?? null;
+        $tipoPagoPend = $opPend ? $repoTipoPago->findById($opPend->getTipoPagoId()) : null;
+        $pagos_por_confirmar[] = [
+            'pago_id'    => $pagoPend->getId(),
+            'monto'      => $pc->getMontoAbonado(),
+            'fecha'      => $pagoPend->getFechaPago(),
+            'concepto'   => $pagoPend->getConceptoPago(),
+            'atleta_id'  => $cuotaPend ? $cuotaPend->getAtletaId() : '',
+            'atleta_nombre' => $atletaPend
+                ? trim($atletaPend->getPrimerNombre() . ' ' .
+                       ($atletaPend->getSegundoNombre() ? $atletaPend->getSegundoNombre() . ' ' : '') .
+                       $atletaPend->getPrimerApellido())
+                : 'Atleta desconocido',
+            'mes'        => $cuotaPend ? (int)$cuotaPend->getMes() : 0,
+            'anio'       => $cuotaPend ? (int)$cuotaPend->getAnio() : 0,
+            'nombre_mes' => $cuotaPend ? ($nombresMeses[(int)$cuotaPend->getMes()] ?? $cuotaPend->getMes()) : '',
+            'banco'      => $opPend->getBanco() ?? '',
+            'referencia' => $opPend->getReferencia() ?? '',
+            'tipo_pago'  => $tipoPagoPend ? $tipoPagoPend->getTipoPago() : '',
+        ];
+    }
+}
+
+// ============================================================
+// 10. PASAR DATOS A LA VISTA
 // ============================================================
 $paginacion = [
     'pagina_actual' => $pagina,

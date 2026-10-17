@@ -16,6 +16,7 @@ interface IUsuarioRepository {
     public function findAllActive(): array;
     public function findByName(string $nombre) : ?Usuario;
     public function findByRol(int $id_rol) : ?Usuario;
+    public function findAllByRol(int $id_rol) : array;
     public function findByStatus(bool $status) : ?Usuario;
     public function findByCedula(string $cedula) : ?Usuario;
 

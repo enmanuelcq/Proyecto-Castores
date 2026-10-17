@@ -159,13 +159,13 @@ function obtenerEstadisticasGenerales($todos_los_atletas, $todas_las_solvencias,
     // ===== ASISTENCIA POR ATLETA =====
     $asistencia_atletas = [];
     foreach($toda_la_asistencia as $a) {
-        $cedula = $a['atleta_cedula'];
-        if(!isset($asistencia_atletas[$cedula])) {
-            $asistencia_atletas[$cedula] = ['total' => 0, 'presentes' => 0];
+        $atleta_id = $a['atleta_id'];
+        if(!isset($asistencia_atletas[$atleta_id])) {
+            $asistencia_atletas[$atleta_id] = ['total' => 0, 'presentes' => 0];
         }
-        $asistencia_atletas[$cedula]['total']++;
+        $asistencia_atletas[$atleta_id]['total']++;
         if($a['asistio'] == 1) {
-            $asistencia_atletas[$cedula]['presentes']++;
+            $asistencia_atletas[$atleta_id]['presentes']++;
         }
     }
     
@@ -426,21 +426,22 @@ function obtenerAsistenciaPorCategoria($todos_los_entrenamientos) {
 function obtenerTopAsistencia($toda_la_asistencia, $todos_los_atletas, $limite = 5) {
     $asistencia_atletas = [];
     foreach($toda_la_asistencia as $a) {
-        $cedula = $a['atleta_cedula'];
-        if(!isset($asistencia_atletas[$cedula])) {
-            $asistencia_atletas[$cedula] = ['total' => 0, 'presentes' => 0];
+        $atleta_id = $a['atleta_id'];
+        if(!isset($asistencia_atletas[$atleta_id])) {
+            $asistencia_atletas[$atleta_id] = ['total' => 0, 'presentes' => 0];
         }
-        $asistencia_atletas[$cedula]['total']++;
+        $asistencia_atletas[$atleta_id]['total']++;
         if($a['asistio'] == 1) {
-            $asistencia_atletas[$cedula]['presentes']++;
+            $asistencia_atletas[$atleta_id]['presentes']++;
         }
     }
     
     $resultado = [];
-    foreach($asistencia_atletas as $cedula => $data) {
+    foreach($asistencia_atletas as $atleta_id => $data) {
         $atleta = null;
         foreach($todos_los_atletas as $a) {
-            if($a['atleta_cedula'] == $cedula) {
+            $atletaEntity = $a['atleta'] ?? null;
+            if($atletaEntity && $atletaEntity->getAtletaId() == $atleta_id) {
                 $atleta = $a;
                 break;
             }

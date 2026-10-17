@@ -68,6 +68,7 @@ class RepositoryOperacion implements IOperacionRepository
             (int) $row['pago_id'],
             (int) $row['tipo_pago_id'],
             $row['referencia'] ?? null,
+            $row['banco'] ?? null,          // ← antes se mapeaba fecha_operacion en esta posición
             $row['fecha_operacion'] ?? null
         );
     }

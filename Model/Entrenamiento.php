@@ -1,109 +1,12 @@
 <?php
 // ============================================
-// /Model/Entrenamientos.php
+// /Model/Entrenamiento.php
+// Funciones auxiliares del módulo de Entrenamientos.
+// La carga de datos se realiza en Controller/EntrenamientosController.php
 // ============================================
-
-// Datos de ejemplo de entrenamientos con cédula de entrenador 26804373
-$entrenamientos = [
-    [
-        'id' => 1,
-        'fecha' => '2026-07-10',
-        'hora_inicio' => '08:00',
-        'hora_fin' => '10:00',
-        'categoria' => 'Sub-14',
-        'tipo' => 'Físico',
-        'descripcion' => 'Entrenamiento de fuerza y resistencia',
-        'lugar' => 'Cancha Principal',
-        'entrenador_cedula' => '26804373',
-        'entrenador_nombre' => 'Enmanuel Castillo',
-        'estado' => 'Finalizado',
-        'asistentes' => 12,
-        'total_atletas' => 15
-    ],
-    [
-        'id' => 2,
-        'fecha' => '2026-07-12',
-        'hora_inicio' => '10:00',
-        'hora_fin' => '12:00',
-        'categoria' => 'Sub-16',
-        'tipo' => 'Técnico',
-        'descripcion' => 'Entrenamiento de pases y control de balón',
-        'lugar' => 'Cancha Alterna',
-        'entrenador_cedula' => '26804373',
-        'entrenador_nombre' => 'Enmanuel Castillo',
-        'estado' => 'Finalizado',
-        'asistentes' => 8,
-        'total_atletas' => 12
-    ],
-    [
-        'id' => 3,
-        'fecha' => '2026-07-15',
-        'hora_inicio' => '14:00',
-        'hora_fin' => '16:00',
-        'categoria' => 'Sub-12',
-        'tipo' => 'Táctico',
-        'descripcion' => 'Entrenamiento táctico y posicionamiento',
-        'lugar' => 'Cancha Principal',
-        'entrenador_cedula' => '26804373',
-        'entrenador_nombre' => 'Enmanuel Castillo',
-        'estado' => 'Programado',
-        'asistentes' => 0,
-        'total_atletas' => 10
-    ],
-    [
-        'id' => 4,
-        'fecha' => '2026-07-08',
-        'hora_inicio' => '09:00',
-        'hora_fin' => '11:00',
-        'categoria' => 'Sub-10',
-        'tipo' => 'Físico',
-        'descripcion' => 'Entrenamiento de velocidad y agilidad',
-        'lugar' => 'Cancha Alterna',
-        'entrenador_cedula' => '26804373',
-        'entrenador_nombre' => 'Enmanuel Castillo',
-        'estado' => 'Finalizado',
-        'asistentes' => 9,
-        'total_atletas' => 10
-    ],
-    [
-        'id' => 5,
-        'fecha' => '2026-07-18',
-        'hora_inicio' => '08:00',
-        'hora_fin' => '10:00',
-        'categoria' => 'Sub-16',
-        'tipo' => 'Técnico',
-        'descripcion' => 'Entrenamiento de definición y remate',
-        'lugar' => 'Cancha Principal',
-        'entrenador_cedula' => '26804373',
-        'entrenador_nombre' => 'Enmanuel Castillo',
-        'estado' => 'Programado',
-        'asistentes' => 0,
-        'total_atletas' => 8
-    ],
-    [
-        'id' => 6,
-        'fecha' => '2026-07-20',
-        'hora_inicio' => '15:00',
-        'hora_fin' => '17:00',
-        'categoria' => 'Sub-14',
-        'tipo' => 'Mixto',
-        'descripcion' => 'Entrenamiento mixto: físico y técnico',
-        'lugar' => 'Cancha Principal',
-        'entrenador_cedula' => '26804373',
-        'entrenador_nombre' => 'Enmanuel Castillo',
-        'estado' => 'Programado',
-        'asistentes' => 0,
-        'total_atletas' => 15
-    ]
-];
-
-$todos_los_entrenamientos = $entrenamientos;
 
 // ===== FUNCIONES =====
 
-/**
- * Obtener entrenamientos por categoría
- */
 function obtenerEntrenamientosPorCategoria($categoria, $entrenamientos) {
     $resultado = [];
     foreach($entrenamientos as $e) {
@@ -114,9 +17,6 @@ function obtenerEntrenamientosPorCategoria($categoria, $entrenamientos) {
     return $resultado;
 }
 
-/**
- * Obtener entrenamientos por fecha
- */
 function obtenerEntrenamientosPorFecha($fecha, $entrenamientos) {
     $resultado = [];
     foreach($entrenamientos as $e) {
@@ -127,9 +27,6 @@ function obtenerEntrenamientosPorFecha($fecha, $entrenamientos) {
     return $resultado;
 }
 
-/**
- * Obtener entrenamientos por estado
- */
 function obtenerEntrenamientosPorEstado($estado, $entrenamientos) {
     $resultado = [];
     foreach($entrenamientos as $e) {
@@ -140,9 +37,6 @@ function obtenerEntrenamientosPorEstado($estado, $entrenamientos) {
     return $resultado;
 }
 
-/**
- * Obtener entrenamientos por entrenador (cédula)
- */
 function obtenerEntrenamientosPorEntrenador($entrenador_cedula, $entrenamientos) {
     $resultado = [];
     foreach($entrenamientos as $e) {
@@ -153,9 +47,6 @@ function obtenerEntrenamientosPorEntrenador($entrenador_cedula, $entrenamientos)
     return $resultado;
 }
 
-/**
- * Obtener entrenamiento por ID
- */
 function obtenerEntrenamientoPorId($id, $entrenamientos) {
     foreach($entrenamientos as $e) {
         if($e['id'] == $id) {
@@ -165,38 +56,23 @@ function obtenerEntrenamientoPorId($id, $entrenamientos) {
     return null;
 }
 
-/**
- * Contar entrenamientos por categoría
- */
 function contarEntrenamientosPorCategoria($categoria, $entrenamientos) {
     return count(obtenerEntrenamientosPorCategoria($categoria, $entrenamientos));
 }
 
-/**
- * Contar entrenamientos por estado
- */
 function contarEntrenamientosPorEstado($estado, $entrenamientos) {
     return count(obtenerEntrenamientosPorEstado($estado, $entrenamientos));
 }
 
-/**
- * Contar entrenamientos por entrenador
- */
 function contarEntrenamientosPorEntrenador($entrenador_cedula, $entrenamientos) {
     return count(obtenerEntrenamientosPorEntrenador($entrenador_cedula, $entrenamientos));
 }
 
-/**
- * Calcular porcentaje de asistencia
- */
 function calcularPorcentajeAsistencia($asistentes, $total) {
     if($total == 0) return 0;
     return round(($asistentes / $total) * 100);
 }
 
-/**
- * Obtener estadísticas de entrenamientos por entrenador
- */
 function obtenerEstadisticasEntrenador($entrenador_cedula, $entrenamientos) {
     $entrenamientos_entrenador = obtenerEntrenamientosPorEntrenador($entrenador_cedula, $entrenamientos);
     
@@ -227,9 +103,6 @@ function obtenerEstadisticasEntrenador($entrenador_cedula, $entrenamientos) {
     ];
 }
 
-/**
- * Obtener resumen de entrenamientos por categoría y entrenador
- */
 function obtenerResumenEntrenamientos($entrenamientos) {
     $resumen = [];
     $categorias = array_unique(array_column($entrenamientos, 'categoria'));
@@ -246,7 +119,6 @@ function obtenerResumenEntrenamientos($entrenamientos) {
         $por_entrenador = array_filter($entrenamientos, function($e) use ($ent) {
             return $e['entrenador_cedula'] == $ent;
         });
-        // Obtener nombre del entrenador
         $nombre = '';
         foreach($por_entrenador as $e) {
             $nombre = $e['entrenador_nombre'];
@@ -261,9 +133,6 @@ function obtenerResumenEntrenamientos($entrenamientos) {
     return $resumen;
 }
 
-/**
- * Obtener próximos entrenamientos (fecha actual en adelante)
- */
 function obtenerProximosEntrenamientos($entrenamientos, $limite = 5) {
     $hoy = date('Y-m-d');
     $proximos = array_filter($entrenamientos, function($e) use ($hoy) {
@@ -277,9 +146,6 @@ function obtenerProximosEntrenamientos($entrenamientos, $limite = 5) {
     return array_slice($proximos, 0, $limite);
 }
 
-/**
- * Obtener entrenamientos por rango de fechas
- */
 function obtenerEntrenamientosPorRangoFechas($fecha_inicio, $fecha_fin, $entrenamientos) {
     $resultado = [];
     foreach($entrenamientos as $e) {

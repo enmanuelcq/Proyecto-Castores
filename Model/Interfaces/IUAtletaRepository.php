@@ -26,6 +26,7 @@ interface IAtletaRepository
     public function findByNombre(string $nombre): array;        // coincidencia en primer o segundo nombre
     public function findByApellido(string $apellido): array;    // coincidencia en apellidos
     public function findByCategoria(int $categoriaId): array;   // atletas de una categoría
+    public function contarAtletasDistintosPorCategorias(array $categoriaIds): int;
     public function findByRepresentante(string $cedulaRepresentante): array; // atletas de un representante
     public function findByStatus(bool $status): array;          // por estado
 }

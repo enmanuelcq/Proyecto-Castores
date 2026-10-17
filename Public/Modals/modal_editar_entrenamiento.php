@@ -28,7 +28,7 @@
                     </div>
                 </div>
 
-                <form id="formEditarEntrenamiento<?php echo $e['id']; ?>" method="POST" action="./Controller/ActualizarEntrenamiento_controller.php" class="FormularioAjax">
+                <form id="formEditarEntrenamiento<?php echo $e['id']; ?>" method="POST" action="./Controller/ActualizarEntrenamiento_controller.php">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="id" value="<?php echo $e['id']; ?>">
                     <input type="hidden" name="entrenador_cedula" value="<?php echo $_SESSION['usuario']['usuario_cedula'] ?? ''; ?>">
@@ -52,7 +52,7 @@
                             <label class="custom-form-label">Categoría</label>
                             <select class="form-select custom-input" name="categoria" required>
                                 <?php 
-                                $categorias = ['Sub-8','Sub-10','Sub-12','Sub-14','Sub-16','Sub-18'];
+                                $categorias = ['Sub-4','Sub-5','Sub-6','Sub-7','Sub-8','Sub-9','Sub-10','Sub-11','Sub-12','Sub-13','Sub-14','Sub-15','Sub-16','Sub-17','Sub-18'];
                                 foreach($categorias as $cat): ?>
                                 <option value="<?php echo $cat; ?>" <?php echo ($e['categoria'] == $cat) ? 'selected' : ''; ?>>
                                     <?php echo $cat; ?>

@@ -1,6 +1,6 @@
 <?php 
 
- if((!isset($_SESSION['usuario'])) && ($_GET['View'] != "404" && $_GET['View'] != "Noticias" && $_GET['View'] != "home" && $_GET['View'] != "Login")){
+ if((!isset($_SESSION['usuario'])) && ($_GET['View'] != "404" && $_GET['View'] != "Noticias" && $_GET['View'] != "home" && $_GET['View'] != "Login" && $_GET['View'] != "RegistroRepresentante")){
 
         $_GET['View'] = "home";
     
